@@ -31,17 +31,17 @@ class AddMusicHandler(tornado.web.RequestHandler):
             with open(save_file_path, 'w') as f:
                 f.write(file['body'])
         except:
-            self.render("add_music.html", msg='参数填写错误！')
+            self.render("add_music.html", msg=u'参数填写错误！')
             return
         MusicControl.add_music(music_name, music_artist, save_file_path)
         os.remove(save_file_path)
-        self.render("add_music.html", msg='新增成功！')
+        self.render("add_music.html", msg=u'新增成功！')
         return
 
 class EditMusicHandler(tornado.web.RequestHandler):
     def get(self):
         music_name = self.get_argument("music_name")
-        self.render("edit_music.html", msg='编辑歌曲', 
+        self.render("edit_music.html", msg=u'编辑歌曲', 
             music=MusicControl.get_music(music_name))
 
     def post(self):
@@ -50,7 +50,7 @@ class EditMusicHandler(tornado.web.RequestHandler):
         assert music_artist
         music = MusicControl.get_music(music_name)
         music.update(music_artist)
-        self.render("edit_music.html", msg='修改成功！', music=music)
+        self.render("edit_music.html", msg=u'修改成功！', music=music)
         return
 
 class DelMusicHandler(tornado.web.RequestHandler):
@@ -59,7 +59,7 @@ class DelMusicHandler(tornado.web.RequestHandler):
         MusicControl.del_music(music_name)
         music_list = MusicControl.get_music_by_page(1)
         page_num = MusicControl.get_music_page_count()
-        self.render("music.html", msg='删除成功！', music_list=music_list, page_num=page_num)
+        self.render("music.html", msg=u'删除成功！', music_list=music_list, page_num=page_num)
         return
 
 class FindMusicHandler(tornado.web.RequestHandler):
@@ -72,5 +72,5 @@ class FindMusicHandler(tornado.web.RequestHandler):
         else:
             music_list = MusicControl.get_music_by_page(1)
             page_num = MusicControl.get_music_page_count()
-            self.render("music.html", msg='未找到对应歌曲！', music_list=music_list, page_num=page_num)
+            self.render("music.html", msg=u'未找到对应歌曲！', music_list=music_list, page_num=page_num)
             return
