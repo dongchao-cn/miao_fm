@@ -1,8 +1,7 @@
 #coding:utf8
 import os
 import tornado
-from .model import get_music,set_music,del_music,get_empty_music_obj,save_music_obj,\
-    get_random_music,get_music_by_order,get_music_count
+from .model import Music
 from config import PAGE_RANGE
 
 class NextMusicHandler(tornado.web.RequestHandler):

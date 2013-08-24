@@ -2,4 +2,4 @@
 
 MUSIC_FILE_PATH = '/home/dc/Music/music_file/'
 
-PAGE_RANGE = 5
+ITEM_PER_PAGE = 5

@@ -12,11 +12,14 @@ import os
 from os.path import getsize
 from mongoengine import *
 
-from config import MUSIC_FILE_PATH
+from config import MUSIC_FILE_PATH, ITEM_PER_PAGE
 
 connect('miao_fm')
 
 class Music(Document):
+    '''
+    store music info
+    '''
     # music meta
     music_name = StringField(primary_key=True, max_length=200, default='')
     music_artist = StringField(max_length=40, required=True, default='')
@@ -36,77 +39,118 @@ class Music(Document):
         return ('music_name = %s\nfile_name = %s\n' % \
             (self.music_name, self.file_name)).encode('utf-8')
 
+    @property
     def play_data(self):
+        '''
+        get the play data for music
+        return json
+        '''
         return json.dumps({ 'music_name' : self.music_name, 
             'music_artist' : self.music_artist,
             'file' : self.file_name })
 
-def get_music(music_name):
-    '''
-    get music by music_name
-    return Music Object or None
-    '''
-    return Music.objects(music_name=music_name).first()
+    def update(self, music_artist):
+        '''
+        update music info
+        '''
+        music.music_artist = music_artist
+        music.upload_data = datetime.datetime.now()
+        music.save()
 
-def set_music(music_name, music_artist, file):
+class MusicControl(object):
     '''
-    set music info and store the music file
-    if music_name exist, rewrite it
+    Music control functions
     '''
-    with open(file,'r') as f:
-        file_name = hashlib.md5(f.read()).hexdigest() + file[file.rindex('.'):]
-    shutil.copy(file,MUSIC_FILE_PATH+file_name)
-    Music(music_name, music_artist, file_name).save()
-    
-def del_music(music_name):
-    '''
-    del music from db and del file
-    '''
-    music = Music.objects(music_name=music_name).first()
-    try:
-        music.delete()
-        os.remove(MUSIC_FILE_PATH+music.file_name)
-    except:
-        pass
 
-def get_empty_music_obj():
-    '''
-    get random music
-    '''
-    return Music()
+    def __init__(self):
+        raise Exception,'MusicControl can\'t be __init__'
 
-def save_music_obj(music_obj):
-    '''
-    get random music
-    '''
-    music_obj.save()
+    @classmethod
+    def add_music(cls, music_name, music_artist, file):
+        '''
+        add new music and store the music file
+        if music_name exist, rewrite it
+        '''
+        with open(file,'r') as f:
+            file_name = hashlib.md5(f.read()).hexdigest() + file[file.rindex('.'):]
+        Music(music_name, music_artist, file_name).save()
+        shutil.copy(file, MUSIC_FILE_PATH+file_name)
+        
+    @classmethod
+    def get_music(cls, music_name):
+        '''
+        get music by music_name
+        return Music Object or None
+        '''
+        return Music.objects(music_name=music_name).first()
 
-def get_random_music():
+    @classmethod
+    def del_music(cls, music_name):
+        '''
+        del music from db and remove file
+        '''
+        music = Music.objects(music_name=music_name).first()
+        try:
+            music.delete()
+            os.remove(MUSIC_FILE_PATH+music.file_name)
+        except OSError:
+            pass
+
+    @classmethod
+    def get_next_music(cls):
+        return _get_random_music()
+
+    @classmethod
+    def get_music_by_page(cls, page):
+        '''
+        get music by page
+        '''
+        page -= 1
+        return Music.objects[page*ITEM_PER_PAGE: (page+1)*ITEM_PER_PAGE]
+
+    @classmethod
+    def get_music_page_count(cls):
+        '''
+        get music page count
+        '''
+        count = Music.objects().count()
+        if count % ITEM_PER_PAGE:
+            return count/ITEM_PER_PAGE+1
+        else:
+            return count/ITEM_PER_PAGE
+
+def _get_random_music():
     '''
     get random music
     '''
     num = random.randint(0,Music.objects().count()-1)
     return Music.objects[num]
 
-def get_music_by_order(start, limit):
-    return Music.objects[start:start+limit]
-
-def get_music_count():
-    '''
-    get music count
-    '''
-    return Music.objects().count()
-
 if __name__ == '__main__':
-    # set_music(u'兄妹','eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
-    # print get_music(u'兄妹')
-    # set_music(u'兄妹1','eason',u'/media/823E59BF3E59AD43/Music/02十年.mp3')
-    # print get_music(u'兄妹1')
-    # set_music(u'floorfiller','eason',u'/media/823E59BF3E59AD43/Music/floorfiller.mp3')
-    # print get_music(u'floorfiller')
-    # del_music(u'兄妹')
-    # print get_music(u'兄妹')
+    # try:
+    #     MusicControl()
+    # except Exception:
+    #     pass
 
-    # print get_random_music()
-    # print get_music_by_order(0,3)
+    # for i in range(8):
+    #     MusicControl.add_music(u'兄妹'+str(i),'eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+    # print MusicControl.get_music_page_count()
+    # print MusicControl.get_music_by_page(1)
+    # print MusicControl.get_music_by_page(2)
+
+    # print MusicControl.get_music(u'兄妹')
+    # MusicControl.del_music(u'兄妹')
+    # print MusicControl.get_music(u'兄妹')
+    # MusicControl.add_music(u'兄妹','eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+
+    # music = MusicControl.get_music(u'兄妹')
+    # print music.play_data
+
+    # print MusicControl.get_next_music()
+
+    MusicControl.add_music(u'兄妹','eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+    music = MusicControl.get_music(u'兄妹')
+    print music.play_data
+    music.update("dsdsds")
+    print music.play_data
     pass
