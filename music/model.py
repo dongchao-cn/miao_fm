@@ -53,9 +53,9 @@ class Music(Document):
         '''
         update music info
         '''
-        music.music_artist = music_artist
-        music.upload_data = datetime.datetime.now()
-        music.save()
+        self.music_artist = music_artist
+        self.upload_data = datetime.datetime.now()
+        self.save()
 
 class MusicControl(object):
     '''
@@ -153,4 +153,6 @@ if __name__ == '__main__':
     print music.play_data
     music.update("dsdsds")
     print music.play_data
+
+    print MusicControl.get_music_page_count()
     pass

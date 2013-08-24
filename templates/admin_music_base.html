@@ -13,27 +13,32 @@
         <hr/>
         <div class="container-fluid">
             <div class="row-fluid">
-                <div class="span12">
-                    <div class="row-fluid">
-                        <div class="span4">
-                            <a href="/admin/music/">Admin</a>
-                        </div>
-                        <div class="span4">
-                            <form action="/admin/music/find_music/" class="form-search">
-                                <input class="input-medium search-query" type="text" name='music_name' /> 
-                                <button type="submit" class="btn">查找</button>
-                            </form>
-                        </div>
-                        <div class="span4">
-                             <input class="btn btn btn-success" type="button" value="添加音乐" onclick="location.href='/admin/music/add_music/';">
+                <div class="span2">
+                    <ul class="nav nav-list">
+                        <li class="nav-header">后台管理</li>
+                        <li class="active"><a href="/admin/music/">歌曲管理</a></li>
+                        <li><a href="#">Library</a></li>
+                    </ul>                    
+                </div>
+                <div class="span10">
+                    <div class="control-group">
+                        <div class="controls">
+                            <div align="left">
+                                <input class="btn btn btn-success" type="button" value="添加音乐" onclick="location.href='/admin/music/add_music/';">
+                            </div>
+
+                            <div align="right">
+                                <form  action="/admin/music/find_music/" class="form-search">
+                                    <input class="input-medium search-query" type="text" name='music_name' /> 
+                                    <button type="submit" class="btn">查找</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
+                    <hr/>
+                    {% block content %}{% end %}
                 </div>
             </div>
-        </div>
-
-        <div class="container" align=middle>
-         {% block content %}{% end %}
         </div>
 
         <!-- Le styles -->
