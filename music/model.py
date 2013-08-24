@@ -12,6 +12,7 @@ import os
 from os.path import getsize
 from mongoengine import *
 
+from cdn.model import CdnControl
 from config import MUSIC_FILE_PATH, ITEM_PER_PAGE
 
 connect('miao_fm')
@@ -47,7 +48,7 @@ class Music(Document):
         '''
         return json.dumps({ 'music_name' : self.music_name, 
             'music_artist' : self.music_artist,
-            'file' : self.file_name })
+            'file' : '%s/music_file/%s' % (CdnControl.get_free_cdn().url, self.file_name) })
 
     def update(self, music_artist):
         '''

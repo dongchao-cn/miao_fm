@@ -3,6 +3,7 @@
 if __name__ == '__main__':
     import sys
     sys.path.insert(0, '../')
+import random
 from mongoengine import *
 
 connect('miao_fm')
@@ -53,6 +54,20 @@ class CdnControl(object):
         get all cdn from db
         '''
         return Cdn.objects()
+
+    @classmethod
+    def get_free_cdn(cls):
+        '''
+        get all cdn from db
+        '''
+        return _get_random_cdn()
+
+def _get_random_cdn():
+    '''
+    get random cdn
+    '''
+    num = random.randint(0,Cdn.objects().count()-1)
+    return Cdn.objects[num]
 
 if __name__ == '__main__':
     cnd1 = Cdn("xidian1",'cdn1.xidian.com')
