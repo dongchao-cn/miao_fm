@@ -33,10 +33,12 @@ class AddMusicHandler(tornado.web.RequestHandler):
         except:
             self.render("music/add_music.html", msg=u'参数填写错误！')
             return
-        MusicControl.add_music(music_name, music_artist, save_file_path)
+        ret =MusicControl.add_music(music_name, music_artist, save_file_path)
         os.remove(save_file_path)
+        if ret:
+            self.render("music/add_music.html", msg=ret)
+            return
         self.render("music/add_music.html", msg=u'新增成功！')
-        return
 
 class EditMusicHandler(tornado.web.RequestHandler):
     def get(self):

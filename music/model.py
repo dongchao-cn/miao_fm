@@ -26,7 +26,7 @@ class Music(Document):
     music_artist = StringField(max_length=40, required=True, default='')
 
     # file info
-    file_name = StringField(max_length=40, required=True, default='')
+    file_name = StringField(max_length=40, required=True,unique=True)
 
     # upload info
     # upload_user = ReferenceField('')
@@ -74,7 +74,10 @@ class MusicControl(object):
         '''
         with open(file,'r') as f:
             file_name = hashlib.md5(f.read()).hexdigest() + file[file.rindex('.'):]
-        Music(music_name, music_artist, file_name).save()
+        try:
+            Music(music_name, music_artist, file_name).save()
+        except NotUniqueError:
+            return u'该文件已存在！'
         shutil.copy(file, MUSIC_FILE_PATH+file_name)
         
     @classmethod
