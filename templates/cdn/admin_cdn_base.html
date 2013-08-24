@@ -1,0 +1,18 @@
+{% extends "../admin_base.html" %}
+{% block extern_head %}
+{% end %}
+
+{% block modle_base_content %}
+<div class="control-group">
+    <div class="controls">
+        <div align="left">
+            <input class="btn btn btn-success" type="button" value="添加CDN" onclick="location.href='/admin/cdn/add_cdn/';">
+        </div>
+    </div>
+</div>
+<hr/>
+{% block content %}{% end %}
+{% end %}
+
+{% block extern_body %}
+{% end %}
