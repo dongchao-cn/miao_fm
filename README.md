@@ -22,7 +22,9 @@ Settings
 
 - config.py
 
-config the basic info about server
+edit the info about server and then run `python config.py` to generate `server_nginx.config` and `cdn_nginx.config`
+
+edit `nginx.conf` and include the 2 config file above.
 
 RunServer
 ---------
