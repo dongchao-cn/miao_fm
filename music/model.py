@@ -6,6 +6,7 @@ if __name__ == '__main__':
 import hashlib
 import datetime
 import random
+import json
 import shutil
 import os
 from os.path import getsize
@@ -35,6 +36,11 @@ class Music(Document):
         return ('music_name = %s\nfile_name = %s\n' % \
             (self.music_name, self.file_name)).encode('utf-8')
 
+    def play_data(self):
+        return json.dumps({ 'music_name' : self.music_name, 
+            'music_artist' : self.music_artist,
+            'file' : self.file_name })
+
 def get_music(music_name):
     '''
     get music by music_name
@@ -52,7 +58,6 @@ def set_music(music_name, music_artist, file):
     shutil.copy(file,MUSIC_FILE_PATH+file_name)
     Music(music_name, music_artist, file_name).save()
     
-
 def del_music(music_name):
     '''
     del music from db and del file
@@ -93,14 +98,15 @@ def get_music_count():
     return Music.objects().count()
 
 if __name__ == '__main__':
-    set_music(u'兄妹','eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
-    print get_music(u'兄妹')
-    set_music(u'兄妹1','eason',u'/media/823E59BF3E59AD43/Music/02十年.mp3')
-    print get_music(u'兄妹1')
-    set_music(u'floorfiller','eason',u'/media/823E59BF3E59AD43/Music/floorfiller.mp3')
-    print get_music(u'floorfiller')
+    # set_music(u'兄妹','eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+    # print get_music(u'兄妹')
+    # set_music(u'兄妹1','eason',u'/media/823E59BF3E59AD43/Music/02十年.mp3')
+    # print get_music(u'兄妹1')
+    # set_music(u'floorfiller','eason',u'/media/823E59BF3E59AD43/Music/floorfiller.mp3')
+    # print get_music(u'floorfiller')
     # del_music(u'兄妹')
     # print get_music(u'兄妹')
 
     # print get_random_music()
-    print get_music_by_order(0,3)
+    # print get_music_by_order(0,3)
+    pass

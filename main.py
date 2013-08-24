@@ -1,30 +1,30 @@
 import os
 import tornado.ioloop
 import tornado.web
-from music.view import GetMusicHandler,AddMusicHandler,EditMusicHandler,\
-	MusicHandler,DelMusicHandler,FindMusicHandler
+import music.view
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write("Hello, world")
+        self.render("home.html")
 
-settings = { 
-    # "static_path" : os.path.join(os.path.dirname(__file__), "static"),  handled in nginx
+settings = {
     "template_path" : os.path.join(os.path.dirname(__file__), "templates"),
     "debug" : True,
 }
 
 application = tornado.web.Application([
-    (r"/", GetMusicHandler),
-    (r"/admin/music/", MusicHandler),
-    (r"/admin/music/add_music/", AddMusicHandler),
-    (r"/admin/music/edit_music/", EditMusicHandler),
-    (r"/admin/music/find_music/", FindMusicHandler),
-    (r"/admin/music/del_music/", DelMusicHandler),
-    # (r"/admin/music/(.*)/", MusicHandler),
-    
-    
-    # (r"/music_file/(.*)", ), handled in nginx
+    # main page
+    (r"/", MainHandler),
+
+    # api
+    (r"/api/next_music/", music.view.NextMusicHandler),
+
+    # admin page
+    (r"/admin/music/", music.view.MusicHandler),
+    (r"/admin/music/add_music/", music.view.AddMusicHandler),
+    (r"/admin/music/edit_music/", music.view.EditMusicHandler),
+    (r"/admin/music/find_music/", music.view.FindMusicHandler),
+    (r"/admin/music/del_music/", music.view.DelMusicHandler),
 ],**settings)
 
 if __name__ == "__main__":

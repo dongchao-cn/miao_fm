@@ -5,10 +5,10 @@ from .model import get_music,set_music,del_music,get_empty_music_obj,save_music_
     get_random_music,get_music_by_order,get_music_count
 from config import PAGE_RANGE
 
-class GetMusicHandler(tornado.web.RequestHandler):
+class NextMusicHandler(tornado.web.RequestHandler):
     def get(self):
         music = get_random_music()
-        self.render("home.html", music=music)
+        self.write(music.play_data())
 
 class AddMusicHandler(tornado.web.RequestHandler):
     def get(self):
