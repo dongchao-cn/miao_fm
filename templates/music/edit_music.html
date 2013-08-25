@@ -18,14 +18,14 @@
         </div>
 
         <div class="control-group">
-            <label class="control-label" for="music_artist">歌手(*)</label>
+            <label class="control-label" for="music_artist">歌手</label>
             <div class="controls">
                 <input id="music_artist" name="music_artist" type="text" value="{{music.music_artist}}" />
             </div>
         </div>
 
         <div class="control-group">
-            <label class="control-label" for="music_album">专辑(*)</label>
+            <label class="control-label" for="music_album">专辑</label>
             <div class="controls">
                 <input id="music_album" name="music_album" type="text" value="{{music.music_album}}" />
             </div>
@@ -33,7 +33,9 @@
 
         <p>文件名: {{ music.file_name }}</p>
         <p>添加时间: {{ music.upload_data }}</p>
-
+        
+        <audio src="{{ music.local_url }}" controls="controls"></audio>
+        
         <div class="control-group">
             <div class="controls">
                 <input class="btn btn btn-success" type="button" value="返回" onclick="location.href='/admin/music/';">

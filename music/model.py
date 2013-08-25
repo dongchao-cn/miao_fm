@@ -17,7 +17,7 @@ import id3reader
 from mongoengine import *
 
 from cdn.model import CdnControl
-from config import MUSIC_FILE_PATH, ITEM_PER_PAGE
+from config import MUSIC_FILE_PATH, ITEM_PER_PAGE, MASTER_CDN
 
 connect('miao_fm')
 
@@ -65,6 +65,9 @@ class Music(Document):
         self.upload_data = datetime.datetime.now()
         self.save()
 
+    @property
+    def local_url(self):
+        return 'http://%s/music_file/%s' % (MASTER_CDN, self.file_name)
 
 class MusicControl(object):
     '''
@@ -84,11 +87,8 @@ class MusicControl(object):
         with open(file,'r') as f:
             file_name = hashlib.md5(f.read()).hexdigest() + file[file.rindex('.'):]
         music_name, music_artist, music_album = _get_info_from_id3(file)
-        try:
-            Music(music_name=music_name, music_artist=music_artist, 
-                music_album=music_album, file_name=file_name).save()
-        except NotUniqueError:
-            return u'该文件已存在！'
+        Music(music_name=music_name, music_artist=music_artist, 
+            music_album=music_album, file_name=file_name).save()
         # shutil.copy(file, MUSIC_FILE_PATH+file_name)
         multiprocessing.Process(target=_lame_mp3, args=(file, MUSIC_FILE_PATH+file_name, remove)).start()
         return music_name
@@ -197,15 +197,16 @@ if __name__ == '__main__':
     # except Exception:
     #     pass
 
-    MusicControl.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
-    MusicControl.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+    # MusicControl.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+    # MusicControl.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
     # for i in range(8):
     #     MusicControl.add_music(u'兄妹'+str(i),'eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
     # print MusicControl.get_music_page_count()
     # print MusicControl.get_music_by_page(1)
     # print MusicControl.get_music_by_page(2)
 
-    # print MusicControl.get_music(u'兄妹')
+    music = MusicControl.get_music(u'兄妹')
+    print music.local_url
     # MusicControl.del_music(u'兄妹')
     # print MusicControl.get_music(u'兄妹')
     # MusicControl.add_music(u'兄妹','eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')

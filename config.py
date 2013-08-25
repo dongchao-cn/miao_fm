@@ -1,8 +1,8 @@
 #coding:utf8
 
 # server and master_cdn should on one machine
-server = 'xdfm.com'
-master_cdn = 'cdn1.xdfm.com'
+SERVER = 'xdfm.com'
+MASTER_CDN = 'cdn1.xdfm.com'
 
 # where to store the music file (master cdn)
 # make sure nginx have read and delete permision to this dir
@@ -47,7 +47,7 @@ server {
         proxy_pass http://frontends;
     }
 }
-''' % (server, ABS_PATH+'/static/')
+''' % (SERVER, ABS_PATH+'/static/')
     with open('server_nginx.config','w') as f:
         f.write(server_config)
 
@@ -63,13 +63,13 @@ server {
         }
     }
 }
-''' % (master_cdn, MUSIC_FILE_PATH)
+''' % (MASTER_CDN, MUSIC_FILE_PATH)
     with open('cdn_nginx.config','w') as f:
         f.write(cdn_config)
 
 def add_master_cdn():
     from cdn.model import CdnControl
-    CdnControl.add_cdn("master", master_cdn)
+    CdnControl.add_cdn("master", MASTER_CDN)
 
 def add_demo_music():
     from music.model import MusicControl
@@ -83,7 +83,7 @@ def main():
     print 'add demo music...'
     add_demo_music()
     print 'Finish!'
-    print 'visit http://%s/admin/ for admin page.' % (server)
+    print 'visit http://%s/admin/ for admin page.' % (SERVER)
 
 if __name__ == '__main__':
     main()
