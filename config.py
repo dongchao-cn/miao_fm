@@ -5,13 +5,20 @@ server = 'xdfm.com'
 master_cdn = 'cdn1.xdfm.com'
 
 # where to store the music file (master cdn)
+# make sure nginx have read and delete permision to this dir
+#   sudo chown www-data -R music_file
+#   sudo chmod +rwx music_file
 MUSIC_FILE_PATH = '/home/dc/Music/music_file/'
 
 # how many items in one page (for admin pages)
 ITEM_PER_PAGE = 10
 
+
+# DON'T EDIT BELOW
+import os
+ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
+
 def create_nginx_config():
-    import os
     server_config = '''
 upstream frontends {
     server 127.0.0.1:8000;
@@ -40,7 +47,7 @@ server {
         proxy_pass http://frontends;
     }
 }
-''' % (server, os.getcwd()+'/static/')
+''' % (server, ABS_PATH+'/static/')
     with open('server_nginx.config','w') as f:
         f.write(server_config)
 

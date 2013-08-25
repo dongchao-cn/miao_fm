@@ -1,7 +1,9 @@
 #coding:utf8
 import os
 import tornado
+
 from .model import MusicControl
+from config import ABS_PATH
 
 class NextMusicHandler(tornado.web.RequestHandler):
     def get(self):
@@ -27,7 +29,8 @@ class AddMusicHandler(tornado.web.RequestHandler):
             assert music_artist
 
             file = self.request.files['file'][0]
-            save_file_path = "uploads/" + file['filename']
+            save_file_path = ABS_PATH + "/uploads/" + file['filename']
+            print save_file_path
             with open(save_file_path, 'w') as f:
                 f.write(file['body'])
         except:

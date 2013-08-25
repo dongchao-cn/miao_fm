@@ -60,6 +60,7 @@ class CdnControl(object):
         '''
         get all cdn from db
         '''
+        assert Cdn.objects().count() != 0
         return _get_random_cdn()
 
 def _get_random_cdn():

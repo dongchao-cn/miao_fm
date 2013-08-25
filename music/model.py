@@ -9,7 +9,9 @@ import random
 import json
 import shutil
 import os
+import subprocess
 from os.path import getsize
+
 from mongoengine import *
 
 from cdn.model import CdnControl
@@ -78,8 +80,17 @@ class MusicControl(object):
             Music(music_name, music_artist, file_name).save()
         except NotUniqueError:
             return u'该文件已存在！'
-        shutil.copy(file, MUSIC_FILE_PATH+file_name)
-        
+        # shutil.copy(file, MUSIC_FILE_PATH+file_name)
+        subprocess.call([ 
+            "lame", 
+            "--quiet", 
+            "--mp3input", 
+            "--abr", 
+            "64", 
+            file, 
+            MUSIC_FILE_PATH+file_name, 
+            ])
+
     @classmethod
     def get_music(cls, music_name):
         '''
@@ -102,6 +113,7 @@ class MusicControl(object):
 
     @classmethod
     def get_next_music(cls):
+        assert Music.objects().count() != 0
         return _get_random_music()
 
     @classmethod
