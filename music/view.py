@@ -30,7 +30,6 @@ class AddMusicHandler(tornado.web.RequestHandler):
 
             file = self.request.files['file'][0]
             save_file_path = ABS_PATH + "/uploads/" + file['filename']
-            print save_file_path
             with open(save_file_path, 'w') as f:
                 f.write(file['body'])
         except:

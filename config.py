@@ -67,11 +67,13 @@ server {
     with open('cdn_nginx.config','w') as f:
         f.write(cdn_config)
 
+def add_master_cdn():
     from cdn.model import CdnControl
     CdnControl.add_cdn("master", master_cdn)
 
 def main():
     create_nginx_config()
+    add_master_cdn()
 
 if __name__ == '__main__':
     main()
