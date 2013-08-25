@@ -23,24 +23,17 @@ class AddMusicHandler(tornado.web.RequestHandler):
 
     def post(self):
         try:
-            music_name = self.get_argument("music_name")
-            assert music_name
-            music_artist = self.get_argument("music_artist")
-            assert music_artist
-
             file = self.request.files['file'][0]
             save_file_path = ABS_PATH + "/uploads/" + file['filename']
             with open(save_file_path, 'w') as f:
                 f.write(file['body'])
         except:
-            self.render("music/add_music.html", msg=u'参数填写错误！')
+            self.render("music/add_music.html", msg=u'文件上传失败！')
             return
-        ret =MusicControl.add_music(music_name, music_artist, save_file_path)
-        os.remove(save_file_path)
-        if ret:
-            self.render("music/add_music.html", msg=ret)
-            return
-        self.render("music/add_music.html", msg=u'新增成功！')
+        music_name = MusicControl.add_music(save_file_path, True)
+        # os.remove(save_file_path)
+        self.render("music/edit_music.html", msg=u'新增成功！',
+            music=MusicControl.get_music(music_name))
 
 class EditMusicHandler(tornado.web.RequestHandler):
     def get(self):
@@ -49,12 +42,18 @@ class EditMusicHandler(tornado.web.RequestHandler):
             music=MusicControl.get_music(music_name))
 
     def post(self):
+        old_music_name = self.get_argument("old_music_name")
         music_name = self.get_argument("music_name")
         music_artist = self.get_argument("music_artist")
-        assert music_artist
-        music = MusicControl.get_music(music_name)
-        music.update(music_artist)
-        self.render("music/edit_music.html", msg=u'修改成功！', music=music)
+        music_album = self.get_argument("music_album")
+        music = MusicControl.get_music(old_music_name)
+        try:
+            ret = music.update(music_name, music_artist, music_album)
+            msg = u'修改成功'
+        except:
+            music = MusicControl.get_music(old_music_name)
+            msg = u'文件名已存在，修改失败!'
+        self.render("music/edit_music.html", msg=msg, music=music)
         return
 
 class DelMusicHandler(tornado.web.RequestHandler):

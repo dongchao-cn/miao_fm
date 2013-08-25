@@ -18,7 +18,7 @@ ITEM_PER_PAGE = 10
 import os
 ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
 
-def create_nginx_config():
+def generate_nginx_config():
     server_config = '''
 upstream frontends {
     server 127.0.0.1:8000;
@@ -71,9 +71,18 @@ def add_master_cdn():
     from cdn.model import CdnControl
     CdnControl.add_cdn("master", master_cdn)
 
+def add_demo_music():
+    from music.model import MusicControl
+    MusicControl.add_music(ABS_PATH+'/demo.mp3')
+
 def main():
-    create_nginx_config()
+    print 'generate nginx config...'
+    generate_nginx_config()
+    print 'add master cdn...'
     add_master_cdn()
+    print 'add demo music...'
+    add_demo_music()
+    print 'Finish!'
 
 if __name__ == '__main__':
     main()

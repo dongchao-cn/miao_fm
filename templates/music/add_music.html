@@ -6,21 +6,7 @@
 
     <form action="/admin/music/add_music/" method="post" enctype="multipart/form-data">
 
-        <legend>歌曲信息(*为必填项)</legend>
-
-        <div class="control-group">
-            <label class="control-label" for="music_name">曲名(*)</label>
-            <div class="controls">
-                <input id="music_name" name="music_name" type="text" />
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label" for="music_artist">艺术家(*)</label>
-            <div class="controls">
-                <input id="music_artist" name="music_artist" type="text" />
-            </div>
-        </div>
+        <legend>上传文件</legend>
 
         <div class="control-group">
             <label class="control-label" for="file">文件(*)</label>
@@ -32,7 +18,7 @@
         <div class="control-group">
             <div class="controls">
                 <input class="btn btn btn-success" type="button" value="返回" onclick="location.href='/admin/music/';">
-                <button class="btn btn-primary" type="submit">提交</button>
+                <button class="btn btn-primary" type="submit">上传</button>
             </div>
         </div>
     </form>
