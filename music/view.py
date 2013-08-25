@@ -22,18 +22,15 @@ class AddMusicHandler(tornado.web.RequestHandler):
         self.render("music/add_music.html", msg=u'新增音乐')
 
     def post(self):
-        try:
-            file = self.request.files['file'][0]
+        for file in self.request.files['file']:
             save_file_path = ABS_PATH + "/uploads/" + file['filename']
             with open(save_file_path, 'w') as f:
                 f.write(file['body'])
-        except:
-            self.render("music/add_music.html", msg=u'文件上传失败！')
-            return
-        music_name = MusicControl.add_music(save_file_path, True)
-        # os.remove(save_file_path)
-        self.render("music/edit_music.html", msg=u'新增成功！',
-            music=MusicControl.get_music(music_name))
+            
+            music_name = MusicControl.add_music(save_file_path, True)
+            # os.remove(save_file_path)
+
+        self.render("music/add_music.html", msg=u'新增成功！')
 
 class EditMusicHandler(tornado.web.RequestHandler):
     def get(self):

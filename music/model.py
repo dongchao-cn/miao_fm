@@ -156,10 +156,32 @@ def _lame_mp3(infile, outfile, remove=False):
 def _get_info_from_id3(file):
     id3r = id3reader.Reader(file)
     
-    music_name = id3r.getValue('title')
-    music_artist = id3r.getValue('performer')
-    music_album = id3r.getValue('album')
+    try:
+        music_name = id3r.getValue('title')
+        music_name.encode('utf8')
+    except:
+        music_name = ''
 
+    try:
+        music_artist = id3r.getValue('performer')
+        music_artist.encode('utf8')
+    except :
+        music_artist = ''
+
+    try:
+        music_album = id3r.getValue('album')
+        music_album.encode('utf8')
+    except :
+        music_album = ''
+
+    # music_name.encode('utf8')
+    # music_artist.encode('utf8')
+    # music_album.encode('utf8')
+
+    # print music_name.encode('utf8')
+    # print music_artist.encode('utf8')
+    # print music_album.encode('utf8')
+    # print type(music_name),type(music_artist),type(music_album)
     return (music_name, music_artist, music_album)
 
 def _get_random_music():
