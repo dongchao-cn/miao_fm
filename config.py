@@ -83,6 +83,7 @@ def main():
     print 'add demo music...'
     add_demo_music()
     print 'Finish!'
+    print 'visit http://%s/admin/ for admin page.' % (server)
 
 if __name__ == '__main__':
     main()
