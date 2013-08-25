@@ -33,3 +33,7 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# nginx config
+cdn_nginx.config
+server_nginx.config

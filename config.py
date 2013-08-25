@@ -1,14 +1,14 @@
 #coding:utf8
 
+# server and master_cdn should on one machine
+server = 'xdfm.com'
+master_cdn = 'cdn1.xdfm.com'
+
 # where to store the music file (master cdn)
 MUSIC_FILE_PATH = '/home/dc/Music/music_file/'
 
 # how many items in one page (for admin pages)
 ITEM_PER_PAGE = 10
-
-# server and master_cdn should on one machine
-server = 'xdfm.com'
-master_cdn = 'cdn1.xdfm.com'
 
 def create_nginx_config():
     import os
@@ -59,6 +59,9 @@ server {
 ''' % (master_cdn, MUSIC_FILE_PATH)
     with open('cdn_nginx.config','w') as f:
         f.write(cdn_config)
+
+    from cdn.model import CdnControl
+    CdnControl.add_cdn("master", master_cdn)
 
 def main():
     create_nginx_config()
