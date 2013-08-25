@@ -10,6 +10,7 @@ Depends
 1. Python 2.X
 2. mongodb
 3. nginx
+4. lame
 
 ### Python Packages
 1. tornado
