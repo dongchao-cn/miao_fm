@@ -69,11 +69,20 @@ server {
 
 def add_master_cdn():
     from cdn.model import CdnControl
-    CdnControl.add_cdn("master", MASTER_CDN)
+    import mongoengine
+    try:
+        CdnControl.add_cdn("master",MASTER_CDN)
+    except mongoengine.NotUniqueError:
+        pass
+
 
 def add_demo_music():
     from music.model import MusicControl
-    MusicControl.add_music(ABS_PATH+'/demo.mp3')
+    import mongoengine
+    try:
+        MusicControl.add_music(ABS_PATH+'/demo.mp3')
+    except mongoengine.NotUniqueError:
+        pass
 
 def main():
     print 'generate nginx config...'
@@ -83,7 +92,8 @@ def main():
     print 'add demo music...'
     add_demo_music()
     print 'Finish!'
-    print 'visit http://%s/admin/ for admin page.' % (SERVER)
+    print 'Please set %s, %s DNS settings' % (SERVER,MASTER_CDN)
+    print 'and visit http://%s/admin/ for admin page.' % (SERVER)
 
 if __name__ == '__main__':
     main()
