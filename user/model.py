@@ -14,6 +14,7 @@ class User(Document):
     '''
     user_name = StringField(max_length = 20, default = '', unique = True)
     user_password = StringField(max_length = 20, required = True)
+    user_status = IntField(required = True)
     user_create_time = DateTimeField(required = True)
 
     def __str__(self):
