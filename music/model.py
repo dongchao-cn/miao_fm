@@ -32,11 +32,12 @@ class MusicJsonEncoder(json.JSONEncoder):
         elif isinstance(obj, ObjectId):
             return str(obj)
         elif isinstance(obj, Music):
-            return {'music_id' : obj.pk,
+            return {'music_id' : obj.music_id,
                 'music_name' : obj.music_name,
                 'music_artist' : obj.music_artist,
                 'music_album' : obj.music_album,
-                'music_file' : 'http://%s/music_file/%s' % (obj.cdn, obj.music_file._id),
+                'file_id' : obj.file_id,
+                'music_url' : obj.music_url,
                 'upload_data' : obj.upload_data}
         else:
             return json.JSONEncoder.default(self, obj)
@@ -46,7 +47,7 @@ class Music(Document):
     store music info
     '''
     # music meta
-    music_name = StringField(max_length=200, default='', unique=True)
+    music_name = StringField(max_length=200, default='')
     music_artist = StringField(max_length=50, default='')
     music_album = StringField(max_length=100, default='')
 
@@ -56,7 +57,25 @@ class Music(Document):
     # upload info
     # upload_user = ReferenceField('')
     upload_data = DateTimeField(default=datetime.datetime.now())
-    
+
+    @property
+    def music_id(self):
+        return self.pk
+
+    @property
+    def music_url(self):
+        try:
+            return 'http://%s/music_file/%s' % (CdnControl.get_free_cdn().url, self.file_id)
+        except AttributeError:
+            return ''
+
+    @property
+    def file_id(self):
+        try:
+            return self.music_file._id
+        except AttributeError:
+            return ''
+
     meta = {
         'ordering': ['-upload_data']
     }
@@ -64,10 +83,6 @@ class Music(Document):
     def __str__(self):
         return ('music_name = %s\nmusic_file = %s\n' % \
             (self.music_name, self.music_file)).encode('utf-8')
-
-    @property
-    def cdn(self):
-        return CdnControl.get_free_cdn().url
 
     # @property
     # def play_data(self):
@@ -127,7 +142,10 @@ class MusicControl(object):
         get music by music_name
         return Music Object or None
         '''
-        return Music.objects(pk=music_id).first()
+        try:
+            return Music.objects(pk=music_id).first()
+        except ValidationError:
+            return None
 
     @classmethod
     def del_music(cls, music_id):
@@ -156,7 +174,8 @@ class MusicControl(object):
         get music by page
         '''
         page -= 1
-        return Music.objects[page*ITEM_PER_PAGE: (page+1)*ITEM_PER_PAGE]
+        return cls.get_music_by_range(page*ITEM_PER_PAGE, (page+1)*ITEM_PER_PAGE)
+        # return Music.objects[page*ITEM_PER_PAGE: (page+1)*ITEM_PER_PAGE]
 
     @classmethod
     def get_music_page_count(cls):
