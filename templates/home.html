@@ -13,18 +13,10 @@
     <script type="text/javascript">
         $(document).ready(function(){
             var description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce id tortor nisi. Aenean sodales diam ac lacus elementum scelerisque. Suspendisse a dui vitae lacus faucibus venenatis vel id nisl. Proin orci ante, ultricies nec interdum at, iaculis venenatis nulla. ';
-            var myPlaylist = [
-
-                {
-                    mp3:'',
-                    title:'',
-                    artist:'Sample',
-                    rating:4,
-                    buy:'#',
-                    price:'0.99',
-                    duration:'0:30'
-                }
-            ];
+            var myPlaylist = []
+            $.getJSON('/api/next_music/', function(data) {
+                myPlaylist.append(data)
+            })
 
             $('body').ttwMusicPlayer(myPlaylist, {
                 autoPlay:false, 

@@ -196,8 +196,13 @@
             }
 
             function playlistNext() {
+                $.getJSON('/api/next_music/', function(data) {
+                    myPlaylist.append(data)
+                })
                 var index = (current + 1 < myPlaylist.length) ? current + 1 : 0;
                 playlistAdvance(index);
+            })
+
             }
 
             function playlistPrev() {
