@@ -8,7 +8,7 @@ MASTER_CDN = 'cdn1.xdfm.com'
 # make sure nginx have read and delete permision to this dir
 #   sudo chown www-data -R music_file
 #   sudo chmod +rwx music_file
-MUSIC_FILE_PATH = ''
+MUSIC_FILE_PATH = '/home/fz/Project/PythonProject/miao_fm/'
 
 # how many items in one page (for admin pages)
 ITEM_PER_PAGE = 10

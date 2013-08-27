@@ -15,9 +15,8 @@
             var description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce id tortor nisi. Aenean sodales diam ac lacus elementum scelerisque. Suspendisse a dui vitae lacus faucibus venenatis vel id nisl. Proin orci ante, ultricies nec interdum at, iaculis venenatis nulla. ';
             var myPlaylist = []
             $.getJSON('/api/next_music/', function(data) {
-                myPlaylist.append(data)
+                myPlaylist.push(data);
             })
-
             $('body').ttwMusicPlayer(myPlaylist, {
                 autoPlay:false, 
                 description:description,
