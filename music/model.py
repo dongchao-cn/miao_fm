@@ -13,11 +13,33 @@ from os.path import getsize
 
 import id3reader
 from mongoengine import *
+from bson.objectid import ObjectId
 
 from cdn.model import CdnControl
 from config import ITEM_PER_PAGE, MASTER_CDN
 
-connect('miao_fm')        
+connect('miao_fm')
+
+class MusicJsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(obj, GridFSProxy):
+            try:
+                return obj._id
+            except AttributeError:
+                return ''
+        elif isinstance(obj, ObjectId):
+            return str(obj)
+        elif isinstance(obj, Music):
+            return {'music_id' : obj.pk,
+                'music_name' : obj.music_name,
+                'music_artist' : obj.music_artist,
+                'music_album' : obj.music_album,
+                'music_file' : obj.music_file,
+                'upload_data' : obj.upload_data}
+        else:
+            return json.JSONEncoder.default(self, obj)
 
 class Music(Document):
     '''
@@ -96,19 +118,19 @@ class MusicControl(object):
         return music
 
     @classmethod
-    def get_music(cls, music_name):
+    def get_music(cls, music_id):
         '''
         get music by music_name
         return Music Object or None
         '''
-        return Music.objects(music_name=music_name).first()
+        return Music.objects(pk=music_id).first()
 
     @classmethod
-    def del_music(cls, music_name):
+    def del_music(cls, music_id):
         '''
         del music from db and remove file
         '''
-        music = Music.objects(music_name=music_name).first()
+        music = Music.objects(pk=music_id).first()
         music.music_file.delete()
         music.delete()
 
@@ -116,6 +138,13 @@ class MusicControl(object):
     def get_next_music(cls):
         assert Music.objects().count() != 0
         return _get_random_music()
+
+    @classmethod
+    def get_music_by_range(cls, start, end):
+        '''
+        get music by range
+        '''
+        return [each for each in Music.objects[start : end]]
 
     @classmethod
     def get_music_by_page(cls, page):
