@@ -6,6 +6,7 @@ if __name__ == '__main__':
 import datetime
 import random
 import os
+import json
 import multiprocessing
 import subprocess
 from os.path import getsize
@@ -47,10 +48,10 @@ class Music(Document):
         '''
         get the play data for music
         '''
-        return { 'music_name' : self.music_name,
+        return json.dumps({ 'music_name' : self.music_name,
             'music_artist' : self.music_artist,
             'music_album' : self.music_album,
-            'file' : '%s/music_file/%s' % (CdnControl.get_free_cdn().url, self.music_file._id) }
+            'file' : '%s/music_file/%s' % (CdnControl.get_free_cdn().url, self.music_file._id) })
     
     @property
     def local_url(self):
