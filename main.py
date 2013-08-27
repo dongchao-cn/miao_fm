@@ -22,9 +22,9 @@ application = tornado.web.Application([
     (r"/", MainHandler),
 
     # api
-    (r"/api/next_music/", music.view.NextMusicHandler),
     (r"/api/music/", music.view.APIMusicControlHandler),
     (r"/api/music/(\w{24})/", music.view.APIMusicHandler),
+    (r"/api/music/next/", music.view.APIMusicNextHandler),
 
     # admin page
     (r"/admin/", AdminHandler),

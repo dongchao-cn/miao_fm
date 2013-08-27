@@ -59,10 +59,14 @@ class APIMusicHandler(tornado.web.RequestHandler):
         MusicControl.del_music(music_id)
         self.write('')
 
-class NextMusicHandler(tornado.web.RequestHandler):
+class APIMusicNextHandler(tornado.web.RequestHandler):
+    '''
+    get:
+        get next music for play
+    '''
     def get(self):
         music = MusicControl.get_next_music()
-        self.write(music.play_data)
+        self.write(json.dumps(music, cls=MusicJsonEncoder))
 
 class MusicHandler(tornado.web.RequestHandler):
     def get(self):

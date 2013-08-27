@@ -36,7 +36,7 @@ class MusicJsonEncoder(json.JSONEncoder):
                 'music_name' : obj.music_name,
                 'music_artist' : obj.music_artist,
                 'music_album' : obj.music_album,
-                'music_file' : obj.music_file,
+                'music_file' : 'http://%s/music_file/%s' % (obj.cdn, obj.music_file._id),
                 'upload_data' : obj.upload_data}
         else:
             return json.JSONEncoder.default(self, obj)
@@ -66,18 +66,22 @@ class Music(Document):
             (self.music_name, self.music_file)).encode('utf-8')
 
     @property
-    def play_data(self):
-        '''
-        get the play data for music
-        '''
-        return json.dumps({ 'music_name' : self.music_name,
-            'music_artist' : self.music_artist,
-            'music_album' : self.music_album,
-            'file' : '%s/music_file/%s' % (CdnControl.get_free_cdn().url, self.music_file._id) })
+    def cdn(self):
+        return CdnControl.get_free_cdn().url
+
+    # @property
+    # def play_data(self):
+    #     '''
+    #     get the play data for music
+    #     '''
+    #     return json.dumps({ 'music_name' : self.music_name,
+    #         'music_artist' : self.music_artist,
+    #         'music_album' : self.music_album,
+    #         'file' : '%s/music_file/%s' % (CdnControl.get_free_cdn().url, self.music_file._id) })
     
-    @property
-    def local_url(self):
-        return 'http://%s/music_file/%s' % (MASTER_CDN, self.music_file._id)
+    # @property
+    # def local_url(self):
+    #     return 'http://%s/music_file/%s' % (MASTER_CDN, self.music_file._id)
     
     def update_info(self, music_name, music_artist, music_album):
         '''
