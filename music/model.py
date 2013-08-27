@@ -3,11 +3,8 @@
 if __name__ == '__main__':
     import sys
     sys.path.insert(0, '../')
-import hashlib
 import datetime
 import random
-import json
-import shutil
 import os
 import multiprocessing
 import subprocess
@@ -17,9 +14,9 @@ import id3reader
 from mongoengine import *
 
 from cdn.model import CdnControl
-from config import MUSIC_FILE_PATH, ITEM_PER_PAGE, MASTER_CDN
+from config import ITEM_PER_PAGE, MASTER_CDN
 
-connect('miao_fm')
+connect('miao_fm')        
 
 class Music(Document):
     '''
@@ -31,7 +28,7 @@ class Music(Document):
     music_album = StringField(max_length=100, default='')
 
     # file info
-    file_name = StringField(max_length=40, required=True)
+    music_file = FileField()
 
     # upload info
     # upload_user = ReferenceField('')
@@ -42,20 +39,24 @@ class Music(Document):
     }
 
     def __str__(self):
-        return ('music_name = %s\nfile_name = %s\n' % \
-            (self.music_name, self.file_name)).encode('utf-8')
+        return ('music_name = %s\nmusic_file = %s\n' % \
+            (self.music_name, self.music_file)).encode('utf-8')
 
     @property
     def play_data(self):
         '''
         get the play data for music
-        return json
         '''
-        return json.dumps({ 'music_name' : self.music_name, 
+        return { 'music_name' : self.music_name,
             'music_artist' : self.music_artist,
-            'file' : '%s/music_file/%s' % (CdnControl.get_free_cdn().url, self.file_name) })
-
-    def update(self, music_name, music_artist, music_album):
+            'music_album' : self.music_album,
+            'file' : '%s/music_file/%s' % (CdnControl.get_free_cdn().url, self.music_file._id) }
+    
+    @property
+    def local_url(self):
+        return 'http://%s/music_file/%s' % (MASTER_CDN, self.music_file._id)
+    
+    def update_info(self, music_name, music_artist, music_album):
         '''
         update music info
         '''
@@ -65,9 +66,12 @@ class Music(Document):
         self.upload_data = datetime.datetime.now()
         self.save()
 
-    @property
-    def local_url(self):
-        return 'http://%s/music_file/%s' % (MASTER_CDN, self.file_name)
+    def update_file(self, file):
+        '''
+        update music info
+        '''
+        self.music_file = open(file, 'r').read()
+        self.save()
 
 class MusicControl(object):
     '''
@@ -84,14 +88,11 @@ class MusicControl(object):
         read music info from id3
         if music_name exist, rewrite it
         '''
-        with open(file,'r') as f:
-            file_name = hashlib.md5(f.read()).hexdigest() + file[file.rindex('.'):]
         music_name, music_artist, music_album = _get_info_from_id3(file)
-        Music(music_name=music_name, music_artist=music_artist, 
-            music_album=music_album, file_name=file_name).save()
-        # shutil.copy(file, MUSIC_FILE_PATH+file_name)
-        multiprocessing.Process(target=_lame_mp3, args=(file, MUSIC_FILE_PATH+file_name, remove)).start()
-        return music_name
+        music = Music(music_name=music_name, music_artist=music_artist, 
+            music_album=music_album, music_file=None).save()
+        multiprocessing.Process(target=_lame_mp3, args=(file, music, remove)).start()
+        return music
 
     @classmethod
     def get_music(cls, music_name):
@@ -107,11 +108,8 @@ class MusicControl(object):
         del music from db and remove file
         '''
         music = Music.objects(music_name=music_name).first()
-        try:
-            music.delete()
-            os.remove(MUSIC_FILE_PATH+music.file_name)
-        except OSError:
-            pass
+        music.music_file.delete()
+        music.delete()
 
     @classmethod
     def get_next_music(cls):
@@ -137,19 +135,23 @@ class MusicControl(object):
         else:
             return count/ITEM_PER_PAGE
 
-def _lame_mp3(infile, outfile, remove=False):
-    try:
-        subprocess.call([ 
-            "lame", 
-            "--quiet", 
-            "--mp3input", 
-            "--abr", 
-            "64", 
-            infile, 
-            outfile, 
-            ])
-    except:
-        shutil.copy(infile, outfile)
+def _lame_mp3(infile, music, remove=False):
+    '''
+    lame the mp3 to smaller
+    '''
+    outfile = infile+'.tmp'
+    subprocess.call([ 
+        "lame", 
+        "--quiet", 
+        "--mp3input", 
+        "--abr", 
+        "64", 
+        infile, 
+        outfile
+        ])
+    music.update_file(outfile)
+    os.remove(outfile)
+
     if remove:
         os.remove(infile)
 
@@ -197,16 +199,27 @@ if __name__ == '__main__':
     # except Exception:
     #     pass
 
-    # MusicControl.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+    # music = MusicControl.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+    # print music
+    # import time
+    # time.sleep(10)
+    # music = MusicControl.get_music(u'兄妹')
+    # print music.play_data
+    # print music.local_url
+
+    # MusicControl.del_music(u'兄妹')
+    # music = MusicControl.get_music(u'兄妹')
+    # print music
+
     # MusicControl.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
     # for i in range(8):
-    #     MusicControl.add_music(u'兄妹'+str(i),'eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+    #     MusicControl.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
     # print MusicControl.get_music_page_count()
     # print MusicControl.get_music_by_page(1)
     # print MusicControl.get_music_by_page(2)
 
-    music = MusicControl.get_music(u'兄妹')
-    print music.local_url
+    # music = MusicControl.get_music(u'兄妹')
+    # print music.local_url
     # MusicControl.del_music(u'兄妹')
     # print MusicControl.get_music(u'兄妹')
     # MusicControl.add_music(u'兄妹','eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')

@@ -1,14 +1,8 @@
 #coding:utf8
 
-# server and master_cdn should on one machine
+# set SERVER and MASTER_CDN to one machine
 SERVER = 'xdfm.com'
 MASTER_CDN = 'cdn1.xdfm.com'
-
-# where to store the music file (master cdn)
-# make sure nginx have read and delete permision to this dir
-#   sudo chown www-data -R music_file
-#   sudo chmod +rwx music_file
-MUSIC_FILE_PATH = ''
 
 # how many items in one page (for admin pages)
 ITEM_PER_PAGE = 10
@@ -48,24 +42,22 @@ server {
     }
 }
 ''' % (SERVER, ABS_PATH+'/static/')
-    with open('server_nginx.config','w') as f:
-        f.write(server_config)
 
-    cdn_config = '''
+    master_cdn_config = '''
+
 server {
     listen 80;
     server_name %s;
 
     location /music_file/ {
-        alias %s;
-        if ($query_string) {
-            expires max;
-        }
+        gridfs miao_fm;
     }
 }
-''' % (MASTER_CDN, MUSIC_FILE_PATH)
-    with open('cdn_nginx.config','w') as f:
-        f.write(cdn_config)
+''' % (MASTER_CDN)
+
+    config = server_config + master_cdn_config
+    with open('server_nginx.config','w') as f:
+        f.write(config)
 
 def add_master_cdn():
     from cdn.model import CdnControl
@@ -92,7 +84,8 @@ def main():
     print 'add demo music...'
     add_demo_music()
     print 'Finish!'
-    print 'Please set %s, %s DNS settings' % (SERVER,MASTER_CDN)
+    print 'Please set %s, %s DNS settings.' % (SERVER,MASTER_CDN)
+    print 'Please include "%s/server_nginx.config" in nginx.conf.' % (ABS_PATH)
     print 'and visit http://%s/admin/ for admin page.' % (SERVER)
 
 if __name__ == '__main__':

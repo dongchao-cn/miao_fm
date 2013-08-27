@@ -9,7 +9,7 @@ Depends
 ### Softwares
 1. Python 2.X
 2. mongodb
-3. nginx
+3. nginx + [nginx-gridfs](https://github.com/mdirolf/nginx-gridfs)
 4. lame
 
 ### Python Packages
