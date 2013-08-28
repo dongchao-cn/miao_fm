@@ -83,20 +83,6 @@ class Music(Document):
     def __str__(self):
         return ('music_name = %s\nmusic_file = %s\n' % \
             (self.music_name, self.music_file)).encode('utf-8')
-
-    # @property
-    # def play_data(self):
-    #     '''
-    #     get the play data for music
-    #     '''
-    #     return json.dumps({ 'music_name' : self.music_name,
-    #         'music_artist' : self.music_artist,
-    #         'music_album' : self.music_album,
-    #         'file' : '%s/music_file/%s' % (CdnControl.get_free_cdn().url, self.music_file._id) })
-    
-    # @property
-    # def local_url(self):
-    #     return 'http://%s/music_file/%s' % (MASTER_CDN, self.music_file._id)
     
     def update_info(self, music_name, music_artist, music_album):
         '''
