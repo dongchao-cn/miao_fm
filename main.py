@@ -3,6 +3,7 @@ import tornado.ioloop
 import tornado.web
 import cdn.view
 import music.view
+import user.view
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -15,6 +16,11 @@ class AdminHandler(tornado.web.RequestHandler):
 settings = {
     "template_path" : os.path.join(os.path.dirname(__file__), "templates"),
     "debug" : True,
+    "cookie_secret": "63oETzKXQkGaYdkLqw421fdasqw12335uYh7EQnp2XdTP1o/Vo=",
+    "login_url": "/login",
+    "xsrf_cookies": True,
+
+
 }
 
 application = tornado.web.Application([
@@ -36,6 +42,9 @@ application = tornado.web.Application([
     (r"/admin/cdn/", cdn.view.CdnHandler),
     (r"/admin/cdn/add_cdn/", cdn.view.AddCdnHandler),
     (r"/admin/cdn/del_cdn/", cdn.view.DelCdnHandler),
+    (r"/login/", user.view.LoginHandler),
+    (r"/regist/", user.view.RegistHandler),
+    (r"/logout/", user.view.LogoutHandler),
 ],**settings)
 
 if __name__ == "__main__":
