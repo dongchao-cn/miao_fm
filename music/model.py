@@ -112,6 +112,7 @@ class Music(Document):
         '''
         update music info
         '''
+        self.music_file.delete()
         self.music_file = open(file, 'r').read()
         self.save()
 
@@ -132,7 +133,7 @@ class MusicControl(object):
         '''
         music_name, music_artist, music_album = _get_info_from_id3(file)
         music = Music(music_name=music_name, music_artist=music_artist, 
-            music_album=music_album, music_file=None).save()
+            music_album=music_album, music_file=open(file, 'r').read()).save()
         multiprocessing.Process(target=_lame_mp3, args=(file, music, remove)).start()
         return music
 
