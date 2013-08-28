@@ -126,7 +126,7 @@ class MusicControl(object):
     @classmethod
     def get_music(cls, music_id):
         '''
-        get music by music_name
+        get music by music_id
         return Music Object or None
         '''
         try:
@@ -147,6 +147,14 @@ class MusicControl(object):
     def get_next_music(cls):
         assert Music.objects().count() != 0
         return _get_random_music()
+
+    @classmethod
+    def get_music_by_name(cls, music_name):
+        '''
+        get music by music_name
+        return Music Object or None
+        '''
+        return Music.objects(music_name=music_name).first()
 
     @classmethod
     def get_music_by_range(cls, start, end):

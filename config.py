@@ -7,7 +7,6 @@ MASTER_CDN = 'cdn1.xdfm.com'
 # how many items in one page (for admin pages)
 ITEM_PER_PAGE = 10
 
-
 # DON'T EDIT BELOW
 import os
 ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
@@ -62,19 +61,18 @@ server {
 def add_master_cdn():
     from cdn.model import CdnControl
     import mongoengine
-    try:
-        CdnControl.add_cdn("master",MASTER_CDN)
-    except mongoengine.NotUniqueError:
-        pass
-
+    cdn = CdnControl.get_cdn("master")
+    if cdn:
+        CdnControl.del_cdn("master")
+    CdnControl.add_cdn("master",MASTER_CDN)
 
 def add_demo_music():
     from music.model import MusicControl
     import mongoengine
-    try:
-        MusicControl.add_music(ABS_PATH+'/demo.mp3')
-    except mongoengine.NotUniqueError:
-        pass
+    music = MusicControl.get_music_by_name('To Be With You')
+    if music:
+        MusicControl.del_music(music.music_id)
+    MusicControl.add_music(ABS_PATH+'/demo.mp3')
 
 def main():
     print 'generate nginx config...'
