@@ -16,9 +16,10 @@ from mongoengine import *
 from bson.objectid import ObjectId
 
 from cdn.model import CdnControl
-from config import ITEM_PER_PAGE, MASTER_CDN
+from master_config import ITEM_PER_PAGE, MASTER_CDN, MASTER_MONGODB_PORT
 
-connect('miao_fm')
+connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
+register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
 
 class MusicJsonEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -52,7 +53,7 @@ class Music(Document):
     music_album = StringField(max_length=100, default='')
 
     # file info
-    music_file = FileField()
+    music_file = FileField('miao_fm_cdn')
 
     # upload info
     # upload_user = ReferenceField('')

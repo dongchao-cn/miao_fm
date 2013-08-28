@@ -4,7 +4,7 @@ import tornado
 import json
 
 from .model import MusicControl,MusicJsonEncoder
-from config import ABS_PATH
+from master_config import ABS_PATH
 
 class APIMusicControlHandler(tornado.web.RequestHandler):
     '''

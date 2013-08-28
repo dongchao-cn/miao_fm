@@ -6,7 +6,9 @@ if __name__ == '__main__':
 import random
 from mongoengine import *
 
-connect('miao_fm')
+from master_config import MASTER_CDN, MASTER_MONGODB_PORT
+
+connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
 
 class Cdn(Document):
     '''
