@@ -21,7 +21,11 @@ class AddCdnHandler(tornado.web.RequestHandler):
         except:
             self.render("cdn/add_cdn.html", msg=u'参数填写错误！')
             return
-        CdnControl.add_cdn(name, url_path)
+        try:
+            CdnControl.add_cdn(name, url_path)
+        except:
+            self.render("cdn/add_cdn.html", msg=u'CDN名已存在！')
+            return
         self.render("cdn/add_cdn.html", msg=u'新增成功！')
         return
 

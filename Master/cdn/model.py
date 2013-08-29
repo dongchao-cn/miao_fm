@@ -6,13 +6,15 @@ if __name__ == '__main__':
 import random
 from mongoengine import *
 
-connect('miao_fm')
+from master_config import MASTER_CDN, MASTER_MONGODB_PORT
+
+connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
 
 class Cdn(Document):
     '''
     store cdn info
     '''
-    name = StringField(max_length=100,primary_key=True)
+    name = StringField(max_length=100,unique=True)
     url_path = StringField(max_length=50)
 
     def __str__(self):
@@ -24,6 +26,13 @@ class Cdn(Document):
         get url
         '''
         return self.url_path
+
+    def update_info(self, url_path):
+        '''
+        update cdn info
+        '''
+        self.url_path = url_path
+        self.save()
 
 class CdnControl(object):
     '''
@@ -47,6 +56,13 @@ class CdnControl(object):
         del cdn from db
         '''
         Cdn.objects(name=name).first().delete()
+
+    @classmethod
+    def get_cdn(cls, name):
+        '''
+        del cdn from db
+        '''
+        return Cdn.objects(name=name).first()
 
     @classmethod
     def get_all_cdn(cls):
