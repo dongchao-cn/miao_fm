@@ -62,8 +62,8 @@ def main():
     print 'generate mongodb config...'
     slave_mongodb_config()
     print 'Finish!'
-    print 'Please include "%s/server_nginx.conf" in nginx.conf and restart nginx.' % (ABS_PATH)
-    print 'Please use "mongod -f slave_mongodb.conf" to start MongoDB.'
+    print 'Please include "%s/slave_nginx.conf" in nginx.conf and restart nginx.' % (ABS_PATH)
+    print 'Please use "mongod -f %s/slave_mongodb.conf" to start MongoDB.' % (ABS_PATH)
 
 if __name__ == '__main__':
     main()

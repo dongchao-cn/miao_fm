@@ -85,7 +85,6 @@ nojournal = true''' % (master_mongodb_dir, MASTER_MONGODB_PORT)
 
 def add_master_cdn():
     from cdn.model import CdnControl
-    import mongoengine
     cdn = CdnControl.get_cdn("master")
     if cdn:
         CdnControl.del_cdn("master")
@@ -93,25 +92,31 @@ def add_master_cdn():
 
 def add_demo_music():
     from music.model import MusicControl
-    import mongoengine
     music = MusicControl.get_music_by_name('To Be With You')
     if music:
         MusicControl.del_music(music.music_id)
     MusicControl.add_music(ABS_PATH+'/demo.mp3')
 
-def main():
+def config():
+    import mongoengine
     print 'generate nginx config...'
     master_nginx_config()
     print 'generate mongodb config...'
     master_mongodb_config()
-    print 'add master cdn...'
-    add_master_cdn()
-    print 'add demo music...'
-    add_demo_music()
+    try:
+        print 'add master cdn...'
+        add_master_cdn()
+        print 'add demo music...'
+        add_demo_music()
+    except mongoengine.connection.ConnectionError:
+        print 'MongoDB NOT started!!!'
+        print 'Please use "mongod -f %s/master_mongodb.conf" to start MongoDB.' % (ABS_PATH)
+        print 'Then re execute this file.'
+        os._exit(-1)
     print 'Finish!'
     print 'Please set %s, %s DNS settings.' % (SERVER,MASTER_CDN)
-    print 'Please include "%s/server_nginx.conf" in nginx.conf.' % (ABS_PATH)
-    print 'and visit http://%s/admin/ for admin page.' % (SERVER)
+    print 'Please include "%s/master_nginx.conf" in nginx.conf.' % (ABS_PATH)
+    print 'Then visit http://%s/admin/ for admin page.' % (SERVER)
 
 if __name__ == '__main__':
-    main()
+    config()

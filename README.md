@@ -19,18 +19,21 @@ Depends
 Settings
 --------
 
-### Server
+### Master
 
-- config.py
+- master_config.py
 
-edit the info about server and then run `python config.py` to generate `server_nginx.config` and `cdn_nginx.config`
+1. edit the info and then run `python master_config.py` to config.
 
-edit `nginx.conf` and include the 2 config file above.
+2. run `python main.py` to start service.
 
-RunServer
----------
+### Slave
 
-```
-python main.py
-```
+Optional, it is using as cdn.
+
+- slave_config.py
+
+1. edit the info and then run `python slave_config.py` to config.
+
+2. run `python main.py` to start service.
 
