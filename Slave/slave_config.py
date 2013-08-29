@@ -14,16 +14,24 @@ ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
 
 def slave_nginx_config():
     config = '''
+upstream slave_stream {
+    server 127.0.0.1:8001;
+}
+
 server {
     listen 80;
     server_name %s;
 
-    location /music_file/ {
-        gridfs miao_fm_cdn;
-        mongo 127.0.0.1:%d;
+    location / {
+        proxy_pass_header Server;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_pass http://slave_stream;
     }
 }
-''' % (SLAVE_CDN, SLAVE_MONGODB_PORT)
+''' % (SLAVE_CDN)
     with open('slave_nginx.conf','w') as f:
         f.write(config)
 

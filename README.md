@@ -1,7 +1,7 @@
 miao_fm
 =======
 
-this is a online music server, just like douban FM
+this is a online music server, just like douban FM.
 
 Depends
 -------
@@ -9,7 +9,7 @@ Depends
 ### Softwares
 1. Python 2.X
 2. mongodb
-3. nginx + [nginx-gridfs](https://github.com/mdirolf/nginx-gridfs)
+3. nginx
 4. lame
 
 ### Python Packages

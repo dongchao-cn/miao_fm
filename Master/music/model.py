@@ -66,7 +66,7 @@ class Music(Document):
     @property
     def music_url(self):
         try:
-            return 'http://%s/music_file/%s' % (CdnControl.get_free_cdn().url, self.file_id)
+            return 'http://%s/music_file/%s/' % (CdnControl.get_free_cdn().url, self.file_id)
         except AttributeError:
             return ''
 
@@ -99,8 +99,8 @@ class Music(Document):
         '''
         update music info
         '''
-        self.music_file.delete()
-        self.music_file = open(file, 'r').read()
+        with open(file, 'r') as f:
+            self.music_file.replace(f)
         self.save()
 
 class MusicControl(object):

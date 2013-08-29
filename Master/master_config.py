@@ -16,13 +16,16 @@ ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
 
 def master_nginx_config():
     server_config = '''
-upstream frontends {
+upstream master_stream {
     server 127.0.0.1:8000;
 }
 
 server {
     listen 80;
     server_name %s;
+
+    # Allow file uploads
+    client_max_body_size 50M;
 
     location /static/ {
         alias %s;
@@ -37,7 +40,7 @@ server {
         proxy_redirect off;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Scheme $scheme;
-        proxy_pass http://frontends;
+        proxy_pass http://master_stream;
     }
 }
 ''' % (SERVER, ABS_PATH+'/static/')
@@ -49,11 +52,15 @@ server {
     server_name %s;
 
     location /music_file/ {
-        gridfs miao_fm_cdn;
-        mongo 127.0.0.1:%d;
+        proxy_pass_header Server;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_pass http://master_stream;
     }
 }
-''' % (MASTER_CDN, MASTER_MONGODB_PORT)
+''' % (MASTER_CDN)
 
     config = server_config + master_cdn_config
     with open('master_nginx.conf','w') as f:
