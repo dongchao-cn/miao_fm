@@ -1,8 +1,6 @@
 {% extends "admin_music_base.html" %}
 
 {% block content %}
-<h2>{{ msg }}</h2>
-
 <div align="left">
 
     <table class="table table-hover table-striped">
@@ -21,9 +19,9 @@
                     <td>{{ each.music_artist }}</td>
                     <td>{{ each.music_album }}</td>
                     <td>
-                        <audio src="{{ each.local_url }}" controls="controls"></audio>
-                        <input class="btn btn-info btn-small" type="button" value="编辑" onclick="location.href='/admin/music/edit_music/?music_name={{ each.music_name }}';">
-                        <input class="btn btn-danger btn-small" type="button" value="删除" onclick="location.href='/admin/music/del_music/?music_name={{ each.music_name }}';">
+                        <audio src="{{ each.music_url }}" controls="controls"></audio>
+                        <input class="btn btn-info btn-small" type="button" value="编辑" onclick="location.href='/admin/music/edit_music/?music_id={{ each.music_id }}';">
+                        <input class="btn btn-danger btn-small" type="button" value="删除" onclick="location.href='/admin/music/del_music/?music_id={{ each.music_id }}';">
                     </td>
                 </tr>
             {% end %}

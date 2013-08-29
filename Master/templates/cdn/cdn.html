@@ -18,7 +18,9 @@
                     <td>{{ each.name }}</td>
                     <td>{{ each.url }}</td>
                     <td>
-                        <input class="btn btn-danger btn-small" type="button" value="删除" onclick="location.href='/admin/cdn/del_cdn/?name={{ each.name }}';">
+                        {% if each.name != 'master' %}
+                            <input class="btn btn-danger btn-small" type="button" value="删除" onclick="location.href='/admin/cdn/del_cdn/?name={{ each.name }}';">
+                        {% end %}
                     </td>
                 </tr>
             {% end %}
