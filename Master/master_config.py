@@ -112,10 +112,11 @@ def config():
     except mongoengine.connection.ConnectionError:
         print 'MongoDB NOT started!!!'
         print 'Please use "mongod -f %s/master_mongodb.conf" to start MongoDB.' % (ABS_PATH)
+        print 'And check %s, %s DNS settings.' % (SERVER,MASTER_CDN)
         print 'Then re execute this file.'
         os._exit(-1)
     print 'Finish!'
-    print 'Please set %s, %s DNS settings.' % (SERVER,MASTER_CDN)
+    # print 'Please set %s, %s DNS settings.' % (SERVER,MASTER_CDN)
     print 'Please include "%s/master_nginx.conf" in nginx.conf.' % (ABS_PATH)
     print 'Then visit http://%s/admin/ for admin page.' % (SERVER)
 

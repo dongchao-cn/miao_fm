@@ -3,7 +3,8 @@
 {% block content %}
 <div align="left">
     <form action="/admin/music/add_music/" method="post" enctype="multipart/form-data">
-
+        {% module xsrf_form_html() %}
+        
         <legend>上传文件</legend>
 
         <div class="control-group">
