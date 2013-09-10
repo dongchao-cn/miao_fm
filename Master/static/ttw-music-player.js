@@ -10,6 +10,7 @@
  * License: You are free to use this file in personal and commercial products, however re-distribution 'as-is' without prior consent is prohibited.
  */
 
+
 (function($) {
     $.fn.ttwMusicPlayer = function(playlist, userOptions) {
         var $self = this, defaultOptions, options, cssSelector, appMgr, playlistMgr, interfaceMgr, ratingsMgr, playlist,
@@ -196,18 +197,25 @@
             }
 
             function playlistNext() {
-                $.getJSON('/api/next_music/', function(data) {
-                    myPlaylist.push(data)
-                })
-                var index = (current + 1 < myPlaylist.length) ? current + 1 : 0;
-                playlistAdvance(index);
-            })
+                //var index = (current + 1 < myPlaylist.length) ? current + 1 : 0;
+                //console.info("play next id = " + index);
+                
+                // console.info("play next!!!");
 
+                var req = '/api/music/next/';
+                myPlaylist = HandleNext(req);
+
+                index = 0;
+                // console.info(myPlaylist[0]['title'] + 'player');
+                playlistAdvance(index);
             }
 
             function playlistPrev() {
-                var index = (current - 1 >= 0) ? current - 1 : myPlaylist.length - 1;
-                playlistAdvance(index);
+                //var index = (current - 1 >= 0) ? current - 1 : myPlaylist.length - 1;
+                //console.info("play prev id = " + index);
+                //playlistAdvance(index);
+
+                console.info("play prev!!!");
             }
 
             function togglePlay() {

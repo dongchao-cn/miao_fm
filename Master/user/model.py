@@ -18,7 +18,7 @@ class User(Document):
     user_create_time = DateTimeField(required = True)
 
     def __str__(self):
-        return ('user_name = %s\n') % (self.username).encode('utf-8')
+        return ('user_name = %s\n') % (self.user_name).encode('utf-8')
 
     def update(self, user_name):
         if User.find_user_by_name(self.user_name) is None:
@@ -27,7 +27,7 @@ class User(Document):
 
     @classmethod
     def find_user_by_name(cls, user_name):
-        return User.objects(user_name = username).first()
+        return User.objects(user_name = user_name).first()
 
     @classmethod
     def check_login(cls, user_name, user_password):

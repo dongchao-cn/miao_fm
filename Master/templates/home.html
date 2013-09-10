@@ -5,25 +5,30 @@
     <link rel="stylesheet" type="text/css" href="/static/css/demo.css">
     <script type="text/javascript" src="/static/js/jquery-1.6.1.min.js"></script>
     <script type="text/javascript" src="/static/jquery-jplayer/jquery.jplayer.js"></script>
-    <script type="text/javascript" src="/static/ttw-music-player-min.js"></script>
+    <script type="text/javascript" src="/static/ttw-music-player.js"></script>
+    <script type="text/javascript" src="/static/Ajax.js"></script>
 {% end %}
 
 
 {% block content %}
     <script type="text/javascript">
         $(document).ready(function(){
+            myPlaylist = InitPage();
             var description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce id tortor nisi. Aenean sodales diam ac lacus elementum scelerisque. Suspendisse a dui vitae lacus faucibus venenatis vel id nisl. Proin orci ante, ultricies nec interdum at, iaculis venenatis nulla. ';
-            var myPlaylist = []
-            $.getJSON('/api/music/next/', function(data) {
-                myPlaylist.push(data);
-            })
+
             $('body').ttwMusicPlayer(myPlaylist, {
                 autoPlay:false, 
                 description:description,
                 jPlayer:{
                     swfPath:'/static/jquery-jplayer' //You need to override the default swf path any time the directory structure changes
+                },
+                ratingCallback:function(index, playlistItem, rating){
+                    console.info("song over");
                 }
             });
+
+            $('.tracklist').hide();
+            $('.rating').hide();
         });
     </script>
 {% end %}
