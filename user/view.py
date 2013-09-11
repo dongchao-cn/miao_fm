@@ -6,7 +6,7 @@ class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie("user")
 
-class LoginHandler(tornado.web.RequestHandler):
+class LoginHandler(BaseHandler):
     def post(self):
         user_name = self.get_argument("user_name")
         user_password = self.get_argument("user_password")
@@ -14,14 +14,20 @@ class LoginHandler(tornado.web.RequestHandler):
             self.set_secure_cookie("user", self.get_argument("name"))
         self.redirect("/")
 
-class LogoutHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("user/user_login.html")
+
+class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie("user")
         self.redirect("/")
 
-class RegistHandler(tornado.web.RequestHandler):
+class RegistHandler(BaseHandler):
     def post(self):
         user_name = self.get_argument("user_name")
         user_password = self.get_argument("user_password")
         self.write(User.regist_new_user(user_name, user_password))
         self.redirect("/")
+
+    def get(self):
+        self.render("user/user_regist.html")
