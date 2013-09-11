@@ -36,7 +36,7 @@ settings = {
     "debug" : True,
     "cookie_secret": "63oETzKXQkGaYdkLqw421fdasqw12335uYh7EQnp2XdTP1o/Vo=",
     "login_url": "/admin/login/",
-    "xsrf_cookies": True,
+    # "xsrf_cookies": True,
 }
 
 application = tornado.web.Application([
@@ -47,18 +47,15 @@ application = tornado.web.Application([
     (r"/music_file/(\w{24})/", FileHandler),
 
     # api
+    # (r"/api/music/(\w{24})/", music.view.APIMusicHandler),
     (r"/api/music/", music.view.APIMusicControlHandler),
+    (r"/api/music/next/", music.view.APINextMusicHandler),
     (r"/api/music/(\w{24})/", music.view.APIMusicHandler),
-    (r"/api/music/next/", music.view.APIMusicNextHandler),
 
     # admin page
     (r"/admin/", AdminHandler),
 
-    (r"/admin/music/", music.view.MusicHandler),
-    (r"/admin/music/add_music/", music.view.AddMusicHandler),
-    (r"/admin/music/edit_music/", music.view.EditMusicHandler),
-    (r"/admin/music/find_music/", music.view.FindMusicHandler),
-    (r"/admin/music/del_music/", music.view.DelMusicHandler),
+    (r"/admin/music/", music.view.MusicControlHandler),
 
     (r"/admin/cdn/", cdn.view.CdnHandler),
     (r"/admin/cdn/add_cdn/", cdn.view.AddCdnHandler),

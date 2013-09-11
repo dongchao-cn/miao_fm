@@ -1,0 +1,33 @@
+{% extends "admin_user_base.html" %}
+
+{% block content %}
+<div align="middle">
+    <form action="/admin/login/" method="post" enctype="multipart/form-data">
+        {% module xsrf_form_html() %}
+        
+        <legend>用户登录</legend>
+
+        <div class="control-group">
+            <label class="control-label" for="user_name">用户名</label>
+            <div class="controls">
+                <input id="user_name" name="user_name"/>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="user_password">密码</label>
+            <div class="controls">
+                <input id="user_password" name="user_password"/>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="controls">
+                <input class="btn btn btn-success" type="button" value="返回" onclick="location.href='/';">
+                <button class="btn btn-primary" type="submit">登录</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% end %}
+

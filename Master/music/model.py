@@ -103,6 +103,13 @@ class Music(Document):
             self.music_file.replace(f)
         self.save()
 
+    def remove(self):
+        '''
+        del music from db and remove file
+        '''
+        self.music_file.delete()
+        self.delete()
+
 class MusicControl(object):
     '''
     Music control functions
@@ -136,13 +143,12 @@ class MusicControl(object):
             return None
 
     @classmethod
-    def del_music(cls, music_id):
+    def remove_all_music(cls):
         '''
         del music from db and remove file
         '''
-        music = Music.objects(pk=music_id).first()
-        music.music_file.delete()
-        music.delete()
+        for music in Music.objects():
+            music.remove()
 
     @classmethod
     def get_next_music(cls):
@@ -163,6 +169,13 @@ class MusicControl(object):
         get music by range
         '''
         return [each for each in Music.objects[start : end]]
+
+    @classmethod
+    def get_music_count(cls):
+        '''
+        get music count
+        '''
+        return Music.objects().count()
 
     @classmethod
     def get_music_by_page(cls, page):
@@ -208,20 +221,17 @@ def _get_info_from_id3(file):
     id3r = id3reader.Reader(file)
     
     try:
-        music_name = id3r.getValue('title')
-        music_name.encode('utf8')
+        music_name = id3r.getValue('title').encode('utf8')
     except:
         music_name = ''
 
     try:
-        music_artist = id3r.getValue('performer')
-        music_artist.encode('utf8')
+        music_artist = id3r.getValue('performer').encode('utf8')
     except :
         music_artist = ''
 
     try:
-        music_album = id3r.getValue('album')
-        music_album.encode('utf8')
+        music_album = id3r.getValue('album').encode('utf8')
     except :
         music_album = ''
 

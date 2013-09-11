@@ -1,37 +1,198 @@
 {% extends "admin_music_base.html" %}
 
 {% block content %}
-<div align="left">
+<div id="pageinfo"></div>
+<div id="paginator"></div>
 
-    <table class="table table-hover table-striped">
-        <thead>
-            <tr>
-                <th>歌名</th>
-                <th>歌手</th>
-                <th>专辑</th>
-                <th> </th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for each in music_list %}
-                <tr>
-                    <td>{{ each.music_name }}</td>
-                    <td>{{ each.music_artist }}</td>
-                    <td>{{ each.music_album }}</td>
-                    <td>
-                        <audio src="{{ each.music_url }}" controls="controls"></audio>
-                        <input class="btn btn-info btn-small" type="button" value="编辑" onclick="location.href='/admin/music/edit_music/?music_id={{ each.music_id }}';">
-                        <input class="btn btn-danger btn-small" type="button" value="删除" onclick="location.href='/admin/music/del_music/?music_id={{ each.music_id }}';">
-                    </td>
-                </tr>
-            {% end %}
-        </tbody>
-    </table>
-    <div align="middle">
-        {% for i in range(1,page_num+1) %}
-            <a href="/admin/music/?page={{i}}">{{i}}</a>
-        {% end %}
-    </div>
-</div>
+<link href="/static/Flexigrid-master/css/flexigrid.css" rel="stylesheet">
+
+<table class="flexme" style="display: none"></table>
+
+
 {% end %}
 
+{% block extern_lib %}
+<script src="/static/js/jquery-1.10.2.js"></script>
+<script src="/static/js/bootstrap-paginator.js"></script>
+
+<script src="/static/Flexigrid-master/js/flexigrid.js"></script>
+{% end %}
+
+{% block extern_js %}
+<script type='text/javascript'>
+// $.ajax( {
+//     url:'/api/music/',// 跳转到 action
+//     type:'get',
+//     success:function(data) {
+//         var items_pre_page = 10
+//         var options = {
+//             currentPage: 1,
+//             totalPages: Math.floor(data.total_count / items_pre_page)+1,
+//             onPageClicked: function(e,originalEvent,type,page){
+//                 $.ajax({
+//                     type: 'get',
+//                     url: "/api/music/",
+//                     data: {
+//                         start:(page-1)*items_pre_page,
+//                         count:items_pre_page
+//                     },
+//                     async : false,
+//                     success:function(data){
+//                         console.info(data)
+//                     }
+//                 });
+//             }
+//         }
+//         $('#paginator').bootstrapPaginator(options);
+//      },
+//      error : function() {
+//           alert("异常！");
+//      }
+// });
+$().ready(function(){
+    $.ajax({
+        type: "get",
+        contentType: "application/json",
+        url: "/api/music/",
+        data: "{}",
+        dataType: 'json',
+        success: function (result) {
+            obj = $.parseJSON(result.d);
+         
+            //add data
+            $("#flexme").flexAddData(formatCustomerResults(obj));
+        }
+    });
+});
+
+$(".flexme").flexigrid({
+    url : '/api/music/',
+    method: 'get',
+    dataType : 'json',
+    colModel : [ {
+        display : '歌名',
+        name : 'music_name',
+        width : 90,
+        align : 'center'
+        }, {
+            display : '歌手',
+            name : 'music_artist',
+            width : 120,
+            align : 'left'
+        }, {
+            display : '专辑',
+            name : 'music_album',
+            width : 120,
+            align : 'left'
+        }, {
+            display : '文件ID',
+            name : 'music_file',
+            width : 80,
+            sortable : true,
+            align : 'left',
+            hide : true
+        }, {
+            display : '上传时间',
+            name : 'upload_data',
+            width : 80,
+            sortable : true,
+            align : 'right',
+            hide : true
+    } ],
+    buttons : [ {
+        name : 'Add',
+        bclass : 'add',
+        onpress : Example4
+        }
+        ,
+        {
+            name : 'Edit',
+            bclass : 'edit',
+            onpress : Example4
+        }
+        ,
+        {
+            name : 'Delete',
+            bclass : 'delete',
+            onpress : Example4
+        }
+        ,
+        {
+            separator : true
+        } 
+    ],
+    searchitems : [ {
+        display : '歌曲ID',
+        name : 'music_id'
+        } ],
+    usepager : true,
+    title : '歌曲信息',
+    useRp : true,
+    rp : 15,
+    showTableToggleBtn : true,
+    width : 750,
+    height : 200
+});
+
+function Example4(com, grid) {
+    if (com == 'Delete') {
+        var conf = confirm('Delete ' + $('.trSelected', grid).length + ' items?')
+        if(conf){
+            $.each($('.trSelected', grid),
+                function(key, value){
+                    $.get('example4.php', { Delete: value.firstChild.innerText}
+                        , function(){
+                            // when ajax returns (callback), update the grid to refresh the data
+                            $(".flexme4").flexReload();
+                    });
+            });    
+        }
+    }
+    else if (com == 'Edit') {
+        var conf = confirm('Edit ' + $('.trSelected', grid).length + ' items?')
+        if(conf){
+            $.each($('.trSelected', grid),
+                function(key, value){
+                    // collect the data
+                    var OrgEmpID = value.children[0].innerText; // in case we're changing the key
+                    var EmpID = prompt("Please enter the New Employee ID",value.children[0].innerText);
+                    var Name = prompt("Please enter the Employee Name",value.children[1].innerText);
+                    var PrimaryLanguage = prompt("Please enter the Employee's Primary Language",value.children[2].innerText);
+                    var FavoriteColor = prompt("Please enter the Employee's Favorite Color",value.children[3].innerText);
+                    var FavoriteAnimal = prompt("Please enter the Employee's Favorite Animal",value.children[4].innerText);
+
+                    // call the ajax to save the data to the session
+                    $.get('example4.php', 
+                        { Edit: true
+                            , OrgEmpID: OrgEmpID
+                            , EmpID: EmpID
+                            , Name: Name
+                            , PrimaryLanguage: PrimaryLanguage
+                            , FavoriteColor: FavoriteColor
+                            , FavoritePet: FavoriteAnimal  }
+                        , function(){
+                            // when ajax returns (callback), update the grid to refresh the data
+                            $(".flexme4").flexReload();
+                    });
+            });    
+        }
+    }
+    else if (com == 'Add') {
+        // collect the data
+        var EmpID = prompt("Please enter the Employee ID","5");
+        var Name = prompt("Please enter the Employee Name","Mark");
+        var PrimaryLanguage = prompt("Please enter the Employee's Primary Language","php");
+        var FavoriteColor = prompt("Please enter the Employee's Favorite Color","Tan");
+        var FavoriteAnimal = prompt("Please enter the Employee's Favorite Animal","Dog");
+
+        // call the ajax to save the data to the session
+        $.get('example4.php', { Add: true, EmpID: EmpID, Name: Name, PrimaryLanguage: PrimaryLanguage, FavoriteColor: FavoriteColor, FavoritePet: FavoriteAnimal  }
+            , function(){
+                // when ajax returns (callback), update the grid to refresh the data
+                $(".flexme4").flexReload();
+        });
+    }
+}
+
+</script>
+{% end %}

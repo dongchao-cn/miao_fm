@@ -1,0 +1,37 @@
+{% extends "admin_user_base.html" %}
+
+{% block content %}
+<div align="left">
+
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th>歌名</th>
+                <th>歌手</th>
+                <th>专辑</th>
+                <th> </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for each in music_list %}
+                <tr>
+                    <td>{{ each.music_name }}</td>
+                    <td>{{ each.music_artist }}</td>
+                    <td>{{ each.music_album }}</td>
+                    <td>
+                        <audio src="{{ each.music_url }}" controls="controls"></audio>
+                        <input class="btn btn-info btn-small" type="button" value="编辑" onclick="location.href='/admin/music/edit_music/?music_id={{ each.music_id }}';">
+                        <input class="btn btn-danger btn-small" type="button" value="删除" onclick="location.href='/admin/music/del_music/?music_id={{ each.music_id }}';">
+                    </td>
+                </tr>
+            {% end %}
+        </tbody>
+    </table>
+    <div align="middle">
+        {% for i in range(1,page_num+1) %}
+            <a href="/admin/music/?page={{i}}">{{i}}</a>
+        {% end %}
+    </div>
+</div>
+{% end %}
+
