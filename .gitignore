@@ -35,5 +35,9 @@ nosetests.xml
 .pydevproject
 
 # nginx config
-cdn_nginx.config
-server_nginx.config
+Master/master_mongodb.conf
+Master/master_nginx.conf
+
+Slave/slave_mongodb.conf
+Slave/slave_nginx.conf
+

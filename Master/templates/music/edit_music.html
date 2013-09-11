@@ -8,7 +8,9 @@
 
         <legend>歌曲信息(*为必填项)</legend>
 
-        <input id="music_name" name="old_music_name" type="hidden" value="{{music.music_name}}" />
+        <input id="music_id" name="music_id" type="hidden" value="{{music.music_id}}" />
+
+        <p>Music ID: {{ music.music_id }}</p>
 
         <div class="control-group">
             <label class="control-label" for="music_name">歌名(*)</label>
@@ -31,16 +33,16 @@
             </div>
         </div>
 
-        <p>文件名: {{ music.file_name }}</p>
+        <p>文件ID: {{ music.file_id }}</p>
         <p>添加时间: {{ music.upload_data }}</p>
         
-        <audio src="{{ music.local_url }}" controls="controls"></audio>
+        <audio src="{{ music.music_url }}" controls="controls"></audio>
         
         <div class="control-group">
             <div class="controls">
                 <input class="btn btn btn-success" type="button" value="返回" onclick="location.href='/admin/music/';">
                 <button class="btn btn-primary" type="submit">提交</button>
-                <input class="btn btn btn-danger" type="button" value="删除" onclick="location.href='/admin/music/del_music/?music_name={{music.music_name}}';">
+                <input class="btn btn btn-danger" type="button" value="删除" onclick="location.href='/admin/music/del_music/?music_id={{music.music_id}}';">
             </div>
         </div>
     </form>

@@ -5,7 +5,7 @@
     <h2>{{ msg }}</h2>
 
     <form action="/admin/cdn/add_cdn/" method="post">
-
+        {% module xsrf_form_html() %}
         <legend>CDN信息(*为必填项)</legend>
 
         <div class="control-group">
