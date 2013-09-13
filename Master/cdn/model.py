@@ -7,9 +7,9 @@ import random
 import json
 from mongoengine import *
 from bson.objectid import ObjectId
-# from master_config import MASTER_CDN, MASTER_MONGODB_PORT
+from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
-# connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
+connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
 
 class CdnJsonEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -86,16 +86,26 @@ class CdnControl(object):
             return None
 
     @classmethod
+    def get_cdn_by_name(cls, name):
+        '''
+        get cdn
+        '''
+        try:
+            return Cdn.objects(name=name).first()
+        except ValidationError:
+            return None
+
+    @classmethod
     def get_all_cdn(cls):
         '''
-        get all cdn from db
+        get all cdn
         '''
         return Cdn.objects()
 
     @classmethod
     def remove_all_cdn(cls):
         '''
-        del music from db and remove file
+        del all cdn
         '''
         for cdn in Cdn.objects():
             cdn.remove()
@@ -103,7 +113,7 @@ class CdnControl(object):
     @classmethod
     def get_free_cdn(cls):
         '''
-        get all cdn from db
+        get free cdn
         '''
         assert Cdn.objects().count() != 0
         return _get_random_cdn()
@@ -118,7 +128,7 @@ class CdnControl(object):
     @classmethod
     def get_cdn_count(cls):
         '''
-        get music count
+        get cdn count
         '''
         return Cdn.objects().count()
 

@@ -2,8 +2,8 @@
 #coding:utf8
 
 # set SERVER and MASTER_CDN to one machine
-SERVER = 'xdfm.com'
-MASTER_CDN = 'cdn.xdfm.com'
+SERVER = 'fm.search-ebooks.org'
+MASTER_CDN = 'cdn.search-ebooks.org'
 
 # how many items in one page (for admin pages)
 ITEM_PER_PAGE = 10
@@ -86,9 +86,9 @@ nojournal = true''' % (master_mongodb_dir, MASTER_MONGODB_PORT)
 
 def add_master_cdn():
     from cdn.model import CdnControl
-    cdn = CdnControl.get_cdn("master")
+    cdn = CdnControl.get_cdn_by_name("master")
     if cdn:
-        CdnControl.del_cdn("master")
+        cdn.remove()
     CdnControl.add_cdn("master", MASTER_CDN, True)
 
 def add_demo_music():
