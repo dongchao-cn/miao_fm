@@ -4,11 +4,24 @@ if __name__ == '__main__':
     import sys
     sys.path.insert(0, '../')
 import random
+import json
 from mongoengine import *
+from bson.objectid import ObjectId
+# from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
-from master_config import MASTER_CDN, MASTER_MONGODB_PORT
+# connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
 
-connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
+class CdnJsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Cdn):
+            return { 'cdn_id' : obj.cdn_id,
+                'name' : obj.name,
+                'url_path' : obj.url_path,
+                'online' : obj.online}
+        elif isinstance(obj, ObjectId):
+            return str(obj)
+        else:
+            return json.JSONEncoder.default(self, obj)
 
 class Cdn(Document):
     '''
@@ -22,18 +35,30 @@ class Cdn(Document):
         return ('%s' % (self.name)).encode('utf-8')
 
     @property
+    def cdn_id(self):
+        return self.pk
+
+    @property
     def url(self):
         '''
         get url
         '''
         return self.url_path
 
-    def update_info(self, url_path):
+    def update_info(self, name, url_path, online=False):
         '''
         update cdn info
         '''
+        self.name = name
         self.url_path = url_path
+        self.online = online
         self.save()
+
+    def remove(self):
+        '''
+        del cdn from db
+        '''
+        self.delete()
 
 class CdnControl(object):
     '''
@@ -44,26 +69,21 @@ class CdnControl(object):
         raise Exception,'CdnControl can\'t be __init__'
 
     @classmethod
-    def add_cdn(cls, name, url_path, online):
+    def add_cdn(cls, name, url_path, online=False):
         '''
         add new cdn
-        if cdn_name exist, rewrite it
         '''
-        Cdn(name, url_path, online).save()
+        return Cdn(name, url_path, online).save()
 
     @classmethod
-    def del_cdn(cls, name):
+    def get_cdn(cls, cdn_id):
         '''
-        del cdn from db
+        get cdn
         '''
-        Cdn.objects(name=name).first().delete()
-
-    @classmethod
-    def get_cdn(cls, name):
-        '''
-        del cdn from db
-        '''
-        return Cdn.objects(name=name).first()
+        try:
+            return Cdn.objects(pk=cdn_id).first()
+        except ValidationError:
+            return None
 
     @classmethod
     def get_all_cdn(cls):
@@ -73,6 +93,14 @@ class CdnControl(object):
         return Cdn.objects()
 
     @classmethod
+    def remove_all_cdn(cls):
+        '''
+        del music from db and remove file
+        '''
+        for cdn in Cdn.objects():
+            cdn.remove()
+
+    @classmethod
     def get_free_cdn(cls):
         '''
         get all cdn from db
@@ -80,22 +108,33 @@ class CdnControl(object):
         assert Cdn.objects().count() != 0
         return _get_random_cdn()
 
+    @classmethod
+    def get_cdn_by_range(cls, start, end):
+        '''
+        get cdn by range
+        '''
+        return [each for each in Cdn.objects[start : end]]
+
+    @classmethod
+    def get_cdn_count(cls):
+        '''
+        get music count
+        '''
+        return Cdn.objects().count()
+
+
 def _get_random_cdn():
     '''
     get random cdn
     '''
-    num = random.randint(0,Cdn.objects().count()-1)
-    return Cdn.objects[num]
+    online_cdn = [cdn for cdn in Cdn.objects() if cdn.online]
+    num = random.randint(0, len(online_cdn)-1)
+    return online_cdn[num]
 
 if __name__ == '__main__':
-    cnd1 = Cdn("xidian1",'cdn1.xidian.com')
-    cnd1.save()
-    print cnd1.url
-    cnd2 = Cdn("xidian2",'cdn2.xidian.com').save()
-    cnd2.save()
-
+    CdnControl.remove_all_cdn()
     CdnControl.add_cdn("xidian1",'cdn1.xidian.com')
     CdnControl.add_cdn("xidian2",'cdn2.xidian.com')
     print CdnControl.get_all_cdn()
-    CdnControl.del_cdn("xidian2")
+    CdnControl.get_all_cdn()[0].remove()
     print CdnControl.get_all_cdn()

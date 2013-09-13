@@ -53,7 +53,7 @@ application = tornado.web.Application([
     (r"/api/music/(\w{24})/", music.view.APIMusicHandler),
 
     (r"/api/cdn/", cdn.view.APICdnControlHandler),
-    (r"/api/cdn/", cdn.view.APICdnHandler),
+    (r"/api/cdn/(\w{24})/", cdn.view.APICdnHandler),
 
     # admin page
     (r"/admin/", AdminHandler),

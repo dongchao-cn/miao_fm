@@ -1,19 +1,20 @@
 #coding:utf8
 import os
+import json
 import tornado
-from .model import CdnControl
+from .model import CdnControl, CdnJsonEncoder
 
 class APICdnControlHandler(tornado.web.RequestHandler):
     '''
     get:
-        get music range
-        list all music by range
+        get cdn range
+        list all cdn by range
 
     post:
-        add a new music
+        add a new cdn
 
     del:
-        del all music
+        del all cdn
     '''
     def get(self):
         '''
@@ -24,56 +25,54 @@ class APICdnControlHandler(tornado.web.RequestHandler):
             start = int(self.get_argument("start"))
             count = int(self.get_argument("count"))
         except:
-            base_info = {'total_count':MusicControl.get_music_count()}
+            base_info = {'total_count':CdnControl.get_cdn_count()}
             self.write(base_info)
             return
-        music_list = MusicControl.get_music_by_range(start, start+count)
-        self.write(json.dumps(music_list, cls=MusicJsonEncoder))
+        cdn_list = CdnControl.get_cdn_by_range(start, start+count)
+        self.write(json.dumps(cdn_list, cls=CdnJsonEncoder))
 
     def post(self):
-        music_list = []
-        for upload_file in self.request.files['file']:
-            save_file_path = ABS_PATH + "/uploads/" + upload_file['filename']
-            with open(save_file_path, 'w') as f:
-                f.write(upload_file['body'])
-                music_list.append(MusicControl.add_music(save_file_path, True))
-        self.write(json.dumps(music_list, cls=MusicJsonEncoder))
+        name = self.get_argument("name")
+        url_path = self.get_argument("url_path")
+        online = self.get_argument("online")
+        online = True if online else False
+        cdn = CdnControl.add_cdn(name, url_path, online)
+        self.write(json.dumps(cdn, cls=CdnJsonEncoder))
 
     def delete(self):
-        MusicControl.remove_all_music()
+        CdnControl.remove_all_cdn()
         self.write('')
 
 class APICdnHandler(tornado.web.RequestHandler):
     '''
     get:
-        get music details
+        get cdn details
 
     put:
-        update music
+        update cdn
 
     delete:
-        delete music
+        delete cdn
     '''
 
-    def get(self, music_id):
-        music = MusicControl.get_music(music_id)
-        self.write(json.dumps(music, cls=MusicJsonEncoder))
+    def get(self, cdn_id):
+        music = CdnControl.get_cdn(cdn_id)
+        self.write(json.dumps(music, cls=CdnJsonEncoder))
 
-    def put(self, music_id):
-        music_name = self.get_argument("music_name")
-        music_artist = self.get_argument("music_artist")
-        music_album = self.get_argument("music_album")
+    def put(self, cdn_id):
+        name = self.get_argument("name")
+        url_path = self.get_argument("url_path")
+        online = self.get_argument("online")
+        online = True if online else False
+        cdn = CdnControl.get_cdn(cdn_id)
+        cdn.update_info(name, url_path, online)
+        cdn = CdnControl.get_cdn(cdn_id)
+        self.write(json.dumps(cdn, cls=CdnJsonEncoder))
 
-        music = MusicControl.get_music(music_id)
-        music.update_info(music_name, music_artist, music_album)
-        music = MusicControl.get_music(music_id)
-        self.write(json.dumps(music, cls=MusicJsonEncoder))
-
-    def delete(self, music_id):
-        music = MusicControl.get_music(music_id)
-        music.remove()
+    def delete(self, cdn_id):
+        cdn = CdnControl.get_cdn(cdn_id)
+        cdn.remove()
         self.write('')
-
 
 class CdnHandler(tornado.web.RequestHandler):
     def get(self):

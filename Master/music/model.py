@@ -65,10 +65,7 @@ class Music(Document):
 
     @property
     def music_url(self):
-        try:
-            return 'http://%s/music_file/%s/' % (CdnControl.get_free_cdn().url, self.file_id)
-        except AttributeError:
-            return ''
+        return 'http://%s/music_file/%s/' % (CdnControl.get_free_cdn().url, self.file_id)
 
     @property
     def file_id(self):
