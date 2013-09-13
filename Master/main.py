@@ -52,14 +52,15 @@ application = tornado.web.Application([
     (r"/api/music/next/", music.view.APINextMusicHandler),
     (r"/api/music/(\w{24})/", music.view.APIMusicHandler),
 
+    (r"/api/cdn/", cdn.view.APICdnControlHandler),
+    (r"/api/cdn/", cdn.view.APICdnHandler),
+
     # admin page
     (r"/admin/", AdminHandler),
 
     (r"/admin/music/", music.view.MusicControlHandler),
 
     (r"/admin/cdn/", cdn.view.CdnHandler),
-    (r"/admin/cdn/add_cdn/", cdn.view.AddCdnHandler),
-    (r"/admin/cdn/del_cdn/", cdn.view.DelCdnHandler),
     
     (r"/admin/login/", user.view.LoginHandler),
     (r"/admin/regist/", user.view.RegistHandler),

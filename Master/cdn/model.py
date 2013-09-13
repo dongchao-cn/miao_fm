@@ -16,6 +16,7 @@ class Cdn(Document):
     '''
     name = StringField(max_length=100,unique=True)
     url_path = StringField(max_length=50)
+    online = BooleanField(default=False)
 
     def __str__(self):
         return ('%s' % (self.name)).encode('utf-8')
@@ -43,12 +44,12 @@ class CdnControl(object):
         raise Exception,'CdnControl can\'t be __init__'
 
     @classmethod
-    def add_cdn(cls, name, url_path):
+    def add_cdn(cls, name, url_path, online):
         '''
         add new cdn
         if cdn_name exist, rewrite it
         '''
-        Cdn(name, url_path).save()
+        Cdn(name, url_path, online).save()
 
     @classmethod
     def del_cdn(cls, name):

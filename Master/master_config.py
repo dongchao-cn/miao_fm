@@ -89,13 +89,14 @@ def add_master_cdn():
     cdn = CdnControl.get_cdn("master")
     if cdn:
         CdnControl.del_cdn("master")
-    CdnControl.add_cdn("master",MASTER_CDN)
+    CdnControl.add_cdn("master", MASTER_CDN, True)
 
 def add_demo_music():
     from music.model import MusicControl
     music = MusicControl.get_music_by_name('To Be With You')
     if music:
-        MusicControl.del_music(music.music_id)
+        # MusicControl.del_music(music.music_id)
+        music.remove()
     MusicControl.add_music(ABS_PATH+'/demo.mp3')
 
 def config():
