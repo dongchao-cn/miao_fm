@@ -18,7 +18,7 @@ from bson.objectid import ObjectId
 from cdn.model import CdnControl
 from master_config import ITEM_PER_PAGE, MASTER_CDN, MASTER_MONGODB_PORT
 
-connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
+# connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
 register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
 
 class MusicJsonEncoder(json.JSONEncoder):

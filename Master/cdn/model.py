@@ -9,7 +9,7 @@ from mongoengine import *
 from bson.objectid import ObjectId
 from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
-connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
+# connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
 
 class CdnJsonEncoder(json.JSONEncoder):
     def default(self, obj):

@@ -101,6 +101,7 @@ def add_demo_music():
 
 def config():
     import mongoengine
+    mongoengine.connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
     print 'generate nginx config...'
     master_nginx_config()
     print 'generate mongodb config...'

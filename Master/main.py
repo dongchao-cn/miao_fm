@@ -10,12 +10,15 @@ import user.view
 import gridfs
 from pymongo import Connection
 from bson.objectid import ObjectId
+from mongoengine import *
 
 from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
 con = Connection("%s:%s" % (MASTER_CDN, MASTER_MONGODB_PORT))
 db = con['miao_fm_cdn']
 fs = gridfs.GridFS(db)
+
+connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
 
 class FileHandler(tornado.web.RequestHandler):
     def get(self, file_id):
