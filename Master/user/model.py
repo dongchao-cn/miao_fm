@@ -4,17 +4,32 @@
 if __name__ == '__main__':
     import sys
     sys.path.insert(0, '../')
+import json
 import hashlib
 import datetime
 
 from mongoengine import *
+from bson.objectid import ObjectId
+
+class UserJsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(obj, ObjectId):
+            return str(obj)
+        elif isinstance(obj, User):
+            return {'user_id' : obj.user_id,
+                'user_name' : obj.user_name,
+                'user_password' : obj.user_password}
+        else:
+            return json.JSONEncoder.default(self, obj)
 
 class User(Document):
     '''
     store user info
     '''
     user_name = StringField(max_length = 50, unique = True)
-    user_password = StringField(max_length = 100, required = True)
+    user_password = StringField(max_length = 40, required = True)
 
     def __str__(self):
         return ('user_name = %s\n') % (self.user_name).encode('utf-8')
@@ -23,7 +38,7 @@ class User(Document):
     def user_id(self):
         return self.pk
 
-    def update(self, user_password):
+    def update_info(self, user_password):
         self.user_password = hashlib.md5(user_password +
             self.user_name).hexdigest().upper()
         self.save()

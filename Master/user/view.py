@@ -1,37 +1,103 @@
 #coding:utf8
+import json
 import tornado
-from model import UserControl
+from model import UserControl, UserJsonEncoder
 
-class BaseHandler(tornado.web.RequestHandler):
-    def get_current_user(self):
-        return self.get_secure_cookie("user")
+class APIUserControlHandler(tornado.web.RequestHandler):
+    '''
+    get:
+        get user range
+        list all user by range
 
-class LoginHandler(BaseHandler):
+    post:
+        add a new user
+
+    del:
+        del all user
+    '''
     def get(self):
-        self.render("user/login.html")
+        '''
+        return base info about user if can't get start or end
+        else return user list
+        '''
+        try:
+            start = int(self.get_argument("start"))
+            count = int(self.get_argument("count"))
+        except:
+            base_info = {'total_count':UserControl.get_user_count()}
+            self.write(base_info)
+            return
+        user_list = UserControl.get_user_by_range(start, start+count)
+        self.write(json.dumps(user_list, cls=UserJsonEncoder))
 
     def post(self):
         user_name = self.get_argument("user_name")
         user_password = self.get_argument("user_password")
+        user = UserControl.add_user(user_name, user_password)
+        self.write(json.dumps(user, cls=UserJsonEncoder))
+
+    def delete(self):
+        UserControl.remove_all_user()
+        self.write('')
+
+class APIUserHandler(tornado.web.RequestHandler):
+    '''
+    get:
+        get user details
+
+    put:
+        update user
+
+    delete:
+        delete user
+    '''
+
+    def get(self, user_id):
+        user = UserControl.get_user(user_id)
+        self.write(json.dumps(user, cls=UserJsonEncoder))
+
+    def put(self, user_id):
+        user_password = self.get_argument("user_password")
+        user = UserControl.get_user(user_id)
+        user.update_info(user_password)
+        user = UserControl.get_user(user_id)
+        self.write(json.dumps(user, cls=UserJsonEncoder))
+
+    def delete(self, user_id):
+        user = UserControl.get_user(user_id)
+        user.remove()
+        self.write('')
+
+class BaseUserCurrentHandler(tornado.web.RequestHandler):
+    def get_current_user(self):
+        return self.get_secure_cookie('user')
+
+class APIUserCurrentHandler(BaseUserCurrentHandler):
+    '''
+    get:
+        get current user
+
+    post:
+        login
+
+    delete:
+        logout
+    '''
+
+    def get(self):
+        user = self.get_secure_cookie('user')
+        self.write({'user_name':user})
+
+    def post(self):
+        user_name = self.get_argument('user_name')
+        user_password = self.get_argument('user_password')
         user = UserControl.find_user_by_name(user_name)
         if user and user.check_pw(user_password):
-            print 'success'
-            self.set_secure_cookie("user", self.get_argument("user_name"))
-        self.redirect("/admin/")
+            self.set_secure_cookie('user', user_name)
+            self.write({'status':True})
+            return
+        self.write({'status':False})
+        return
 
-class LogoutHandler(BaseHandler):
-    def get(self):
-        self.clear_cookie("user")
-        self.redirect("/")
-
-class RegistHandler(BaseHandler):
-    def get(self):
-        self.render("user/reg.html")
-
-    def post(self):
-        user_name = self.get_argument("user_name")
-        user_password = self.get_argument("user_password")
-        if UserControl.regist_new_user(user_name, user_password):
-            self.redirect("/admin/")
-        else:
-            self.redirect("/")
+    def delete(self):
+        self.clear_cookie('user')
