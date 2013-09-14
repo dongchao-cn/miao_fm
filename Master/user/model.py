@@ -7,7 +7,6 @@ if __name__ == '__main__':
 import json
 import hashlib
 import datetime
-
 from mongoengine import *
 from bson.objectid import ObjectId
 

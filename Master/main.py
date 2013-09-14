@@ -20,6 +20,8 @@ fs = gridfs.GridFS(db)
 
 connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
 
+
+
 class FileHandler(tornado.web.RequestHandler):
     def get(self, file_id):
         self.set_header ('Content-Type', 'audio/mpeg')
@@ -30,7 +32,6 @@ class MainHandler(tornado.web.RequestHandler):
         self.render("home.html")
 
 class AdminHandler(tornado.web.RequestHandler):
-    @tornado.web.authenticated
     def get(self):
         self.render("admin_base.html")
 

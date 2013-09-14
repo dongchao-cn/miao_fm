@@ -2,9 +2,10 @@
 import os
 import json
 import tornado
+from user.view import authenticated, BaseHandler
 from .model import CdnControl, CdnJsonEncoder
 
-class APICdnControlHandler(tornado.web.RequestHandler):
+class APICdnControlHandler(BaseHandler):
     '''
     get:
         get cdn range
@@ -16,6 +17,7 @@ class APICdnControlHandler(tornado.web.RequestHandler):
     del:
         del all cdn
     '''
+    @authenticated
     def get(self):
         '''
         return base info about music if can't get start or end
@@ -31,6 +33,7 @@ class APICdnControlHandler(tornado.web.RequestHandler):
         cdn_list = CdnControl.get_cdn_by_range(start, start+count)
         self.write(json.dumps(cdn_list, cls=CdnJsonEncoder))
 
+    @authenticated
     def post(self):
         name = self.get_argument("name")
         url_path = self.get_argument("url_path")
@@ -39,11 +42,12 @@ class APICdnControlHandler(tornado.web.RequestHandler):
         cdn = CdnControl.add_cdn(name, url_path, online)
         self.write(json.dumps(cdn, cls=CdnJsonEncoder))
 
+    @authenticated
     def delete(self):
         CdnControl.remove_all_cdn()
         self.write('')
 
-class APICdnHandler(tornado.web.RequestHandler):
+class APICdnHandler(BaseHandler):
     '''
     get:
         get cdn details
@@ -54,11 +58,12 @@ class APICdnHandler(tornado.web.RequestHandler):
     delete:
         delete cdn
     '''
-
+    @authenticated
     def get(self, cdn_id):
         music = CdnControl.get_cdn(cdn_id)
         self.write(json.dumps(music, cls=CdnJsonEncoder))
 
+    @authenticated
     def put(self, cdn_id):
         name = self.get_argument("name")
         url_path = self.get_argument("url_path")
@@ -69,40 +74,13 @@ class APICdnHandler(tornado.web.RequestHandler):
         cdn = CdnControl.get_cdn(cdn_id)
         self.write(json.dumps(cdn, cls=CdnJsonEncoder))
 
+    @authenticated
     def delete(self, cdn_id):
         cdn = CdnControl.get_cdn(cdn_id)
         cdn.remove()
         self.write('')
 
-class CdnHandler(tornado.web.RequestHandler):
+class CdnHandler(BaseHandler):
+    @authenticated
     def get(self):
         self.render("cdn/cdn.html")
-
-# class AddCdnHandler(tornado.web.RequestHandler):
-#     def get(self):
-#         self.render("cdn/add_cdn.html", msg=u'新增CDN')
-
-#     def post(self):
-#         try:
-#             name = self.get_argument("name")
-#             assert name
-#             url_path = self.get_argument("url_path")
-#             assert url_path
-#         except:
-#             self.render("cdn/add_cdn.html", msg=u'参数填写错误！')
-#             return
-#         try:
-#             CdnControl.add_cdn(name, url_path)
-#         except:
-#             self.render("cdn/add_cdn.html", msg=u'CDN名已存在！')
-#             return
-#         self.render("cdn/add_cdn.html", msg=u'新增成功！')
-#         return
-
-# class DelCdnHandler(tornado.web.RequestHandler):
-#     def get(self):
-#         name = self.get_argument("name")
-#         CdnControl.del_cdn(name)
-#         cdn_list = CdnControl.get_all_cdn()
-#         self.render("cdn/cdn.html", msg=u'删除成功！', cdn_list=cdn_list)
-#         return
