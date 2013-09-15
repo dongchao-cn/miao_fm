@@ -1,14 +1,81 @@
 {% extends "admin_music_base.html" %}
 
 {% block content %}
-<div id="pageinfo"></div>
-<div id="paginator"></div>
+
 
 <link href="/static/Flexigrid-master/css/flexigrid.css" rel="stylesheet">
+    
+    <!--add song-->
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Start uploading your files</h3>
+        </div>
+        <div class="modal-body"> 
+            <p class="text-info"><strong>Please choose the file you wanna upload</strong></p>
+            <div>
+                <div id="upload">
+                    <span class="btn btn-success fileinput-button" id="clearlist">
+                         <span>Add files...</span>
+                         <input id="fileupload" type="file" name="file" display="none" data-url="/api/music/" multiple>
+                    </span>
+                </div>
+            </div>
 
-<table class="flexme" style="display: none"></table>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true" id="shutdown">关闭</button>
+            </div>
+        </div>
+    </div>
+    <!--add song end-->
 
+    <!--refresh song list-->
 
+    <!--refresh song list end-->
+
+    <!--delete all songs-->
+    <div id="myModal2" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Do you really wanna clear all the files?</h3>
+        </div>
+        <div class="modal-body"> 
+
+            <div class="modal-footer">
+                <button id="deleteListAll" class="btn btn btn-primary" data-dismiss="modal" aria-hidden="true">I'm sure!</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel </button>
+            </div>
+        </div>
+    </div>
+    <!--delete all songs end-->
+
+    <ul class="nav nav-tabs" id="myTab">
+        <li class="active"><a href="#home">歌曲列表</a></li>       
+    </ul>
+
+    <!--songlist-->
+    <div class="tab-content">
+        <div class="tab-pane active" id="home">
+            <table class="table table-hover" id="addSong">
+                <thead>  
+                    <td><strong>file_id</strong></td>
+                    <td><strong>music_album</strong></td>
+                    <td><strong>music_artist</strong></td>
+                    <td><strong>music_name</strong></td>
+                    <td><strong></strong></td>
+                </thead>
+                <tbody ></tbody>
+            </table>
+            <div align='middle' class="paginator"></div>
+        </div>
+    <!--delete-->
+    <div class="tab-pane" id="profile">
+        <div class="tab-pane active" id="home">
+            <div id="pageinfo"></div>
+            <div class="paginator"></div>      
+            </div>
+    </div>   
+</div>
 {% end %}
 
 {% block extern_lib %}
@@ -16,183 +83,183 @@
 <script src="/static/js/bootstrap-paginator.js"></script>
 
 <script src="/static/Flexigrid-master/js/flexigrid.js"></script>
+<script src="/static/jQuery-File-Upload-8.8.5/js/vendor/jquery.ui.widget.js"></script>
+<script src="/static/jQuery-File-Upload-8.8.5/js/jquery.iframe-transport.js"></script>
+<script src="/static/jQuery-File-Upload-8.8.5/js/jquery.fileupload.js"></script>
+
 {% end %}
 
 {% block extern_js %}
+
 <script type='text/javascript'>
-// $.ajax( {
-//     url:'/api/music/',// 跳转到 action
-//     type:'get',
-//     success:function(data) {
-//         var items_pre_page = 10
-//         var options = {
-//             currentPage: 1,
-//             totalPages: Math.floor(data.total_count / items_pre_page)+1,
-//             onPageClicked: function(e,originalEvent,type,page){
-//                 $.ajax({
-//                     type: 'get',
-//                     url: "/api/music/",
-//                     data: {
-//                         start:(page-1)*items_pre_page,
-//                         count:items_pre_page
-//                     },
-//                     async : false,
-//                     success:function(data){
-//                         console.info(data)
-//                     }
-//                 });
-//             }
-//         }
-//         $('#paginator').bootstrapPaginator(options);
-//      },
-//      error : function() {
-//           alert("异常！");
-//      }
-// });
-$().ready(function(){
+
+//clear uploaded song list
+$('#shutdown').bind('click',function(event){
+    $('#clearlist').nextAll().remove();
+    //location.reload();
+});
+
+//refresh song list
+$('#refreshList').bind('click',function(event){
+    //location.reload();
     $.ajax({
-        type: "get",
-        contentType: "application/json",
+            type: 'get',
+            url: "/api/music/",
+            dataType:'json',
+            data: {
+                 start:0,
+                 count:items_pre_page
+            },
+            async : true,
+            success:function(data){
+                $("#addSong > tbody").empty();
+                for(var i = 0;i < data.length;++i){
+                    var tdstr = '<tr><td>'+data[i].file_id+'</td> \
+                        <td>'+ data[i].music_album +'</td> \
+                        <td>' + data[i].music_artist+'</td> \
+                        <td>'+data[i].music_name+'</td> \
+                        <td><button>del</button></td> \
+                        </tr>';
+                        //console.info(tdstr);
+                     $("#addSong > tbody:last").append(tdstr);
+                    }              
+                }
+            });
+});
+
+//delete all the song list 
+$('#deleteListAll').bind('click',function(event){
+    $.ajax({
+        type: 'delete',
         url: "/api/music/",
-        data: "{}",
+        async : false,
+        success:function(){
+            $("#addSong > tbody").empty(); 
+         }
+        });
+    });
+
+//上传文件
+$(function(){
+    $('#fileupload').fileupload({
         dataType: 'json',
-        success: function (result) {
-            obj = $.parseJSON(result.d);
-         
-            //add data
-            $("#flexme").flexAddData(formatCustomerResults(obj));
+        add: function (e, data) { 
+            console.info(data.files[0].name);           
+            $('<h6/>').text(data.files[0].name).appendTo($('#upload'));           
+            console.info(data);
+            data.context = $('<button type="button" class="btn btn-mini btn-info"/>').text('start upload')
+                .appendTo($('#upload'))
+                .click(function () {
+                    data.context = $('<button type="button" class="btn btn-mini btn-info"/>').text('uploading......').replaceAll($(this));
+                    data.submit();
+                });
+        },
+        done: function (e, data) {
+            data.context.text('upload finished!');
+            console.info(data.files[0]);
+            $.ajax({
+            type: 'get',
+            url: "/api/music/",
+            dataType:'json',
+            data: {
+                 start:0,
+                 count:items_pre_page
+            },
+            async : true,
+            success:function(data){
+                $("#addSong > tbody").empty();
+                for(var i = 0;i < data.length;++i){
+                    var tdstr = '<tr><td>'+data[i].file_id+'</td> \
+                        <td>'+ data[i].music_album +'</td> \
+                        <td>' + data[i].music_artist+'</td> \
+                        <td>'+data[i].music_name+'</td> \
+                        <td><button>del</button></td> \
+                        </tr>';
+                        //console.info(tdstr);
+                     $("#addSong > tbody:last").append(tdstr);
+                    }              
+                }
+            });
+
+        }
+    });
+
+    
+});
+
+$('#myTab a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+});
+
+items_pre_page = 10
+
+$.ajax( {
+    url:'/api/music/',// 跳转到 action
+    type:'get',
+    dataType:'json',
+    success:function(data) {
+        var options = {
+            currentPage: 1,
+            totalPages: Math.floor(data.total_count / items_pre_page) + 1,
+            onPageClicked: function(e,originalEvent,type,page){
+                $.ajax({
+                    type: 'get',
+                    url: "/api/music/",
+                    dataType:'json',
+                    data: {
+                        start:(page-1)*items_pre_page,
+                        count:items_pre_page
+                    },
+                    async : false,
+                    success:function(data){
+                        console.info(data.length);
+                        $("#addSong > tbody").empty();
+                        for(var i = 0;i < data.length;++i){
+                            var tdstr = '<tr><td>'+data[i].file_id+'</td> \
+                                <td>'+ data[i].music_album +'</td> \
+                                <td>' + data[i].music_artist+'</td> \
+                                <td>'+data[i].music_name+'</td> \
+                                </tr>'
+                            //console.info(tdstr);
+                            $("#addSong > tbody:last").append(tdstr);
+                        }                  
+                    }
+                });
+            }
+        }
+        $('.paginator').bootstrapPaginator(options);
+     },
+     error : function() {
+          alert("异常！");
+     }
+ });
+
+
+$(document).ready(function(){
+    $.ajax({
+        type: 'get',
+        url: "/api/music/",
+        dataType:'json',
+        data: {
+            start:0,
+            count:items_pre_page
+        },
+        async : false,
+        success:function(data){
+            $("#addSong > tbody").empty();
+            for(var i = 0;i < data.length;++i){
+                var tdstr = '<tr><td>'+data[i].file_id+'</td> \
+                    <td>'+ data[i].music_album +'</td> \
+                    <td>' + data[i].music_artist+'</td> \
+                    <td>'+data[i].music_name+'</td> \
+                    <td><button>del</button></td> \
+                    </tr>'
+                //console.info(tdstr);
+                $("#addSong > tbody:last").append(tdstr);
+            }                  
         }
     });
 });
-
-$(".flexme").flexigrid({
-    url : '/api/music/',
-    method: 'get',
-    dataType : 'json',
-    colModel : [ {
-        display : '歌名',
-        name : 'music_name',
-        width : 90,
-        align : 'center'
-        }, {
-            display : '歌手',
-            name : 'music_artist',
-            width : 120,
-            align : 'left'
-        }, {
-            display : '专辑',
-            name : 'music_album',
-            width : 120,
-            align : 'left'
-        }, {
-            display : '文件ID',
-            name : 'music_file',
-            width : 80,
-            sortable : true,
-            align : 'left',
-            hide : true
-        }, {
-            display : '上传时间',
-            name : 'upload_data',
-            width : 80,
-            sortable : true,
-            align : 'right',
-            hide : true
-    } ],
-    buttons : [ {
-        name : 'Add',
-        bclass : 'add',
-        onpress : Example4
-        }
-        ,
-        {
-            name : 'Edit',
-            bclass : 'edit',
-            onpress : Example4
-        }
-        ,
-        {
-            name : 'Delete',
-            bclass : 'delete',
-            onpress : Example4
-        }
-        ,
-        {
-            separator : true
-        } 
-    ],
-    searchitems : [ {
-        display : '歌曲ID',
-        name : 'music_id'
-        } ],
-    usepager : true,
-    title : '歌曲信息',
-    useRp : true,
-    rp : 15,
-    showTableToggleBtn : true,
-    width : 750,
-    height : 200
-});
-
-function Example4(com, grid) {
-    if (com == 'Delete') {
-        var conf = confirm('Delete ' + $('.trSelected', grid).length + ' items?')
-        if(conf){
-            $.each($('.trSelected', grid),
-                function(key, value){
-                    $.get('example4.php', { Delete: value.firstChild.innerText}
-                        , function(){
-                            // when ajax returns (callback), update the grid to refresh the data
-                            $(".flexme4").flexReload();
-                    });
-            });    
-        }
-    }
-    else if (com == 'Edit') {
-        var conf = confirm('Edit ' + $('.trSelected', grid).length + ' items?')
-        if(conf){
-            $.each($('.trSelected', grid),
-                function(key, value){
-                    // collect the data
-                    var OrgEmpID = value.children[0].innerText; // in case we're changing the key
-                    var EmpID = prompt("Please enter the New Employee ID",value.children[0].innerText);
-                    var Name = prompt("Please enter the Employee Name",value.children[1].innerText);
-                    var PrimaryLanguage = prompt("Please enter the Employee's Primary Language",value.children[2].innerText);
-                    var FavoriteColor = prompt("Please enter the Employee's Favorite Color",value.children[3].innerText);
-                    var FavoriteAnimal = prompt("Please enter the Employee's Favorite Animal",value.children[4].innerText);
-
-                    // call the ajax to save the data to the session
-                    $.get('example4.php', 
-                        { Edit: true
-                            , OrgEmpID: OrgEmpID
-                            , EmpID: EmpID
-                            , Name: Name
-                            , PrimaryLanguage: PrimaryLanguage
-                            , FavoriteColor: FavoriteColor
-                            , FavoritePet: FavoriteAnimal  }
-                        , function(){
-                            // when ajax returns (callback), update the grid to refresh the data
-                            $(".flexme4").flexReload();
-                    });
-            });    
-        }
-    }
-    else if (com == 'Add') {
-        // collect the data
-        var EmpID = prompt("Please enter the Employee ID","5");
-        var Name = prompt("Please enter the Employee Name","Mark");
-        var PrimaryLanguage = prompt("Please enter the Employee's Primary Language","php");
-        var FavoriteColor = prompt("Please enter the Employee's Favorite Color","Tan");
-        var FavoriteAnimal = prompt("Please enter the Employee's Favorite Animal","Dog");
-
-        // call the ajax to save the data to the session
-        $.get('example4.php', { Add: true, EmpID: EmpID, Name: Name, PrimaryLanguage: PrimaryLanguage, FavoriteColor: FavoriteColor, FavoritePet: FavoriteAnimal  }
-            , function(){
-                // when ajax returns (callback), update the grid to refresh the data
-                $(".flexme4").flexReload();
-        });
-    }
-}
-
 </script>
 {% end %}

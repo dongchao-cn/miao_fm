@@ -12,32 +12,20 @@
     /*font-family: Lato Bold;*/
     /*src: url('../fonts/Lato-Bold.ttf');*/
 /*}*/
-
-html { overflow-y: scroll; }
-
-body {
-    background: #444 url(/static/images/bg.jpg) repeat 0 0 scroll;
+.fileinput-button {
+  position: relative;
+  overflow: hidden;
 }
-
-#title{
-    background:transparent url(/static/images/title.png) 0 0 scroll;
-    position:absolute;
-    top:60px;
-    left:24px;
-    height:62px;
-    width:334px;
-}
-
-#download{
-    position:absolute;
-    top:132px;
-    left:30px;
-    text-decoration:none;
-    font-size:12px;
-    color:#999;
-    font-family:arial, sans-serif;
-}
-
-#download:hover{
-    color:#fff;
+.fileinput-button input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  transform: translate(-300px, 0) scale(4);
+  font-size: 23px;
+  direction: ltr;
+  cursor: pointer;
+  border:1px solid red;
 }
