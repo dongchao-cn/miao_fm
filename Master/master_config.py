@@ -11,6 +11,10 @@ ITEM_PER_PAGE = 10
 MASTER_MONGODB_PATH = '/data/mongo_db'
 MASTER_MONGODB_PORT = 6867
 
+# admin user
+ADMIN_NAME = 'admin'
+ADMIN_PASSWORD = 'admin'
+
 # DON'T EDIT BELOW
 import os
 ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
@@ -26,7 +30,7 @@ server {
     server_name %s;
 
     # Allow file uploads
-    client_max_body_size 50M;
+    client_max_body_size 100M;
 
     location /static/ {
         alias %s;
@@ -95,9 +99,15 @@ def add_demo_music():
     from music.model import MusicControl
     music = MusicControl.get_music_by_name('To Be With You')
     if music:
-        # MusicControl.del_music(music.music_id)
         music.remove()
     MusicControl.add_music(ABS_PATH+'/demo.mp3')
+
+def add_user_admin():
+    from user.model import UserControl
+    user = UserControl.get_user_by_name(ADMIN_NAME)
+    if user:
+        user.remove()
+    UserControl.add_user(ADMIN_NAME, ADMIN_PASSWORD)
 
 def config():
     import mongoengine
@@ -109,6 +119,8 @@ def config():
     try:
         print 'add master cdn...'
         add_master_cdn()
+        print 'add admin user...'
+        add_user_admin()
         print 'add demo music...'
         add_demo_music()
     except mongoengine.connection.ConnectionError:
@@ -118,7 +130,6 @@ def config():
         print 'Then re execute this file.'
         os._exit(-1)
     print 'Finish!'
-    # print 'Please set %s, %s DNS settings.' % (SERVER,MASTER_CDN)
     print 'Please include "%s/master_nginx.conf" in nginx.conf.' % (ABS_PATH)
     print 'Then visit http://%s/admin/ for admin page.' % (SERVER)
 

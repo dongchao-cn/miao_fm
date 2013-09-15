@@ -115,7 +115,7 @@ class APIUserCurrentHandler(BaseHandler):
     def post(self):
         user_name = self.get_argument('user_name')
         user_password = self.get_argument('user_password')
-        user = UserControl.find_user_by_name(user_name)
+        user = UserControl.get_user_by_name(user_name)
         if user and user.check_pw(user_password):
             self.set_secure_cookie('user', user_name)
             self.write({'status':True})

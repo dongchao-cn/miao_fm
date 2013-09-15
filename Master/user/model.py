@@ -106,5 +106,5 @@ class UserControl(object):
         return User.objects().count()
 
     @classmethod
-    def find_user_by_name(cls, user_name):
+    def get_user_by_name(cls, user_name):
         return User.objects(user_name = user_name).first()
