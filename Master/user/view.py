@@ -125,3 +125,7 @@ class APIUserCurrentHandler(BaseHandler):
 
     def delete(self):
         self.clear_cookie('user')
+
+class UserLoginHandler(BaseHandler):
+    def get(self):
+        self.render("user/login.html")

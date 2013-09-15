@@ -20,8 +20,6 @@ fs = gridfs.GridFS(db)
 
 connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
 
-
-
 class FileHandler(tornado.web.RequestHandler):
     def get(self, file_id):
         self.set_header ('Content-Type', 'audio/mpeg')
@@ -46,6 +44,7 @@ settings = {
 application = tornado.web.Application([
     # main page
     (r"/", MainHandler),
+    (r"/login/", user.view.UserLoginHandler),
 
     # local music server
     (r"/music_file/(\w{24})/", FileHandler),
@@ -69,7 +68,6 @@ application = tornado.web.Application([
     (r"/admin/music/", music.view.MusicControlHandler),
 
     (r"/admin/cdn/", cdn.view.CdnHandler),
-    
     
 ],**settings)
 
