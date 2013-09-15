@@ -37,7 +37,7 @@ settings = {
     "template_path" : os.path.join(os.path.dirname(__file__), "templates"),
     "debug" : True,
     "cookie_secret": "63oETzKXQkGaYdkLqw421fdasqw12335uYh7EQnp2XdTP1o/Vo=",
-    "login_url": "/admin/login/",
+    "login_url": "/login/",
     # "xsrf_cookies": True,
 }
 

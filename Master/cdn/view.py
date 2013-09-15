@@ -81,6 +81,5 @@ class APICdnHandler(BaseHandler):
         self.write('')
 
 class CdnHandler(BaseHandler):
-    @authenticated
     def get(self):
         self.render("cdn/cdn.html")

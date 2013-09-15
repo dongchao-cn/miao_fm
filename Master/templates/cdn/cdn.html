@@ -1,7 +1,6 @@
 {% extends "admin_cdn_base.html" %}
 
 {% block content %}
-<h2>{{ msg }}</h2>
 
 <div align="left">
     <table class="table table-hover table-striped">
@@ -13,17 +12,6 @@
             </tr>
         </thead>
         <tbody>
-            {% for each in cdn_list %}
-                <tr>
-                    <td>{{ each.name }}</td>
-                    <td>{{ each.url }}</td>
-                    <td>
-                        {% if each.name != 'master' %}
-                            <input class="btn btn-danger btn-small" type="button" value="删除" onclick="location.href='/admin/cdn/del_cdn/?name={{ each.name }}';">
-                        {% end %}
-                    </td>
-                </tr>
-            {% end %}
         </tbody>
     </table>
 </div>

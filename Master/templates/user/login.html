@@ -1,6 +1,5 @@
 {% extends "admin_user_base.html" %}
 {% block extern_head %}
-<script src="/static/js/jquery-1.10.2.js"></script>
 <script src="/static/js/jquery.form.js"></script>
 {% end %}
 
@@ -40,16 +39,15 @@
 var options = {
     dataType: 'json',
     success: function(data) {
+        $('#loginForm').clearForm();
         if (data.status)
         {
-            alert('登录成功');
             location.href = '/admin/'
         }
         else
         {
             alert('用户名或密码错误!');
         }
-        $('#loginForm').clearForm();
     }
 };
 

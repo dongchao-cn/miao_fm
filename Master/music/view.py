@@ -94,6 +94,5 @@ class APINextMusicHandler(BaseHandler):
         self.write(json.dumps(music, cls=MusicJsonEncoder))
 
 class MusicControlHandler(BaseHandler):
-    @authenticated
     def get(self):
         self.render("music/music.html")
