@@ -1,3 +1,10 @@
 body {
     background: #fff;
 }
+
+#controls {
+	margin-top:5px;
+}
+#menu {
+	float:left;
+}
