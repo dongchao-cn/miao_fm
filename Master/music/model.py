@@ -96,9 +96,13 @@ class Music(Document):
         '''
         update music info
         '''
-        with open(file, 'r') as f:
-            self.music_file.replace(f)
-        self.save()
+        try:
+            self.reload()
+            with open(file, 'r') as f:
+                self.music_file.replace(f)
+            self.save()
+        except mongoengine.errors.OperationError:
+            pass
 
     def remove(self):
         '''
