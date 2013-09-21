@@ -4,6 +4,8 @@
 
 
 <link href="/static/Flexigrid-master/css/flexigrid.css" rel="stylesheet">
+<link href="/static/jQuery-File-Upload-8.8.5/css/jquery.fileupload-ui.css" rel="stylesheet">
+<link href="/static/css/management.css" rel="stylesheet">
     
     <!--add song-->
     <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -29,10 +31,6 @@
     </div>
     <!--add song end-->
 
-    <!--refresh song list-->
-
-    <!--refresh song list end-->
-
     <!--delete all songs-->
     <div id="myModal2" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
@@ -40,7 +38,6 @@
             <h3 id="myModalLabel">Do you really wanna clear all the files?</h3>
         </div>
         <div class="modal-body"> 
-
             <div class="modal-footer">
                 <button id="deleteListAll" class="btn btn btn-primary" data-dismiss="modal" aria-hidden="true">I'm sure!</button>
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel </button>
@@ -49,26 +46,45 @@
     </div>
     <!--delete all songs end-->
 
+    <!--edit song-->
+    <div id="myModal3" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">The file information is as follows</h3>
+        </div>
+        <div class="modal-body"> 
+            <div id="editSong">
+            </div>
+
+            <div class="modal-footer">
+                <button id="updateSongInfo" class="btn btn btn-primary" data-dismiss="modal" aria-hidden="true">I'm done!</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel it </button>
+            </div>
+        </div>
+    </div>
+    <!--edit song end-->
+
+    <!---song title-->
     <ul class="nav nav-tabs" id="myTab">
         <li class="active"><a href="#home">歌曲列表</a></li>       
     </ul>
+    <!---song title-->
 
     <!--songlist-->
     <div class="tab-content">
         <div class="tab-pane active" id="home">
             <table class="table table-hover" id="addSong">
                 <thead>  
-                    <td><strong>file_id</strong></td>
+                    <td><strong>music_id</strong></td>
                     <td><strong>music_album</strong></td>
                     <td><strong>music_artist</strong></td>
                     <td><strong>music_name</strong></td>
-                    <td><strong></strong></td>
                 </thead>
                 <tbody ></tbody>
             </table>
             <div align='middle' class="paginator"></div>
         </div>
-    <!--delete-->
+
     <div class="tab-pane" id="profile">
         <div class="tab-pane active" id="home">
             <div id="pageinfo"></div>
@@ -95,7 +111,6 @@
 //clear uploaded song list
 $('#shutdown').bind('click',function(event){
     $('#clearlist').nextAll().remove();
-    //location.reload();
 });
 
 //refresh song list
@@ -113,11 +128,12 @@ $('#refreshList').bind('click',function(event){
             success:function(data){
                 $("#addSong > tbody").empty();
                 for(var i = 0;i < data.length;++i){
-                    var tdstr = '<tr><td>'+data[i].file_id+'</td> \
+                    var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
                         <td>'+ data[i].music_album +'</td> \
                         <td>' + data[i].music_artist+'</td> \
                         <td>'+data[i].music_name+'</td> \
-                        <td><button>del</button></td> \
+                        <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp\
+                        <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
                         </tr>';
                         //console.info(tdstr);
                      $("#addSong > tbody:last").append(tdstr);
@@ -137,6 +153,97 @@ $('#deleteListAll').bind('click',function(event){
          }
         });
     });
+
+//delete song 
+function delSong(event){
+    //console.info(event.id);
+    var musicId = event.id;
+    url = '/api/music/' + musicId + '/';
+    $.ajax({
+        type:'delete',
+        url:url,
+        async : false,
+        success:function(data){
+            //console.info("delete" + data + "success!");
+            $('.' + musicId).remove();
+        },
+    });
+    
+}
+
+//edit song 
+function editSong(event){
+    //console.info($(event).next().attr('id'));
+    var musicId = $(event).next().attr('id');
+    var trObj = $('.' + musicId);
+    //console.info(trObj);
+    var trChildren = trObj.children();
+    var music_id = trChildren[0].innerText;
+    //console.info(music_id);
+    var music_album = trChildren[1].innerText;
+    //console.info(music_album);
+    var music_artist = trChildren[2].innerText;
+    //console.info(music_artist);
+    var music_name = trChildren[3].innerText;
+    //console.info(music_name);
+    $("#editSong").empty();
+    var strInputText = 
+          '<div class="input-group"><span class="input-group-addon">music_id</span>\
+          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+          <input type="text" class="form-control" disabled="disabled" value="' + music_id +'"></br>\
+          <span class="input-group-addon">music_album</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
+          <input  type="text" class="form-control" value="' + music_album +'"></br>\
+          <span class="input-group-addon">music_artist</span>\
+          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+          <input  type="text" class="form-control" value="' + music_artist +'"></br>\
+          <span class="input-group-addon">music_name</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+          <input  type="text" class="form-control" value="' + music_name +'"></br>\
+        </div>';
+    $("#editSong").append(strInputText);
+}
+
+//update song info
+$('#updateSongInfo').bind('click',function(event){
+    //$('#clearlist').nextAll().remove();
+    var info = $('#editSong div').children();
+    console.info($(info[1]).val());
+    console.info($(info[4]).val());
+    console.info($(info[7]).val());
+    console.info($(info[10]).val());
+
+    var musicId = $(info[1]).val();
+    var musicAlbum = $(info[4]).val();
+    var musicArtist = $(info[7]).val();
+    var musicName = $(info[10]).val();
+
+    $.ajax({
+        type:'put',
+        url: "/api/music/" + musicId + '/',
+        data:{
+            music_album: musicAlbum,
+            music_artist: musicArtist,
+            music_name: musicName,
+        },
+        async : false,
+        success:function(){
+           //parent.location.reload();
+           console.info($(this));
+           var tdstr = '<tr class="' + musicId + '"><td>'+ musicId +'</td> \
+                            <td>'+ musicAlbum +'</td> \
+                            <td>' + musicArtist +'</td> \
+                            <td>'+ musicName +'</td> \
+                            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp \
+                            <button id="' + musicId + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
+                            </tr>';
+           $('.' + musicId).replaceWith(tdstr);
+
+         }
+     });
+    
+});
+    
+
+
 
 //上传文件
 $(function(){
@@ -168,11 +275,12 @@ $(function(){
             success:function(data){
                 $("#addSong > tbody").empty();
                 for(var i = 0;i < data.length;++i){
-                    var tdstr = '<tr><td>'+data[i].file_id+'</td> \
-                        <td>'+ data[i].music_album +'</td> \
-                        <td>' + data[i].music_artist+'</td> \
-                        <td>'+data[i].music_name+'</td> \
-                        <td><button>del</button></td> \
+                    var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
+                    <td>'+ data[i].music_album +'</td> \
+                    <td>' + data[i].music_artist+'</td> \
+                    <td>'+data[i].music_name+'</td> \
+                    <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp\
+                    <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
                         </tr>';
                         //console.info(tdstr);
                      $("#addSong > tbody:last").append(tdstr);
@@ -186,10 +294,10 @@ $(function(){
     
 });
 
-$('#myTab a').click(function (e) {
-    e.preventDefault();
-    $(this).tab('show');
-});
+// $('#myTab a').click(function (e) {
+//     e.preventDefault();
+//     $(this).tab('show');
+// });
 
 items_pre_page = 10
 
@@ -215,11 +323,13 @@ $.ajax( {
                         console.info(data.length);
                         $("#addSong > tbody").empty();
                         for(var i = 0;i < data.length;++i){
-                            var tdstr = '<tr><td>'+data[i].file_id+'</td> \
-                                <td>'+ data[i].music_album +'</td> \
-                                <td>' + data[i].music_artist+'</td> \
-                                <td>'+data[i].music_name+'</td> \
-                                </tr>'
+                            var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
+                            <td>'+ data[i].music_album +'</td> \
+                            <td>' + data[i].music_artist+'</td> \
+                            <td>'+data[i].music_name+'</td> \
+                            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp \
+                            <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
+                            </tr>';
                             //console.info(tdstr);
                             $("#addSong > tbody:last").append(tdstr);
                         }                  
@@ -248,17 +358,21 @@ $(document).ready(function(){
         success:function(data){
             $("#addSong > tbody").empty();
             for(var i = 0;i < data.length;++i){
-                var tdstr = '<tr><td>'+data[i].file_id+'</td> \
-                    <td>'+ data[i].music_album +'</td> \
-                    <td>' + data[i].music_artist+'</td> \
-                    <td>'+data[i].music_name+'</td> \
-                    <td><button>del</button></td> \
-                    </tr>'
+                var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
+                        <td>'+ data[i].music_album +'</td> \
+                        <td>' + data[i].music_artist+'</td> \
+                        <td>'+data[i].music_name+'</td> \
+                        <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp\
+                        <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
+                        </tr>';
                 //console.info(tdstr);
                 $("#addSong > tbody:last").append(tdstr);
             }                  
         }
     });
 });
+
+// edit song list
+
 </script>
 {% end %}
