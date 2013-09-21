@@ -12,6 +12,7 @@ import subprocess
 from os.path import getsize
 
 import id3reader
+import mongoengine.errors
 from mongoengine import *
 from bson.objectid import ObjectId
 
@@ -100,7 +101,7 @@ class Music(Document):
             self.reload()
             with open(file, 'r') as f:
                 self.music_file.replace(f)
-            self.save()
+                self.save()
         except mongoengine.errors.OperationError:
             pass
 
