@@ -2,8 +2,8 @@
 #coding:utf8
 
 # set SERVER and MASTER_CDN to one machine
-SERVER = 'search-ebooks.org'
-MASTER_CDN = 'cdn.search-ebooks.org'
+SERVER = 'xdfm.com'
+MASTER_CDN = 'cdn.xdfm.com'
 
 # how many items in one page (for admin pages)
 ITEM_PER_PAGE = 10
