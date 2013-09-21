@@ -63,12 +63,6 @@
     </div>
     <!--edit song end-->
 
-    <!---song title-->
-    <ul class="nav nav-tabs" id="myTab">
-        <li class="active"><a href="#home">歌曲列表</a></li>       
-    </ul>
-    <!---song title-->
-
     <!--songlist-->
     <div class="tab-content">
         <div class="tab-pane active" id="home">
@@ -125,11 +119,14 @@ $('#refreshList').bind('click',function(event){
             async : true,
             success:function(data){
                 $("#addSong > tbody").empty();
+                console.info(data);
                 for(var i = 0;i < data.length;++i){
-                    var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
+                    var tdstr = 
+                        '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
                         <td>'+ data[i].music_album +'</td> \
                         <td>' + data[i].music_artist+'</td> \
                         <td>'+data[i].music_name+'</td> \
+                        <td><audio controls ="controls" preload="none" src="' + data[i].music_url +'"/><audio/></td>\
                         <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp\
                         <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
                         </tr>';
@@ -173,50 +170,63 @@ function delSong(event){
 function editSong(event){
     //console.info($(event).next().attr('id'));
     var musicId = $(event).next().attr('id');
-    var trObj = $('.' + musicId);
-    //console.info(trObj);
-    var trChildren = trObj.children();
-    var music_id = trChildren[0].innerText;
-    //console.info(music_id);
-    var music_album = trChildren[1].innerText;
-    //console.info(music_album);
-    var music_artist = trChildren[2].innerText;
-    //console.info(music_artist);
-    var music_name = trChildren[3].innerText;
-    //console.info(music_name);
-    $("#editSong").empty();
-    var strInputText = 
-          '<div class="input-group"><span class="input-group-addon">music_id</span>\
-          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
-          <input type="text" class="form-control" disabled="disabled" value="' + music_id +'"></br>\
-          <span class="input-group-addon">music_album</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
-          <input  type="text" class="form-control" value="' + music_album +'"></br>\
-          <span class="input-group-addon">music_artist</span>\
-          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
-          <input  type="text" class="form-control" value="' + music_artist +'"></br>\
-          <span class="input-group-addon">music_name</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
-          <input  type="text" class="form-control" value="' + music_name +'"></br>\
-        </div>';
-    $("#editSong").append(strInputText);
+        $.ajax({
+        type:'get',
+        url: "/api/music/" + musicId + '/',
+        async : false,
+        success:function(data){
+            var dataObj = eval('(' + data + ')');
+            var musicId = dataObj.music_id;
+            var musicAlbum = dataObj.music_album;
+            var musicArtist = dataObj.music_artist;
+            var musicName = dataObj.music_name;
+            console.info(dataObj.music_url);
+            console.info(dataObj);
+            $("#editSong").empty();
+                var strInputText = 
+                      '<div class="input-group"><span class="input-group-addon">music_id</span>\
+                      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                      <input type="text" class="form-control" disabled="disabled" value="' + dataObj.music_id +'"></br>\
+                      <span class="input-group-addon">music_album</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
+                      <input  type="text" class="form-control" value="' + dataObj.music_album +'"></br>\
+                      <span class="input-group-addon">music_artist</span>\
+                      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                      <input  type="text" class="form-control" value="' + dataObj.music_artist +'"></br>\
+                      <span class="input-group-addon">music_name</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                      <input  type="text" class="form-control" value="' + dataObj.music_name +'"></br>\
+                      <audio controls ="controls" preload="none" src="' + dataObj.music_url +'"/><audio/>\
+                    </div>';
+                $("#editSong").append(strInputText);
+        },
+        error:function(){
+            $("#editSong").empty();
+            var strInputText = '<p>Sorry,the song you find does not exist!</p>';
+            $("#editSong").append(strInputText);
+        }
+    });
+    
 }
 
 //update song info
 $('#updateSongInfo').bind('click',function(event){
     //$('#clearlist').nextAll().remove();
     var info = $('#editSong div').children();
-    console.info($(info[1]).val());
-    console.info($(info[4]).val());
-    console.info($(info[7]).val());
-    console.info($(info[10]).val());
+    // console.info("##########");
+    // console.info(info);
+    // console.info($(info[1]).val());
+    // console.info($(info[4]).val());
+    // console.info($(info[7]).val());
+    // console.info($(info[10]).val());
 
     var musicId = $(info[1]).val();
     var musicAlbum = $(info[4]).val();
     var musicArtist = $(info[7]).val();
     var musicName = $(info[10]).val();
-
+    var url = "http://cdn.search-ebooks.org/music_file/" +  + '/';
+    
     $.ajax({
         type:'put',
-        url: "/api/music/" + musicId + '/',
+        url: '/api/music/' + musicId + '/',
         data:{
             music_album: musicAlbum,
             music_artist: musicArtist,
@@ -240,8 +250,54 @@ $('#updateSongInfo').bind('click',function(event){
     
 });
     
+//search song info
+function searchMusic(){
+    var musicId = $('#searchMusicId').val();
+    console.info(musicId);
+    $.ajax({
+        type:'get',
+        url: "/api/music/" + musicId + '/',
+        async : false,
+        success:function(data){
+            var dataObj = eval('(' + data + ')');
+            var musicId = dataObj.music_id;
+            var musicAlbum = dataObj.music_album;
+            var musicArtist = dataObj.music_artist;
+            var musicName = dataObj.music_name;
+            console.info(dataObj.music_url);
+            console.info(dataObj);
+            $("#editSong").empty();
+                var strInputText = 
+                      '<div class="input-group"><span class="input-group-addon">music_id</span>\
+                      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                      <input type="text" class="form-control" disabled="disabled" value="' + dataObj.music_id +'"></br>\
+                      <span class="input-group-addon">music_album</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
+                      <input  type="text" class="form-control" value="' + dataObj.music_album +'"></br>\
+                      <span class="input-group-addon">music_artist</span>\
+                      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                      <input  type="text" class="form-control" value="' + dataObj.music_artist +'"></br>\
+                      <span class="input-group-addon">music_name</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                      <input  type="text" class="form-control" value="' + dataObj.music_name +'"></br>\
+                      <audio controls ="controls" preload="none" src="' + dataObj.music_url +'"/><audio/>\
+                    </div>';
+                $("#editSong").append(strInputText);
+        },
+        error:function(){
+            $("#editSong").empty();
+            var strInputText = '<p>Sorry,the song you find does not exist!</p>';
+            $("#editSong").append(strInputText);
+        }
+    });
 
+}
 
+$('#myModal3').on('hidden', function () {
+    $("#editSong").empty();
+})
+
+$('#myModal').on('hidden', function () {
+    location.reload();
+})
 
 //上传文件
 $(function(){
@@ -272,17 +328,17 @@ $(function(){
             async : true,
             success:function(data){
                 $("#addSong > tbody").empty();
-                for(var i = 0;i < data.length;++i){
-                    var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
-                    <td>'+ data[i].music_album +'</td> \
-                    <td>' + data[i].music_artist+'</td> \
-                    <td>'+data[i].music_name+'</td> \
-                    <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp\
-                    <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
-                        </tr>';
-                        //console.info(tdstr);
-                     $("#addSong > tbody:last").append(tdstr);
-                    }              
+                // for(var i = 0;i < data.length;++i){
+                //     var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
+                //     <td>'+ data[i].music_album +'</td> \
+                //     <td>' + data[i].music_artist+'</td> \
+                //     <td>'+data[i].music_name+'</td> \
+                //     <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp\
+                //     <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
+                //         </tr>';
+                //         //console.info(tdstr);
+                //      $("#addSong > tbody:last").append(tdstr);
+                    // }              
                 }
             });
 
@@ -291,11 +347,6 @@ $(function(){
 
     
 });
-
-// $('#myTab a').click(function (e) {
-//     e.preventDefault();
-//     $(this).tab('show');
-// });
 
 items_pre_page = 10
 
@@ -355,14 +406,15 @@ $(document).ready(function(){
         async : false,
         success:function(data){
             $("#addSong > tbody").empty();
+            console.info(data);
             for(var i = 0;i < data.length;++i){
                 var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
-                        <td>'+ data[i].music_album +'</td> \
-                        <td>' + data[i].music_artist+'</td> \
-                        <td>'+data[i].music_name+'</td> \
-                        <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp\
-                        <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
-                        </tr>';
+                <td>'+ data[i].music_album +'</td> \
+                <td>' + data[i].music_artist+'</td> \
+                <td>'+data[i].music_name+'</td> \
+                <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp\
+                <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
+                </tr>';
                 //console.info(tdstr);
                 $("#addSong > tbody:last").append(tdstr);
             }                  
