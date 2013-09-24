@@ -10,7 +10,6 @@
         <link rel="shortcut icon" href="/static/favicon.ico" >
         <link rel="icon" type="image/gif" href="/static/animated_favicon1.gif">
 
-        <link href="/static/css/demo.css" rel="stylesheet">
         <script src="/static/js/jquery-1.10.2.js"></script>
         <!-- Le styles -->
         <link href="/static/css/bootstrap.min.css" rel="stylesheet">
@@ -29,15 +28,14 @@
     </head>
 
     <body>
-        <hr/>
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="span2">
                     <ul class="nav nav-list">
-                        <li class="nav-header">后台管理</li>
+                        <li class="nav-header"><a href="/admin/">后台管理</a></li>
                         <li><a href="/admin/music/">歌曲管理</a></li>
                         <!-- <li><a href="/admin/cdn/">CDN管理</a></li> -->
-                    </ul>                    
+                    </ul>
                 </div>
                 <div align='right'>
                     <a class="pull-right" id='logoutButton' href="/api/user/current/">注销</a>

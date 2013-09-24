@@ -48,7 +48,7 @@
             currencySymbol:'$',
             buyText:'BUY',
             tracksToShow:5,
-            autoPlay:false,
+            autoplay:false,
             jPlayer:{}
         };
 
@@ -197,25 +197,32 @@
             }
 
             function playlistNext() {
-                //var index = (current + 1 < myPlaylist.length) ? current + 1 : 0;
-                //console.info("play next id = " + index);
-                
                 // console.info("play next!!!");
+                $.ajax({
+                    type:'get',
+                    url: '/api/music/next/',
+                    dataType:'json',
+                    async : false,
+                    success:function(data){
+                       // console.info(data);
+                       // myPlaylist = []
+                       var music = {};
+                       music['mp3'] = data.music_url;
+                       music['title'] = data.music_name;
+                       music['artist'] = data.music_artist;
+                       myPlaylist.push(music);
+                     }
+                });
+                // console.info(myPlaylist);
+                // playlistAdvance(0);
 
-                var req = '/api/music/next/';
-                myPlaylist = HandleNext(req);
-
-                index = 0;
-                // console.info(myPlaylist[0]['title'] + 'player');
+                var index = (current + 1 < myPlaylist.length) ? current + 1 : 0;
                 playlistAdvance(index);
             }
 
             function playlistPrev() {
-                //var index = (current - 1 >= 0) ? current - 1 : myPlaylist.length - 1;
-                //console.info("play prev id = " + index);
-                //playlistAdvance(index);
-
-                console.info("play prev!!!");
+                var index = (current - 1 >= 0) ? current - 1 : myPlaylist.length - 1;
+                playlistAdvance(index);
             }
 
             function togglePlay() {

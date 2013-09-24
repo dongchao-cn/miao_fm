@@ -6,20 +6,35 @@
     <script type="text/javascript" src="/static/js/jquery-1.10.2.js"></script>
     <script type="text/javascript" src="/static/jquery-jplayer/jquery.jplayer.js"></script>
     <script type="text/javascript" src="/static/ttw-music-player.js"></script>
-    <script type="text/javascript" src="/static/Ajax.js"></script>
 {% end %}
 
 {% block content %}
     <script type="text/javascript">
         $(document).ready(function(){
-            myPlaylist = InitPage();
+            myPlaylist = [];
+            $.ajax({
+                type:'get',
+                url: '/api/music/next/',
+                dataType:'json',
+                async : false,
+                success:function(data){
+                   // console.info(data);
+                   myPlaylist = []
+                   var music = {};
+                   music['mp3'] = data.music_url;
+                   music['title'] = data.music_name;
+                   music['artist'] = data.music_artist;
+                   myPlaylist.push(music);
+                 }
+            });
+            // console.info(myPlaylist);
             var description = '';
 
             $('body').ttwMusicPlayer(myPlaylist, {
-                autoPlay:false, 
+                autoplay:true, 
                 description:description,
                 jPlayer:{
-                    swfPath:'/static/jquery-jplayer' //You need to override the default swf path any time the directory structure changes
+                    swfPath:'/static/jquery-jplayer'
                 },
                 ratingCallback:function(index, playlistItem, rating){
                     console.info("song over");
