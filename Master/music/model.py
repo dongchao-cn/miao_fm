@@ -66,7 +66,7 @@ class Music(Document):
 
     @property
     def music_url(self):
-        return 'http://%s/music_file/%s/' % (CdnControl.get_free_cdn().url, self.file_id)
+        return 'http://%s:8080/music_file/%s/' % (CdnControl.get_free_cdn().url, self.file_id)
 
     @property
     def file_id(self):
