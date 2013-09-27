@@ -5,9 +5,6 @@
 SERVER = 'xdfm.com'
 MASTER_CDN = 'cdn.xdfm.com'
 
-# how many items in one page (for admin pages)
-ITEM_PER_PAGE = 10
-
 MASTER_MONGODB_PATH = '/data/mongo_db'
 MASTER_MONGODB_PORT = 6867
 
