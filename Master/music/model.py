@@ -220,23 +220,30 @@ def _lame_mp3(infile, music, remove=False):
         os.remove(infile)
 
 def _get_info_from_id3(file):
-    id3r = id3reader.Reader(file)
-    
+    music_name = ''
+    music_artist = ''
+    music_album = ''
+
+    try:
+        id3r = id3reader.Reader(file)
+    except:
+        return (music_name, music_artist, music_album)
+
     try:
         music_name = id3r.getValue('title').encode('utf8')
     except:
-        music_name = ''
+        pass
 
     try:
         music_artist = id3r.getValue('performer').encode('utf8')
-    except :
-        music_artist = ''
+    except:
+        pass
 
     try:
         music_album = id3r.getValue('album').encode('utf8')
-    except :
-        music_album = ''
-
+    except:
+        pass
+        
     # music_name.encode('utf8')
     # music_artist.encode('utf8')
     # music_album.encode('utf8')
@@ -255,6 +262,7 @@ def _get_random_music():
     return Music.objects[num]
 
 if __name__ == '__main__':
+    connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
     # try:
     #     MusicControl()
     # except Exception:
@@ -298,5 +306,8 @@ if __name__ == '__main__':
 
     # print MusicControl.get_music_page_count()
 
-    # print _get_info_from_id3('/home/dc/Music/music_file/a01a45b7e7dd1f5b0e0a85db09d581c1.mp3')
+    # for each in _get_info_from_id3('/media/823E59BF3E59AD43/Music/buckle up n chuggeluck heaven.mp3'):
+    #     print each
+
+    print MusicControl.add_music('/media/823E59BF3E59AD43/Music/buckle up n chuggeluck heaven.mp3')
     pass
