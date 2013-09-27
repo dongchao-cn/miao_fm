@@ -298,5 +298,6 @@ if __name__ == '__main__':
 
     # print MusicControl.get_music_page_count()
 
-    # print _get_info_from_id3('/home/dc/Music/music_file/a01a45b7e7dd1f5b0e0a85db09d581c1.mp3')
+    # for each in _get_info_from_id3('/media/823E59BF3E59AD43/Music/buckle up n chuggeluck heaven.mp3'):
+    #     print each
     pass
