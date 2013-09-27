@@ -25,7 +25,7 @@ Settings
 
 1. edit the info and then run `python master_config.py` to config.
 
-2. run `python main.py` to start service.
+2. run `python main.py 2>> master.log` to start service.
 
 ### Slave
 
@@ -35,5 +35,5 @@ Optional, it is using as cdn.
 
 1. edit the info and then run `python slave_config.py` to config.
 
-2. run `python main.py` to start service.
+2. run `python main.py 2>> slave.log` to start service.
 
