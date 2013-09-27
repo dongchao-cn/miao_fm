@@ -75,7 +75,8 @@ master = true
 dbpath = %s
 oplogSize = 64
 port = %d
-nojournal = true''' % (master_mongodb_dir, MASTER_MONGODB_PORT)
+nojournal = true
+rest = true''' % (master_mongodb_dir, MASTER_MONGODB_PORT)
     try:
         if not os.path.exists(master_mongodb_dir):
             os.makedirs(master_mongodb_dir)
