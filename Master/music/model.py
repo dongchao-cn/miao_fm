@@ -17,7 +17,7 @@ from mongoengine import *
 from bson.objectid import ObjectId
 
 from cdn.model import CdnControl
-from master_config import ITEM_PER_PAGE, MASTER_CDN, MASTER_MONGODB_PORT
+from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
 # connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
 register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
@@ -178,26 +178,6 @@ class MusicControl(object):
         get music count
         '''
         return Music.objects().count()
-
-    @classmethod
-    def get_music_by_page(cls, page):
-        '''
-        get music by page
-        '''
-        page -= 1
-        return cls.get_music_by_range(page*ITEM_PER_PAGE, (page+1)*ITEM_PER_PAGE)
-        # return Music.objects[page*ITEM_PER_PAGE: (page+1)*ITEM_PER_PAGE]
-
-    @classmethod
-    def get_music_page_count(cls):
-        '''
-        get music page count
-        '''
-        count = Music.objects().count()
-        if count % ITEM_PER_PAGE:
-            return count/ITEM_PER_PAGE+1
-        else:
-            return count/ITEM_PER_PAGE
 
 def _lame_mp3(infile, music, remove=False):
     '''
