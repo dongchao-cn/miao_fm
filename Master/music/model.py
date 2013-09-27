@@ -205,9 +205,17 @@ def _get_info_from_id3(file):
     music_album = ''
 
     try:
+        id3reader._encodings = ['gbk', 'iso8859-1', 'utf-16', 'utf-16be']
         id3r = id3reader.Reader(file)
+    except UnicodeDecodeError:
+        id3reader._encodings = ['iso8859-1', 'utf-16', 'utf-16be' ,'utf-8']
+        try:
+            id3r = id3reader.Reader(file)
+        except:
+            return (music_name, music_artist, music_album)
     except:
         return (music_name, music_artist, music_album)
+    # id3r = id3reader.Reader(file)
 
     try:
         music_name = id3r.getValue('title').encode('utf8')
@@ -286,8 +294,21 @@ if __name__ == '__main__':
 
     # print MusicControl.get_music_page_count()
 
-    # for each in _get_info_from_id3('/media/823E59BF3E59AD43/Music/buckle up n chuggeluck heaven.mp3'):
+    list_dirs = os.walk('/media/823E59BF3E59AD43/Music/')
+    for root, dirs, files in list_dirs: 
+        for f in files: 
+            if os.path.join(root, f).endswith('.mp3'):
+                print os.path.join(root, f)
+                for each in _get_info_from_id3(os.path.join(root, f)):
+                    print each
+                print
+    
+    # for each in _get_info_from_id3('/media/823E59BF3E59AD43/Music/mariah carey - without you - 玛丽亚凯莉 失去你.mp3'):
+    #     print each
+    # for each in _get_info_from_id3('/media/823E59BF3E59AD43/Music/01兄妹.mp3'):
     #     print each
 
-    print MusicControl.add_music('/media/823E59BF3E59AD43/Music/buckle up n chuggeluck heaven.mp3')
+
+
+    # print MusicControl.add_music('/media/823E59BF3E59AD43/Music/buckle up n chuggeluck heaven.mp3')
     pass

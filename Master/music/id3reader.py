@@ -10,7 +10,8 @@ __version__ = '1.53.20070415'    # History at the end of the file.
 import struct, sys, zlib
 
 # These are the text encodings, indexed by the first byte of a text value.
-_encodings = ['gbk', 'utf-8', 'iso8859-1', 'utf-16', 'utf-16be']
+_encodings = ['iso8859-1', 'utf-16', 'utf-16be' ,'utf-8']
+# _encodings = ['gbk', 'iso8859-1', 'utf-16', 'utf-16be']
 
 # Simple pseudo-id's, mapped to their various representations.
 # Use these ids with getValue, and you don't need to know what
