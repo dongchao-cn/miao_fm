@@ -39,6 +39,7 @@ class MusicJsonEncoder(json.JSONEncoder):
                 'music_name' : obj.music_name,
                 'music_artist' : obj.music_artist,
                 'music_album' : obj.music_album,
+                'music_genre' : obj.music_genre,
                 'file_id' : obj.file_id,
                 'music_url' : obj.music_url,
                 'upload_data' : obj.upload_data}
@@ -53,6 +54,7 @@ class Music(Document):
     music_name = StringField(max_length=200, default='')
     music_artist = StringField(max_length=50, default='')
     music_album = StringField(max_length=100, default='')
+    music_genre = StringField(max_length=100, default='')
 
     # file info
     music_file = FileField('miao_fm_cdn')
@@ -84,13 +86,14 @@ class Music(Document):
         return ('music_name = %s\nmusic_file = %s\n' % \
             (self.music_name, self.music_file)).encode('utf-8')
     
-    def update_info(self, music_name, music_artist, music_album):
+    def update_info(self, music_name, music_artist, music_album, music_genre):
         '''
         update music info
         '''
         self.music_name = music_name
         self.music_artist = music_artist
         self.music_album = music_album
+        self.music_genre = music_genre
         self.upload_data = datetime.datetime.now()
         self.save()
 
@@ -128,9 +131,9 @@ class MusicControl(object):
         read music info from id3
         if music_name exist, rewrite it
         '''
-        music_name, music_artist, music_album = _get_info_from_id3(file)
+        music_name, music_artist, music_album, music_genre = _get_info_from_id3(file)
         music = Music(music_name=music_name, music_artist=music_artist, 
-            music_album=music_album, music_file=open(file, 'r').read()).save()
+            music_album=music_album, music_genre=music_genre, music_file=open(file, 'r').read()).save()
         multiprocessing.Process(target=_lame_mp3, args=(file, music, remove)).start()
         return music
 
@@ -204,14 +207,15 @@ def _get_info_from_id3(file):
     music_name = ''
     music_artist = ''
     music_album = ''
+    music_genre = ''
 
-    os.system('mid3iconv -q -e GBK "%s"' % (file))
+    os.system('mid3iconv -q -e GBK "%s"' % (file.encode('utf8')))
     try:
         audio = mutagen.File(file, easy=True)
     except:
         print 'On mutagen.File : %s' % (file)
         traceback.print_exc()
-        return music_name, music_artist, music_album
+        return music_name, music_artist, music_album, music_genre
 
     try:
         music_name = audio['title'][0]
@@ -228,7 +232,12 @@ def _get_info_from_id3(file):
     except:
         pass
 
-    return music_name, music_artist, music_album
+    try:
+        music_genre = audio['genre'][0]
+    except:
+        pass
+
+    return music_name, music_artist, music_album, music_genre
 
 def _get_random_music():
     '''

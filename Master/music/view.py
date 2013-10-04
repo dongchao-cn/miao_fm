@@ -72,9 +72,10 @@ class APIMusicHandler(BaseHandler):
         music_name = self.get_argument("music_name")
         music_artist = self.get_argument("music_artist")
         music_album = self.get_argument("music_album")
+        music_genre = self.get_argument("music_genre")
 
         music = MusicControl.get_music(music_id)
-        music.update_info(music_name, music_artist, music_album)
+        music.update_info(music_name, music_artist, music_album, music_genre)
         music = MusicControl.get_music(music_id)
         self.write(json.dumps(music, cls=MusicJsonEncoder))
 
