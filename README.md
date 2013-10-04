@@ -15,6 +15,7 @@ Depends
 ### Python Packages
 1. tornado
 2. mongoengine
+3. mutagen
 
 Settings
 --------
