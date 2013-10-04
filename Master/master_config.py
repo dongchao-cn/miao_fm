@@ -70,13 +70,16 @@ server {
 
 def master_mongodb_config():
     master_mongodb_dir = '%s/master' % (MASTER_MONGODB_PATH)
+    log_path = '%s/mongod.log' % (master_mongodb_dir)
     config = '''
 master = true
+fork = true
 dbpath = %s
-oplogSize = 64
 port = %d
+logpath = %s
+logappend = true
 nojournal = true
-rest = true''' % (master_mongodb_dir, MASTER_MONGODB_PORT)
+rest = true''' % (master_mongodb_dir, MASTER_MONGODB_PORT, log_path)
     try:
         if not os.path.exists(master_mongodb_dir):
             os.makedirs(master_mongodb_dir)
