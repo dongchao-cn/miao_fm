@@ -9,9 +9,10 @@ import os
 import json
 import multiprocessing
 import subprocess
+import traceback
 from os.path import getsize
 
-import id3reader
+import mutagen
 import mongoengine.errors
 from mongoengine import *
 from bson.objectid import ObjectId
@@ -204,43 +205,30 @@ def _get_info_from_id3(file):
     music_artist = ''
     music_album = ''
 
+    os.system('mid3iconv -q -e GBK "%s"' % (file))
     try:
-        id3reader._encodings = ['gbk', 'iso8859-1', 'utf-16', 'utf-16be']
-        id3r = id3reader.Reader(file)
-    except UnicodeDecodeError:
-        id3reader._encodings = ['iso8859-1', 'utf-16', 'utf-16be' ,'utf-8']
-        try:
-            id3r = id3reader.Reader(file)
-        except:
-            return (music_name, music_artist, music_album)
+        audio = mutagen.File(file, easy=True)
     except:
-        return (music_name, music_artist, music_album)
-    # id3r = id3reader.Reader(file)
+        print 'On mutagen.File : %s' % (file)
+        traceback.print_exc()
+        return music_name, music_artist, music_album
 
     try:
-        music_name = id3r.getValue('title').encode('utf8')
+        music_name = audio['title'][0]
     except:
         pass
 
     try:
-        music_artist = id3r.getValue('performer').encode('utf8')
+        music_artist = audio['artist'][0]
     except:
         pass
 
     try:
-        music_album = id3r.getValue('album').encode('utf8')
+        music_album = audio['album'][0]
     except:
         pass
-        
-    # music_name.encode('utf8')
-    # music_artist.encode('utf8')
-    # music_album.encode('utf8')
 
-    # print music_name.encode('utf8')
-    # print music_artist.encode('utf8')
-    # print music_album.encode('utf8')
-    # print type(music_name),type(music_artist),type(music_album)
-    return (music_name, music_artist, music_album)
+    return music_name, music_artist, music_album
 
 def _get_random_music():
     '''
@@ -250,7 +238,7 @@ def _get_random_music():
     return Music.objects[num]
 
 if __name__ == '__main__':
-    connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
+    # connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
     # try:
     #     MusicControl()
     # except Exception:
@@ -300,7 +288,8 @@ if __name__ == '__main__':
             if os.path.join(root, f).endswith('.mp3'):
                 print os.path.join(root, f)
                 for each in _get_info_from_id3(os.path.join(root, f)):
-                    print each
+                    print each.encode('utf8')
+                    pass
                 print
     
     # for each in _get_info_from_id3('/media/823E59BF3E59AD43/Music/mariah carey - without you - 玛丽亚凯莉 失去你.mp3'):
