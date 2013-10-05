@@ -96,4 +96,4 @@ class APINextMusicHandler(BaseHandler):
 
 class MusicControlHandler(BaseHandler):
     def get(self):
-        self.render("music/music.html")
+        self.render("music.html")

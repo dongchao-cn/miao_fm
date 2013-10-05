@@ -26,7 +26,9 @@
                     }
                     else
                     {
-                        $("#userLable").html('&nbsp' + data.user_name + '&nbsp/&nbsp');
+                        $(document).ready(function(){
+                            $("#userLable").html('&nbsp' + data.user_name + '&nbsp/&nbsp');
+                        });
                     }
                 }
             });
@@ -50,7 +52,7 @@
                     <i class="icon-user"></i>
                 </div>
                 <div class="span10">
-                    {% block modle_base_content %}{% end %}
+                    {% block content %}{% end %}
                 </div>
             </div>
         </div>
