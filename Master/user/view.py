@@ -40,18 +40,20 @@ class APIUserControlHandler(BaseHandler):
     @authenticated
     def get(self):
         '''
-        return base info about user if can't get start or end
-        else return user list
+        return base info about user or
+        return user list
         '''
-        try:
-            start = int(self.get_argument("start"))
-            count = int(self.get_argument("count"))
-        except:
+        by = self.get_argument('by')
+        if by == 'status':
             base_info = {'total_count':UserControl.get_user_count()}
             self.write(base_info)
-            return
-        user_list = UserControl.get_user_by_range(start, start+count)
-        self.write(json.dumps(user_list, cls=UserJsonEncoder))
+        elif by == 'range':
+            start = int(self.get_argument("start"))
+            count = int(self.get_argument("count"))
+            user_list = UserControl.get_user_by_range(start, start+count)
+            self.write(json.dumps(user_list, cls=UserJsonEncoder))
+        else:
+            raise HTTPError(400)
 
     @authenticated
     def post(self):

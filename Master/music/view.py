@@ -22,14 +22,13 @@ class APIMusicControlHandler(BaseHandler):
     @authenticated
     def get(self):
         '''
-        return base info about music if can't get start or end
-        else return music list
+        return base info about music or
+        return music list
         '''
         by = self.get_argument('by')
         if by == 'status':
             base_info = {'total_count':MusicControl.get_music_count()}
             self.write(base_info)
-            return
         elif by == 'range':
             start = int(self.get_argument("start"))
             count = int(self.get_argument("count"))

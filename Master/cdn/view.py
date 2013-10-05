@@ -20,19 +20,21 @@ class APICdnControlHandler(BaseHandler):
     @authenticated
     def get(self):
         '''
-        return base info about music if can't get start or end
-        else return music list
+        return base info about cdn or
+        return cdn list
         '''
-        try:
-            start = int(self.get_argument("start"))
-            count = int(self.get_argument("count"))
-        except:
+        by = self.get_argument('by')
+        if by == 'status':
             base_info = {'total_count':CdnControl.get_cdn_count()}
             self.write(base_info)
-            return
-        cdn_list = CdnControl.get_cdn_by_range(start, start+count)
-        self.write(json.dumps(cdn_list, cls=CdnJsonEncoder))
-
+        elif by == 'range':
+            start = int(self.get_argument("start"))
+            count = int(self.get_argument("count"))
+            cdn_list = CdnControl.get_cdn_by_range(start, start+count)
+            self.write(json.dumps(cdn_list, cls=CdnJsonEncoder))
+        else:
+            raise HTTPError(400)
+            
     @authenticated
     def post(self):
         name = self.get_argument("name")
