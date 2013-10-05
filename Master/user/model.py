@@ -10,19 +10,6 @@ import datetime
 from mongoengine import *
 from bson.objectid import ObjectId
 
-class UserJsonEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime.datetime):
-            return obj.strftime('%Y-%m-%d %H:%M:%S')
-        elif isinstance(obj, ObjectId):
-            return str(obj)
-        elif isinstance(obj, User):
-            return {'user_id' : obj.user_id,
-                'user_name' : obj.user_name,
-                'user_password' : obj.user_password}
-        else:
-            return json.JSONEncoder.default(self, obj)
-
 class User(Document):
     '''
     store user info

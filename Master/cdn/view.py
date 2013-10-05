@@ -2,8 +2,9 @@
 import os
 import json
 import tornado
-from user.view import authenticated, APIBaseHandler
-from .model import CdnControl, CdnJsonEncoder
+from base_def import APIBaseHandler, MainJsonEncoder
+from user.view import authenticated
+from .model import CdnControl
 
 class APICdnControlHandler(APIBaseHandler):
     '''
@@ -26,7 +27,7 @@ class APICdnControlHandler(APIBaseHandler):
             start = int(self.get_argument("start"))
             count = int(self.get_argument("count"))
             cdn_list = CdnControl.get_cdn_by_range(start, start+count)
-            self.write(json.dumps(cdn_list, cls=CdnJsonEncoder))
+            self.write(json.dumps(cdn_list, cls=MainJsonEncoder))
         else:
             raise HTTPError(400)
             
@@ -37,7 +38,7 @@ class APICdnControlHandler(APIBaseHandler):
         online = self.get_argument("online")
         online = True if online else False
         cdn = CdnControl.add_cdn(name, url_path, online)
-        self.write(json.dumps(cdn, cls=CdnJsonEncoder))
+        self.write(json.dumps(cdn, cls=MainJsonEncoder))
 
     @authenticated
     def delete(self):
@@ -58,7 +59,7 @@ class APICdnHandler(APIBaseHandler):
     @authenticated
     def get(self, cdn_id):
         music = CdnControl.get_cdn(cdn_id)
-        self.write(json.dumps(music, cls=CdnJsonEncoder))
+        self.write(json.dumps(music, cls=MainJsonEncoder))
 
     @authenticated
     def put(self, cdn_id):
@@ -69,7 +70,7 @@ class APICdnHandler(APIBaseHandler):
         cdn = CdnControl.get_cdn(cdn_id)
         cdn.update_info(name, url_path, online)
         cdn = CdnControl.get_cdn(cdn_id)
-        self.write(json.dumps(cdn, cls=CdnJsonEncoder))
+        self.write(json.dumps(cdn, cls=MainJsonEncoder))
 
     @authenticated
     def delete(self, cdn_id):

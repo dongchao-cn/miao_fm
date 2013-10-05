@@ -9,19 +9,7 @@ from mongoengine import *
 from bson.objectid import ObjectId
 from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
-# connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
-
-class CdnJsonEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Cdn):
-            return { 'cdn_id' : obj.cdn_id,
-                'name' : obj.name,
-                'url_path' : obj.url_path,
-                'online' : obj.online}
-        elif isinstance(obj, ObjectId):
-            return str(obj)
-        else:
-            return json.JSONEncoder.default(self, obj)
+# connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
 
 class Cdn(Document):
     '''

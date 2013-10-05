@@ -20,6 +20,7 @@ db = con['miao_fm_cdn']
 fs = gridfs.GridFS(db)
 
 connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
+register_connection('miao_fm_cdn', 'miao_fm_cdn', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
 
 class FileHandler(tornado.web.RequestHandler):
     def get(self, file_id):

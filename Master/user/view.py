@@ -6,21 +6,8 @@ import functools
 
 from tornado.web import HTTPError
 
-from model import UserControl, UserJsonEncoder
-
-class APIBaseHandler(tornado.web.RequestHandler):
-    # def prepare(self):
-    #     self.begin_time = time.time()
-
-    # def on_finish(self):
-    #     self.cost = time.time() - self.begin_time
-    #     print self.request.method, self.request.uri, int(self.cost * 10e3)
-
-    def get_current_user(self):
-        return self.get_secure_cookie('user')
-
-    def set_default_headers(self):
-        self.set_header ('Content-Type', 'application/json')
+from base_def import APIBaseHandler, MainJsonEncoder
+from .model import UserControl
 
 def authenticated(method):
     @functools.wraps(method)
@@ -52,7 +39,7 @@ class APIUserControlHandler(APIBaseHandler):
             start = int(self.get_argument("start"))
             count = int(self.get_argument("count"))
             user_list = UserControl.get_user_by_range(start, start+count)
-            self.write(json.dumps(user_list, cls=UserJsonEncoder))
+            self.write(json.dumps(user_list, cls=MainJsonEncoder))
         else:
             raise HTTPError(400)
 
@@ -61,7 +48,7 @@ class APIUserControlHandler(APIBaseHandler):
         user_name = self.get_argument("user_name")
         user_password = self.get_argument("user_password")
         user = UserControl.add_user(user_name, user_password)
-        self.write(json.dumps(user, cls=UserJsonEncoder))
+        self.write(json.dumps(user, cls=MainJsonEncoder))
 
     @authenticated
     def delete(self):
@@ -83,7 +70,7 @@ class APIUserHandler(APIBaseHandler):
     @authenticated
     def get(self, user_id):
         user = UserControl.get_user(user_id)
-        self.write(json.dumps(user, cls=UserJsonEncoder))
+        self.write(json.dumps(user, cls=MainJsonEncoder))
 
     @authenticated
     def put(self, user_id):
@@ -91,7 +78,7 @@ class APIUserHandler(APIBaseHandler):
         user = UserControl.get_user(user_id)
         user.update_info(user_password)
         user = UserControl.get_user(user_id)
-        self.write(json.dumps(user, cls=UserJsonEncoder))
+        self.write(json.dumps(user, cls=MainJsonEncoder))
 
     @authenticated
     def delete(self, user_id):

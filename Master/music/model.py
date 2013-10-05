@@ -21,30 +21,7 @@ from cdn.model import CdnControl
 from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
 # connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
-register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
-
-class MusicJsonEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime.datetime):
-            return obj.strftime('%Y-%m-%d %H:%M:%S')
-        elif isinstance(obj, GridFSProxy):
-            try:
-                return obj._id
-            except AttributeError:
-                return ''
-        elif isinstance(obj, ObjectId):
-            return str(obj)
-        elif isinstance(obj, Music):
-            return {'music_id' : obj.music_id,
-                'music_name' : obj.music_name,
-                'music_artist' : obj.music_artist,
-                'music_album' : obj.music_album,
-                'music_genre' : obj.music_genre,
-                'file_id' : obj.file_id,
-                'music_url' : obj.music_url,
-                'upload_date' : obj.upload_date}
-        else:
-            return json.JSONEncoder.default(self, obj)
+# register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
 
 class Music(Document):
     '''

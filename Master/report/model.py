@@ -11,25 +11,9 @@ from bson.objectid import ObjectId
 
 from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
-from music.model import Music, MusicControl, MusicJsonEncoder
+from music.model import Music, MusicControl
 
 # connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
-
-class ReportJsonEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime.datetime):
-            return obj.strftime('%Y-%m-%d %H:%M:%S')
-        elif isinstance(obj, ObjectId):
-            return str(obj)
-        elif isinstance(obj, Music):
-            return json.loads(json.dumps(obj, cls=MusicJsonEncoder))
-        elif isinstance(obj, Report):
-            return {'report_id' : obj.report_id,
-                'report_music' : obj.report_music,
-                'report_info' : obj.report_info,
-                'report_date' : obj.report_date}
-        else:
-            return json.JSONEncoder.default(self, obj)
 
 class Report(Document):
     '''

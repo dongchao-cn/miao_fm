@@ -2,8 +2,9 @@
 import tornado
 import json
 
-from user.view import authenticated, APIBaseHandler
-from .model import ReportControl,ReportJsonEncoder
+from base_def import APIBaseHandler, MainJsonEncoder
+from user.view import authenticated
+from .model import ReportControl
 
 class APIReportControlHandler(APIBaseHandler):
     '''
@@ -26,7 +27,7 @@ class APIReportControlHandler(APIBaseHandler):
             start = int(self.get_argument("start"))
             count = int(self.get_argument("count"))
             report_list = ReportControl.get_report_by_range(start, start+count)
-            self.write(json.dumps(report_list, cls=ReportJsonEncoder))
+            self.write(json.dumps(report_list, cls=MainJsonEncoder))
         else:
             raise HTTPError(400)
 
@@ -35,7 +36,7 @@ class APIReportControlHandler(APIBaseHandler):
         music_id = self.get_argument("music_id")
         report_info = self.get_argument("report_info")
         report = ReportControl.add_report(music_id, report_info)
-        self.write(json.dumps(report, cls=ReportJsonEncoder))
+        self.write(json.dumps(report, cls=MainJsonEncoder))
 
     @authenticated
     def delete(self):
@@ -54,7 +55,7 @@ class APIReportHandler(APIBaseHandler):
     @authenticated
     def get(self, report_id):
         report = ReportControl.get_report(report_id)
-        self.write(json.dumps(report, cls=ReportJsonEncoder))
+        self.write(json.dumps(report, cls=MainJsonEncoder))
 
     @authenticated
     def delete(self, report_id):
