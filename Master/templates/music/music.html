@@ -69,22 +69,23 @@
             <table class="table table-hover" id="addSong">
                 <thead>  
                     <td><strong>music_id</strong></td>
-                    <td><strong>music_album</strong></td>
-                    <td><strong>music_artist</strong></td>
                     <td><strong>music_name</strong></td>
+                    <td><strong>music_artist</strong></td>
+                    <td><strong>music_album</strong></td>
+                    <td><strong>music_genre</strong></td>
                 </thead>
                 <tbody ></tbody>
             </table>
             <div align='middle' class="paginator"></div>
         </div>
 
-    <div class="tab-pane" id="profile">
-        <div class="tab-pane active" id="home">
-            <div id="pageinfo"></div>
-            <div class="paginator"></div>      
+        <div class="tab-pane" id="profile">
+            <div class="tab-pane active" id="home">
+                <div id="pageinfo"></div>
+                <div class="paginator"></div>      
             </div>
-    </div>   
-</div>
+        </div>   
+    </div>
 {% end %}
 
 {% block extern_lib %}
@@ -123,9 +124,10 @@ $('#refreshList').bind('click',function(event){
                 for(var i = 0;i < data.length;++i){
                     var tdstr = 
                         '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
-                        <td>'+ data[i].music_album +'</td> \
-                        <td>' + data[i].music_artist+'</td> \
                         <td>'+data[i].music_name+'</td> \
+                        <td>' + data[i].music_artist+'</td> \
+                        <td>'+ data[i].music_album +'</td> \
+                        <td>'+data[i].music_genre+'</td> \
                         <td><audio controls ="controls" preload="none" src="' + data[i].music_url +'"/><audio/></td>\
                         <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp\
                         <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
@@ -174,27 +176,35 @@ function editSong(event){
         type:'get',
         url: "/api/music/" + musicId + '/',
         async : false,
+        dataType:'json',
         success:function(data){
-            var dataObj = eval('(' + data + ')');
-            var musicId = dataObj.music_id;
-            var musicAlbum = dataObj.music_album;
-            var musicArtist = dataObj.music_artist;
-            var musicName = dataObj.music_name;
-            console.info(dataObj.music_url);
-            console.info(dataObj);
+            // var dataObj = eval('(' + data + ')');
+            // var musicId = dataObj.music_id;
+            // var musicAlbum = dataObj.music_album;
+            // var musicArtist = dataObj.music_artist;
+            // var musicName = dataObj.music_name;
+            // var musicId = data.music_id;
+            // var musicAlbum = data.music_album;
+            // var musicArtist = data.music_artist;
+            // var musicName = data.music_name;
+
+            // console.info(dataObj.music_url);
+            // console.info(dataObj);
             $("#editSong").empty();
                 var strInputText = 
-                      '<div class="input-group"><span class="input-group-addon">music_id</span>\
-                      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
-                      <input type="text" class="form-control" disabled="disabled" value="' + dataObj.music_id +'"></br>\
-                      <span class="input-group-addon">music_album</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
-                      <input  type="text" class="form-control" value="' + dataObj.music_album +'"></br>\
-                      <span class="input-group-addon">music_artist</span>\
-                      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
-                      <input  type="text" class="form-control" value="' + dataObj.music_artist +'"></br>\
-                      <span class="input-group-addon">music_name</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
-                      <input  type="text" class="form-control" value="' + dataObj.music_name +'"></br>\
-                      <audio controls ="controls" preload="none" src="' + dataObj.music_url +'"/><audio/>\
+                    '<div class="input-group"><span class="input-group-addon">music_id</span>\
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                    <input type="text" class="form-control" disabled="disabled" value="' + data.music_id +'"></br>\
+                    <span class="input-group-addon">music_name</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                    <input  type="text" class="form-control" value="' + data.music_name +'"></br>\
+                    <span class="input-group-addon">music_artist</span>\
+                    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                    <input  type="text" class="form-control" value="' + data.music_artist +'"></br>\
+                    <span class="input-group-addon">music_album</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
+                    <input  type="text" class="form-control" value="' + data.music_album +'"></br>\
+                    <span class="input-group-addon">music_genre</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
+                    <input  type="text" class="form-control" value="' + data.music_genre +'"></br>\
+                    <audio controls ="controls" preload="none" src="' + data.music_url +'"/><audio/>\
                     </div>';
                 $("#editSong").append(strInputText);
         },
@@ -213,38 +223,40 @@ $('#updateSongInfo').bind('click',function(event){
     var info = $('#editSong div').children();
     // console.info("##########");
     // console.info(info);
-    // console.info($(info[1]).val());
-    // console.info($(info[4]).val());
-    // console.info($(info[7]).val());
-    // console.info($(info[10]).val());
+    // console.info($(info[1]).val()); // id
+    // console.info($(info[4]).val()); // name
+    // console.info($(info[7]).val()); // artist
+    // console.info($(info[10]).val());// album
+    // console.info($(info[13]).val());// genre
 
     var musicId = $(info[1]).val();
-    var musicAlbum = $(info[4]).val();
+    var musicName = $(info[4]).val();
     var musicArtist = $(info[7]).val();
-    var musicName = $(info[10]).val();
-    var url = "http://cdn.search-ebooks.org/music_file/" +  + '/';
+    var musicAlbum = $(info[10]).val();
+    var musicGenre = $(info[13]).val();
     
     $.ajax({
         type:'put',
         url: '/api/music/' + musicId + '/',
         data:{
-            music_album: musicAlbum,
-            music_artist: musicArtist,
             music_name: musicName,
+            music_artist: musicArtist,
+            music_album: musicAlbum,
+            music_genre: musicGenre,
         },
         async : false,
         success:function(){
            //parent.location.reload();
            console.info($(this));
            var tdstr = '<tr class="' + musicId + '"><td>'+ musicId +'</td> \
-                            <td>'+ musicAlbum +'</td> \
-                            <td>' + musicArtist +'</td> \
                             <td>'+ musicName +'</td> \
+                            <td>' + musicArtist +'</td> \
+                            <td>'+ musicAlbum +'</td> \
+                            <td>'+ musicGenre +'</td> \
                             <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp \
                             <button id="' + musicId + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
                             </tr>';
            $('.' + musicId).replaceWith(tdstr);
-
          }
      });
     
@@ -258,28 +270,31 @@ function searchMusic(){
         type:'get',
         url: "/api/music/" + musicId + '/',
         async : false,
+        dataType: 'json',
         success:function(data){
-            var dataObj = eval('(' + data + ')');
-            var musicId = dataObj.music_id;
-            var musicAlbum = dataObj.music_album;
-            var musicArtist = dataObj.music_artist;
-            var musicName = dataObj.music_name;
-            console.info(dataObj.music_url);
-            console.info(dataObj);
+            // var dataObj = eval('(' + data + ')');
+            // var musicId = dataObj.music_id;
+            // var musicAlbum = dataObj.music_album;
+            // var musicArtist = dataObj.music_artist;
+            // var musicName = dataObj.music_name;
+            // console.info(dataObj.music_url);
+            // console.info(dataObj);
             $("#editSong").empty();
                 var strInputText = 
                       '<div class="input-group"><span class="input-group-addon">music_id</span>\
-                      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
-                      <input type="text" class="form-control" disabled="disabled" value="' + dataObj.music_id +'"></br>\
-                      <span class="input-group-addon">music_album</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
-                      <input  type="text" class="form-control" value="' + dataObj.music_album +'"></br>\
-                      <span class="input-group-addon">music_artist</span>\
-                      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
-                      <input  type="text" class="form-control" value="' + dataObj.music_artist +'"></br>\
-                      <span class="input-group-addon">music_name</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
-                      <input  type="text" class="form-control" value="' + dataObj.music_name +'"></br>\
-                      <audio controls ="controls" preload="none" src="' + dataObj.music_url +'"/><audio/>\
-                    </div>';
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                        <input type="text" class="form-control" disabled="disabled" value="' + data.music_id +'"></br>\
+                        <span class="input-group-addon">music_name</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                        <input  type="text" class="form-control" value="' + data.music_name +'"></br>\
+                        <span class="input-group-addon">music_artist</span>\
+                        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
+                        <input  type="text" class="form-control" value="' + data.music_artist +'"></br>\
+                        <span class="input-group-addon">music_album</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
+                        <input  type="text" class="form-control" value="' + data.music_album +'"></br>\
+                        <span class="input-group-addon">music_genre</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
+                        <input  type="text" class="form-control" value="' + data.music_genre +'"></br>\
+                        <audio controls ="controls" preload="none" src="' + data.music_url +'"/><audio/>\
+                      </div>';
                 $("#editSong").append(strInputText);
         },
         error:function(){
@@ -373,12 +388,13 @@ $.ajax( {
                         $("#addSong > tbody").empty();
                         for(var i = 0;i < data.length;++i){
                             var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
-                            <td>'+ data[i].music_album +'</td> \
-                            <td>' + data[i].music_artist+'</td> \
-                            <td>'+data[i].music_name+'</td> \
-                            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp \
-                            <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
-                            </tr>';
+                                <td>'+data[i].music_name+'</td> \
+                                <td>' + data[i].music_artist+'</td> \
+                                <td>'+ data[i].music_album +'</td> \
+                                <td>'+data[i].music_genre+'</td> \
+                                <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp \
+                                <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
+                                </tr>';
                             //console.info(tdstr);
                             $("#addSong > tbody:last").append(tdstr);
                         }                  
@@ -406,15 +422,16 @@ $(document).ready(function(){
         async : false,
         success:function(data){
             $("#addSong > tbody").empty();
-            console.info(data);
+            // console.info(data);
             for(var i = 0;i < data.length;++i){
                 var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
-                <td>'+ data[i].music_album +'</td> \
-                <td>' + data[i].music_artist+'</td> \
-                <td>'+data[i].music_name+'</td> \
-                <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp\
-                <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
-                </tr>';
+                    <td>'+data[i].music_name+'</td> \
+                    <td>' + data[i].music_artist+'</td> \
+                    <td>'+ data[i].music_album +'</td> \
+                    <td>'+data[i].music_genre+'</td> \
+                    <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp\
+                    <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
+                    </tr>';
                 //console.info(tdstr);
                 $("#addSong > tbody:last").append(tdstr);
             }                  
