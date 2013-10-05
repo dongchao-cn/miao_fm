@@ -3,15 +3,14 @@ import os
 import tornado
 import json
 
-from user.view import authenticated, BaseHandler
+from user.view import authenticated, APIBaseHandler
 from .model import MusicControl,MusicJsonEncoder
 from master_config import ABS_PATH
 
-class APIMusicControlHandler(BaseHandler):
+class APIMusicControlHandler(APIBaseHandler):
     '''
     get:
-        get music range
-        list all music by range
+        get music status or range
 
     post:
         add a new music
@@ -21,10 +20,6 @@ class APIMusicControlHandler(BaseHandler):
     '''
     @authenticated
     def get(self):
-        '''
-        return base info about music or
-        return music list
-        '''
         by = self.get_argument('by')
         if by == 'status':
             base_info = {'total_count':MusicControl.get_music_count()}
@@ -52,7 +47,7 @@ class APIMusicControlHandler(BaseHandler):
         MusicControl.remove_all_music()
         self.write('')
 
-class APIMusicHandler(BaseHandler):
+class APIMusicHandler(APIBaseHandler):
     '''
     get:
         get music details
@@ -87,7 +82,7 @@ class APIMusicHandler(BaseHandler):
         music.remove()
         self.write('')
 
-class APINextMusicHandler(BaseHandler):
+class APINextMusicHandler(APIBaseHandler):
     '''
     get:
         get next music for play
@@ -96,6 +91,6 @@ class APINextMusicHandler(BaseHandler):
         music = MusicControl.get_next_music()
         self.write(json.dumps(music, cls=MusicJsonEncoder))
 
-class MusicControlHandler(BaseHandler):
+class MusicControlHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("music.html")

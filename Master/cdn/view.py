@@ -2,14 +2,13 @@
 import os
 import json
 import tornado
-from user.view import authenticated, BaseHandler
+from user.view import authenticated, APIBaseHandler
 from .model import CdnControl, CdnJsonEncoder
 
-class APICdnControlHandler(BaseHandler):
+class APICdnControlHandler(APIBaseHandler):
     '''
     get:
-        get cdn range
-        list all cdn by range
+        get cdn status or range
 
     post:
         add a new cdn
@@ -19,10 +18,6 @@ class APICdnControlHandler(BaseHandler):
     '''
     @authenticated
     def get(self):
-        '''
-        return base info about cdn or
-        return cdn list
-        '''
         by = self.get_argument('by')
         if by == 'status':
             base_info = {'total_count':CdnControl.get_cdn_count()}
@@ -49,7 +44,7 @@ class APICdnControlHandler(BaseHandler):
         CdnControl.remove_all_cdn()
         self.write('')
 
-class APICdnHandler(BaseHandler):
+class APICdnHandler(APIBaseHandler):
     '''
     get:
         get cdn details
@@ -82,6 +77,6 @@ class APICdnHandler(BaseHandler):
         cdn.remove()
         self.write('')
 
-class CdnHandler(BaseHandler):
+class CdnHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("cdn/cdn.html")

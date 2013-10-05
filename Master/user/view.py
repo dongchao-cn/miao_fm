@@ -7,7 +7,7 @@ from tornado.web import HTTPError
 
 from model import UserControl, UserJsonEncoder
 
-class BaseHandler(tornado.web.RequestHandler):
+class APIBaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie('user')
 
@@ -25,11 +25,10 @@ def authenticated(method):
         return method(self, *args, **kwargs)
     return wrapper
 
-class APIUserControlHandler(BaseHandler):
+class APIUserControlHandler(APIBaseHandler):
     '''
     get:
-        get user range
-        list all user by range
+        get user status or range
 
     post:
         add a new user
@@ -39,10 +38,6 @@ class APIUserControlHandler(BaseHandler):
     '''
     @authenticated
     def get(self):
-        '''
-        return base info about user or
-        return user list
-        '''
         by = self.get_argument('by')
         if by == 'status':
             base_info = {'total_count':UserControl.get_user_count()}
@@ -67,7 +62,7 @@ class APIUserControlHandler(BaseHandler):
         UserControl.remove_all_user()
         self.write('')
 
-class APIUserHandler(BaseHandler):
+class APIUserHandler(APIBaseHandler):
     '''
     get:
         get user details
@@ -98,7 +93,7 @@ class APIUserHandler(BaseHandler):
         user.remove()
         self.write('')
 
-class APIUserCurrentHandler(BaseHandler):
+class APIUserCurrentHandler(APIBaseHandler):
     '''
     get:
         get current user
@@ -128,6 +123,6 @@ class APIUserCurrentHandler(BaseHandler):
     def delete(self):
         self.clear_cookie('user')
 
-class UserLoginHandler(BaseHandler):
+class UserLoginHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("user/login.html")
