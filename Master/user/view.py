@@ -118,4 +118,4 @@ class APIUserCurrentHandler(APIBaseHandler):
 
 class UserLoginHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("user/login.html")
+        self.render("login.html")
