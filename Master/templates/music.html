@@ -125,8 +125,9 @@ $('#refreshList').bind('click',function(event){
             url: "/api/music/",
             dataType:'json',
             data: {
-                 start:0,
-                 count:items_pre_page
+                by:'range',
+                start:0,
+                count:items_pre_page
             },
             async : true,
             success:function(data){
@@ -348,8 +349,9 @@ $(function(){
             url: "/api/music/",
             dataType:'json',
             data: {
-                 start:0,
-                 count:items_pre_page
+                by:'range',
+                start:0,
+                count:items_pre_page
             },
             async : true,
             success:function(data){
@@ -380,6 +382,9 @@ $.ajax( {
     url:'/api/music/',// 跳转到 action
     type:'get',
     dataType:'json',
+    data: {
+        by:'status'
+    },
     success:function(data) {
         var options = {
             currentPage: 1,
@@ -390,12 +395,13 @@ $.ajax( {
                     url: "/api/music/",
                     dataType:'json',
                     data: {
+                        by:'range',
                         start:(page-1)*items_pre_page,
                         count:items_pre_page
                     },
                     async : false,
                     success:function(data){
-                        console.info(data.length);
+                        // console.info(data.length);
                         $("#addSong > tbody").empty();
                         for(var i = 0;i < data.length;++i){
                             var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
@@ -427,6 +433,7 @@ $(document).ready(function(){
         url: "/api/music/",
         dataType:'json',
         data: {
+            by:'range',
             start:0,
             count:items_pre_page
         },
