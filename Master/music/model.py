@@ -42,7 +42,7 @@ class MusicJsonEncoder(json.JSONEncoder):
                 'music_genre' : obj.music_genre,
                 'file_id' : obj.file_id,
                 'music_url' : obj.music_url,
-                'upload_data' : obj.upload_data}
+                'upload_date' : obj.upload_date}
         else:
             return json.JSONEncoder.default(self, obj)
 
@@ -61,7 +61,7 @@ class Music(Document):
 
     # upload info
     # upload_user = ReferenceField('')
-    upload_data = DateTimeField(default=datetime.datetime.now())
+    upload_date = DateTimeField(default=datetime.datetime.now())
 
     @property
     def music_id(self):
@@ -79,7 +79,7 @@ class Music(Document):
             return ''
 
     meta = {
-        'ordering': ['-upload_data']
+        'ordering': ['-upload_date']
     }
 
     def __str__(self):
@@ -94,7 +94,7 @@ class Music(Document):
         self.music_artist = music_artist
         self.music_album = music_album
         self.music_genre = music_genre
-        self.upload_data = datetime.datetime.now()
+        self.upload_date = datetime.datetime.now()
         self.save()
 
     def update_file(self, file):

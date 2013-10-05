@@ -6,6 +6,7 @@ import tornado.web
 import cdn.view
 import music.view
 import user.view
+import report.view
 
 import gridfs
 from pymongo import Connection
@@ -61,6 +62,9 @@ application = tornado.web.Application([
     (r"/api/user/", user.view.APIUserControlHandler),
     (r"/api/user/(\w{24})/", user.view.APIUserHandler),
     (r"/api/user/current/", user.view.APIUserCurrentHandler),
+
+    (r"/api/report/", report.view.APIReportControlHandler),
+    (r"/api/report/(\w{24})/", report.view.APIReportHandler),
 
     # admin page
     (r"/admin/", AdminHandler),
