@@ -2,21 +2,9 @@
 import time
 import json
 import tornado
-import functools
 
-from tornado.web import HTTPError
-
-from base_def import APIBaseHandler, MainJsonEncoder
-from .model import UserControl
-
-def authenticated(method):
-    @functools.wraps(method)
-    def wrapper(self, *args, **kwargs):
-        # print self.current_user
-        if not self.current_user:
-            raise HTTPError(403)
-        return method(self, *args, **kwargs)
-    return wrapper
+from util import APIBaseHandler, MainJsonEncoder
+from .model import UserControl, authenticated
 
 class APIUserControlHandler(APIBaseHandler):
     '''

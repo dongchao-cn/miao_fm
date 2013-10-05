@@ -7,8 +7,20 @@ if __name__ == '__main__':
 import json
 import hashlib
 import datetime
+
 from mongoengine import *
 from bson.objectid import ObjectId
+import functools
+from tornado.web import HTTPError
+
+def authenticated(method):
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        # print self.current_user
+        if not self.current_user:
+            raise HTTPError(403)
+        return method(self, *args, **kwargs)
+    return wrapper
 
 class User(Document):
     '''

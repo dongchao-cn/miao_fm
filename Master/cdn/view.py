@@ -2,8 +2,8 @@
 import os
 import json
 import tornado
-from base_def import APIBaseHandler, MainJsonEncoder
-from user.view import authenticated
+from util import APIBaseHandler, MainJsonEncoder
+from user.model import authenticated
 from .model import CdnControl
 
 class APICdnControlHandler(APIBaseHandler):

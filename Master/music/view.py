@@ -3,8 +3,8 @@ import os
 import tornado
 import json
 
-from base_def import APIBaseHandler, MainJsonEncoder
-from user.view import authenticated
+from util import APIBaseHandler, MainJsonEncoder
+from user.model import authenticated
 from .model import MusicControl
 from master_config import ABS_PATH
 
