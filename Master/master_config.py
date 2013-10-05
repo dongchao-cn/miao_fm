@@ -19,7 +19,7 @@ ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
 def master_nginx_config():
     server_config = '''
 upstream master_stream {
-    server 127.0.0.1:8000;
+    server 127.0.0.1:6000;
 }
 
 server {
@@ -112,7 +112,7 @@ def add_user_admin():
 
 def config():
     import mongoengine
-    mongoengine.connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
+    mongoengine.connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
     print 'generate nginx config...'
     master_nginx_config()
     print 'generate mongodb config...'
@@ -127,7 +127,7 @@ def config():
     except mongoengine.connection.ConnectionError:
         print 'MongoDB NOT started!!!'
         print 'Please use "mongod -f %s/master_mongodb.conf" to start MongoDB.' % (ABS_PATH)
-        print 'And check %s, %s DNS settings.' % (SERVER,MASTER_CDN)
+        # print 'And check %s, %s DNS settings.' % (SERVER,MASTER_CDN)
         print 'Then re execute this file.'
         os._exit(-1)
     print 'Finish!'

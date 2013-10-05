@@ -14,11 +14,11 @@ from mongoengine import *
 
 from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
-con = Connection("%s:%s" % (MASTER_CDN, MASTER_MONGODB_PORT))
+con = Connection("%s:%s" % ('127.0.0.1', MASTER_MONGODB_PORT))
 db = con['miao_fm_cdn']
 fs = gridfs.GridFS(db)
 
-connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
+connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
 
 class FileHandler(tornado.web.RequestHandler):
     def get(self, file_id):
@@ -72,5 +72,5 @@ application = tornado.web.Application([
 ],**settings)
 
 if __name__ == "__main__":
-    application.listen(8000)
+    application.listen(6000)
     tornado.ioloop.IOLoop.instance().start()
