@@ -42,7 +42,7 @@ class APICdnControlHandler(APIBaseHandler):
     @authenticated
     def delete(self):
         CdnControl.remove_all_cdn()
-        self.write('')
+        self.write({})
 
 class APICdnHandler(APIBaseHandler):
     '''
@@ -75,7 +75,7 @@ class APICdnHandler(APIBaseHandler):
     def delete(self, cdn_id):
         cdn = CdnControl.get_cdn(cdn_id)
         cdn.remove()
-        self.write('')
+        self.write({})
 
 class CdnHandler(tornado.web.RequestHandler):
     def get(self):

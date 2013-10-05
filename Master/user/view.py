@@ -1,4 +1,5 @@
 #coding:utf8
+import time
 import json
 import tornado
 import functools
@@ -8,15 +9,20 @@ from tornado.web import HTTPError
 from model import UserControl, UserJsonEncoder
 
 class APIBaseHandler(tornado.web.RequestHandler):
+    # def prepare(self):
+    #     self.begin_time = time.time()
+
+    # def on_finish(self):
+    #     self.cost = time.time() - self.begin_time
+    #     print self.request.method, self.request.uri, int(self.cost * 10e3)
+
     def get_current_user(self):
         return self.get_secure_cookie('user')
 
-def authenticated(method):
-    """Decorate methods with this to require that the user be logged in.
+    def set_default_headers(self):
+        self.set_header ('Content-Type', 'application/json')
 
-    If the user is not logged in, they will be redirected to the configured
-    `login url <RequestHandler.get_login_url>`.
-    """
+def authenticated(method):
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
         # print self.current_user
@@ -60,7 +66,7 @@ class APIUserControlHandler(APIBaseHandler):
     @authenticated
     def delete(self):
         UserControl.remove_all_user()
-        self.write('')
+        self.write({})
 
 class APIUserHandler(APIBaseHandler):
     '''
@@ -91,7 +97,7 @@ class APIUserHandler(APIBaseHandler):
     def delete(self, user_id):
         user = UserControl.get_user(user_id)
         user.remove()
-        self.write('')
+        self.write({})
 
 class APIUserCurrentHandler(APIBaseHandler):
     '''
@@ -118,10 +124,10 @@ class APIUserCurrentHandler(APIBaseHandler):
             self.write({'status':True})
             return
         self.write({'status':False})
-        return
 
     def delete(self):
         self.clear_cookie('user')
+        self.write({})
 
 class UserLoginHandler(tornado.web.RequestHandler):
     def get(self):

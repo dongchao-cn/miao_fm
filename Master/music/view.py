@@ -45,7 +45,7 @@ class APIMusicControlHandler(APIBaseHandler):
     @authenticated
     def delete(self):
         MusicControl.remove_all_music()
-        self.write('')
+        self.write({})
 
 class APIMusicHandler(APIBaseHandler):
     '''
@@ -80,7 +80,7 @@ class APIMusicHandler(APIBaseHandler):
     def delete(self, music_id):
         music = MusicControl.get_music(music_id)
         music.remove()
-        self.write('')
+        self.write({})
 
 class APINextMusicHandler(APIBaseHandler):
     '''
