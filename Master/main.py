@@ -46,34 +46,30 @@ settings = {
 application = tornado.web.Application([
     # main page
     (r"/", MainHandler),
-    (r"/login/", user.view.UserLoginHandler),
-
-    # local music server
-    (r"/music_file/(\w{24})/", FileHandler),
 
     # api
-    # (r"/api/music/(\w{24})/", music.view.APIMusicHandler),
-    (r"/api/music/", music.view.APIMusicControlHandler),
+    (r"/api/music/", music.view.APIMusicSetHandler),
     (r"/api/music/(\w{24})/", music.view.APIMusicHandler),
-    (r"/api/music/next/", music.view.APINextMusicHandler),
+    (r"/api/music/next/", music.view.APIMusicNextHandler),
 
-    (r"/api/cdn/", cdn.view.APICdnControlHandler),
+    (r"/api/cdn/", cdn.view.APICdnSetHandler),
     (r"/api/cdn/(\w{24})/", cdn.view.APICdnHandler),
 
-    (r"/api/user/", user.view.APIUserControlHandler),
+    (r"/api/user/", user.view.APIUserSetHandler),
     (r"/api/user/(\w{24})/", user.view.APIUserHandler),
     (r"/api/user/current/", user.view.APIUserCurrentHandler),
 
-    (r"/api/report/", report.view.APIReportControlHandler),
+    (r"/api/report/", report.view.APIReportSetHandler),
     (r"/api/report/(\w{24})/", report.view.APIReportHandler),
 
     # admin page
+    (r"/login/", user.view.UserLoginHandler),
     (r"/admin/", AdminHandler),
-
-    (r"/admin/music/", music.view.MusicControlHandler),
-
+    (r"/admin/music/", music.view.MusicSetHandler),
     (r"/admin/cdn/", cdn.view.CdnHandler),
     
+    # local music server
+    (r"/music_file/(\w{24})/", FileHandler),
 ],**settings)
 
 if __name__ == "__main__":

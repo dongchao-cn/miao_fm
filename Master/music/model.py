@@ -17,11 +17,11 @@ import mongoengine.errors
 from mongoengine import *
 from bson.objectid import ObjectId
 
-from cdn.model import CdnControl
+from cdn.model import CdnSet
 from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
-# connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
-# register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
+# connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
+# register_connection('miao_fm_cdn', 'miao_fm_cdn', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
 
 class Music(Document):
     '''
@@ -46,7 +46,7 @@ class Music(Document):
 
     @property
     def music_url(self):
-        return 'http://%s/music_file/%s/' % (CdnControl.get_free_cdn().url, self.file_id)
+        return 'http://%s/music_file/%s/' % (CdnSet.get_free_cdn().url, self.file_id)
 
     @property
     def file_id(self):
@@ -64,9 +64,6 @@ class Music(Document):
             (self.music_name, self.music_file)).encode('utf-8')
     
     def update_info(self, music_name, music_artist, music_album, music_genre):
-        '''
-        update music info
-        '''
         self.music_name = music_name
         self.music_artist = music_artist
         self.music_album = music_album
@@ -75,9 +72,6 @@ class Music(Document):
         self.save()
 
     def update_file(self, file):
-        '''
-        update music info
-        '''
         try:
             self.reload()
             with open(file, 'r') as f:
@@ -87,27 +81,19 @@ class Music(Document):
             pass
 
     def remove(self):
-        '''
-        del music from db and remove file
-        '''
         self.music_file.delete()
         self.delete()
 
-class MusicControl(object):
+class MusicSet(object):
     '''
     Music control functions
     '''
 
     def __init__(self):
-        raise Exception,'MusicControl can\'t be __init__'
+        raise Exception,'MusicSet can\'t be __init__'
 
     @classmethod
     def add_music(cls, file, remove=False):
-        '''
-        add new music and store the music file
-        read music info from id3
-        if music_name exist, rewrite it
-        '''
         music_name, music_artist, music_album, music_genre = _get_info_from_id3(file)
         music = Music(music_name=music_name, music_artist=music_artist, 
             music_album=music_album, music_genre=music_genre, music_file=open(file, 'r').read()).save()
@@ -116,10 +102,6 @@ class MusicControl(object):
 
     @classmethod
     def get_music(cls, music_id):
-        '''
-        get music by music_id
-        return Music Object or None
-        '''
         try:
             return Music.objects(pk=music_id).first()
         except ValidationError:
@@ -127,9 +109,6 @@ class MusicControl(object):
 
     @classmethod
     def remove_all_music(cls):
-        '''
-        del music from db and remove file
-        '''
         for music in Music.objects():
             music.remove()
 
@@ -140,24 +119,14 @@ class MusicControl(object):
 
     @classmethod
     def get_music_by_name(cls, music_name):
-        '''
-        get music by music_name
-        return Music Object or None
-        '''
         return Music.objects(music_name=music_name).first()
 
     @classmethod
     def get_music_by_range(cls, start, end):
-        '''
-        get music by range
-        '''
         return [each for each in Music.objects[start : end]]
 
     @classmethod
     def get_music_count(cls):
-        '''
-        get music count
-        '''
         return Music.objects().count()
 
 def _lame_mp3(infile, music, remove=False):
@@ -217,56 +186,53 @@ def _get_info_from_id3(file):
     return music_name, music_artist, music_album, music_genre
 
 def _get_random_music():
-    '''
-    get random music
-    '''
     num = random.randint(0,Music.objects().count()-1)
     return Music.objects[num]
 
 if __name__ == '__main__':
     # connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
     # try:
-    #     MusicControl()
+    #     MusicSet()
     # except Exception:
     #     pass
 
-    # music = MusicControl.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+    # music = MusicSet.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
     # print music
     # import time
     # time.sleep(10)
-    # music = MusicControl.get_music(u'兄妹')
+    # music = MusicSet.get_music(u'兄妹')
     # print music.play_data
     # print music.local_url
 
-    # MusicControl.del_music(u'兄妹')
-    # music = MusicControl.get_music(u'兄妹')
+    # MusicSet.del_music(u'兄妹')
+    # music = MusicSet.get_music(u'兄妹')
     # print music
 
-    # MusicControl.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+    # MusicSet.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
     # for i in range(8):
-    #     MusicControl.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
-    # print MusicControl.get_music_page_count()
-    # print MusicControl.get_music_by_page(1)
-    # print MusicControl.get_music_by_page(2)
+    #     MusicSet.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+    # print MusicSet.get_music_page_count()
+    # print MusicSet.get_music_by_page(1)
+    # print MusicSet.get_music_by_page(2)
 
-    # music = MusicControl.get_music(u'兄妹')
+    # music = MusicSet.get_music(u'兄妹')
     # print music.local_url
-    # MusicControl.del_music(u'兄妹')
-    # print MusicControl.get_music(u'兄妹')
-    # MusicControl.add_music(u'兄妹','eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+    # MusicSet.del_music(u'兄妹')
+    # print MusicSet.get_music(u'兄妹')
+    # MusicSet.add_music(u'兄妹','eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
 
-    # music = MusicControl.get_music(u'兄妹')
+    # music = MusicSet.get_music(u'兄妹')
     # print music.play_data
 
-    # print MusicControl.get_next_music()
+    # print MusicSet.get_next_music()
 
-    # MusicControl.add_music(u'兄妹','eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
-    # music = MusicControl.get_music(u'兄妹')
+    # MusicSet.add_music(u'兄妹','eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
+    # music = MusicSet.get_music(u'兄妹')
     # print music.play_data
     # music.update("dsdsds")
     # print music.play_data
 
-    # print MusicControl.get_music_page_count()
+    # print MusicSet.get_music_page_count()
 
     list_dirs = os.walk('/media/823E59BF3E59AD43/Music/')
     for root, dirs, files in list_dirs: 
@@ -285,5 +251,5 @@ if __name__ == '__main__':
 
 
 
-    # print MusicControl.add_music('/media/823E59BF3E59AD43/Music/buckle up n chuggeluck heaven.mp3')
+    # print MusicSet.add_music('/media/823E59BF3E59AD43/Music/buckle up n chuggeluck heaven.mp3')
     pass

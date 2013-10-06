@@ -47,17 +47,14 @@ class User(Document):
         return check_password == self.user_password
 
     def remove(self):
-        '''
-        del user from db
-        '''
         self.delete()
 
-class UserControl(object):
+class UserSet(object):
     '''
     User control functions
     '''
     def __init__(self):
-        raise Exception,'UserControl can\'t be __init__'
+        raise Exception,'UserSet can\'t be __init__'
 
     @classmethod
     def add_user(cls, user_name, user_password):
@@ -67,9 +64,6 @@ class UserControl(object):
 
     @classmethod
     def get_user(cls, user_id):
-        '''
-        get user
-        '''
         try:
             return User.objects(pk=user_id).first()
         except ValidationError:
@@ -77,31 +71,19 @@ class UserControl(object):
 
     @classmethod
     def get_all_user(cls):
-        '''
-        get all user from db
-        '''
         return User.objects()
 
     @classmethod
     def remove_all_user(cls):
-        '''
-        del user info
-        '''
         for user in User.objects():
             user.remove()
 
     @classmethod
     def get_user_by_range(cls, start, end):
-        '''
-        get cdn by range
-        '''
         return [each for each in User.objects[start : end]]
 
     @classmethod
     def get_user_count(cls):
-        '''
-        get cdn count
-        '''
         return User.objects().count()
 
     @classmethod

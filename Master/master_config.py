@@ -90,25 +90,25 @@ rest = true''' % (master_mongodb_dir, MASTER_MONGODB_PORT, log_path)
         f.write(config)
 
 def add_master_cdn():
-    from cdn.model import CdnControl
-    cdn = CdnControl.get_cdn_by_name("master")
+    from cdn.model import CdnSet
+    cdn = CdnSet.get_cdn_by_name("master")
     if cdn:
         cdn.remove()
-    CdnControl.add_cdn("master", MASTER_CDN, True)
+    CdnSet.add_cdn("master", MASTER_CDN, True)
 
 def add_demo_music():
-    from music.model import MusicControl
-    music = MusicControl.get_music_by_name('To Be With You')
+    from music.model import MusicSet
+    music = MusicSet.get_music_by_name('To Be With You')
     if music:
         music.remove()
-    MusicControl.add_music(ABS_PATH+'/demo.mp3')
+    MusicSet.add_music(ABS_PATH+'/demo.mp3')
 
 def add_user_admin():
-    from user.model import UserControl
-    user = UserControl.get_user_by_name(ADMIN_NAME)
+    from user.model import UserSet
+    user = UserSet.get_user_by_name(ADMIN_NAME)
     if user:
         user.remove()
-    UserControl.add_user(ADMIN_NAME, ADMIN_PASSWORD)
+    UserSet.add_user(ADMIN_NAME, ADMIN_PASSWORD)
 
 def config():
     import mongoengine

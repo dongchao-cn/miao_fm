@@ -4,9 +4,9 @@ import json
 import tornado
 from util import APIBaseHandler, MainJsonEncoder
 from user.model import authenticated
-from .model import CdnControl
+from .model import CdnSet
 
-class APICdnControlHandler(APIBaseHandler):
+class APICdnSetHandler(APIBaseHandler):
     '''
     get:
         get cdn status or range
@@ -21,12 +21,12 @@ class APICdnControlHandler(APIBaseHandler):
     def get(self):
         by = self.get_argument('by')
         if by == 'status':
-            base_info = {'total_count':CdnControl.get_cdn_count()}
+            base_info = {'total_count':CdnSet.get_cdn_count()}
             self.write(base_info)
         elif by == 'range':
             start = int(self.get_argument("start"))
             count = int(self.get_argument("count"))
-            cdn_list = CdnControl.get_cdn_by_range(start, start+count)
+            cdn_list = CdnSet.get_cdn_by_range(start, start+count)
             self.write(json.dumps(cdn_list, cls=MainJsonEncoder))
         else:
             raise HTTPError(400)
@@ -37,12 +37,12 @@ class APICdnControlHandler(APIBaseHandler):
         url_path = self.get_argument("url_path")
         online = self.get_argument("online")
         online = True if online else False
-        cdn = CdnControl.add_cdn(name, url_path, online)
+        cdn = CdnSet.add_cdn(name, url_path, online)
         self.write(json.dumps(cdn, cls=MainJsonEncoder))
 
     @authenticated
     def delete(self):
-        CdnControl.remove_all_cdn()
+        CdnSet.remove_all_cdn()
         self.write({})
 
 class APICdnHandler(APIBaseHandler):
@@ -58,7 +58,7 @@ class APICdnHandler(APIBaseHandler):
     '''
     @authenticated
     def get(self, cdn_id):
-        music = CdnControl.get_cdn(cdn_id)
+        music = CdnSet.get_cdn(cdn_id)
         self.write(json.dumps(music, cls=MainJsonEncoder))
 
     @authenticated
@@ -67,14 +67,14 @@ class APICdnHandler(APIBaseHandler):
         url_path = self.get_argument("url_path")
         online = self.get_argument("online")
         online = True if online else False
-        cdn = CdnControl.get_cdn(cdn_id)
+        cdn = CdnSet.get_cdn(cdn_id)
         cdn.update_info(name, url_path, online)
-        cdn = CdnControl.get_cdn(cdn_id)
+        cdn = CdnSet.get_cdn(cdn_id)
         self.write(json.dumps(cdn, cls=MainJsonEncoder))
 
     @authenticated
     def delete(self, cdn_id):
-        cdn = CdnControl.get_cdn(cdn_id)
+        cdn = CdnSet.get_cdn(cdn_id)
         cdn.remove()
         self.write({})
 

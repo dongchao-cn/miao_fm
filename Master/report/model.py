@@ -11,7 +11,7 @@ from bson.objectid import ObjectId
 
 from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
-from music.model import Music, MusicControl
+from music.model import Music, MusicSet
 
 # connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
 
@@ -39,17 +39,17 @@ class Report(Document):
     def remove(self):
         self.delete()
 
-class ReportControl(object):
+class ReportSet(object):
     '''
     Report control functions
     '''
 
     def __init__(self):
-        raise Exception,'ReportControl can\'t be __init__'
+        raise Exception,'ReportSet can\'t be __init__'
 
     @classmethod
     def add_report(cls, report_music_id, report_info):
-        music = MusicControl.get_music(report_music_id)
+        music = MusicSet.get_music(report_music_id)
         report = Report(report_music=music, report_info=report_info).save()
         return report
 
@@ -75,7 +75,7 @@ class ReportControl(object):
 
 if __name__ == '__main__':
     connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
-    # report = ReportControl.add_report('524ffdf056a9e50cbb93a443','dasd')
+    # report = ReportSet.add_report('524ffdf056a9e50cbb93a443','dasd')
     # print report
-    report = ReportControl.get_report_by_range(0,10)[0]
+    report = ReportSet.get_report_by_range(0,10)[0]
     print json.dumps(report, cls=ReportJsonEncoder)
