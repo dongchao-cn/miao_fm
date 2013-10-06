@@ -1,34 +1,181 @@
 {% extends "base.html" %}
 
 {% block extern_head %}
-    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/demo.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/home.css">
+    <link rel="stylesheet" type="text/css" href="/static/jPlayer/skin/blue.monday/jplayer.blue.monday.css">
     <script type="text/javascript" src="/static/js/jquery-1.10.2.js"></script>
-    <script type="text/javascript" src="/static/jquery-jplayer/jquery.jplayer.js"></script>
-    <script type="text/javascript" src="/static/ttw-music-player.js"></script>
-    <script type="text/javascript" src="/static/Ajax.js"></script>
+    <script type="text/javascript" src="/static/jPlayer/js/jquery.jplayer.min.js"></script>
+    <script type="text/javascript" src="/static/jPlayer/js/jplayer.playlist.min.js"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+
+$(document).ready(function(){
+
+    new jPlayerPlaylist({
+        jPlayer: "#jquery_jplayer_1",
+        cssSelectorAncestor: "#jp_container_1"
+    }, 
+    [],{ 
+        ready: function () {
+            var songUrl;
+            $.ajax({
+                type:"get",
+                url:"/api/music/",
+                dataType:'json',
+                async:false,
+                success:function(data){
+                    var listNum = data.total_count;
+                    var randomSong = parseInt(listNum * Math.random());
+                    //console.info(randomSong);
+                    $.ajax({
+                        type:"get",
+                        url:"/api/music/",
+                        dataType:"json",
+                        data:{
+                            start:0,
+                            count:listNum
+                        },
+                        async:false,
+                        success:function(data){
+                            console.info(data[randomSong]);
+                            songUrl = data[randomSong].music_url;
+                            var songTitle = data[randomSong].music_name;
+                            var singerName = data[randomSong].music_artist;  
+                            var songInfo = songTitle + "-" + singerName;
+                            $("#songTitle ul li p").replaceWith(songInfo);                 
+                        }
+                    });
+                },
+            });
+            $(this).jPlayer("setMedia", {
+                mp3:songUrl
+            });
+            $(this).jPlayer("play");
+        },
+        ended: function (event) {
+            $.ajax({
+                type:"get",
+                url:"/api/music/next/",
+                dataType:"json",
+                async:false,
+                success:function(data){
+                    //console.info(data);
+                    //var songInfo = data.music_name + "-" + data.music_artist;
+                    //$("#songTitle ul li p").replaceWith(songInfo);  
+
+                    $("#jquery_jplayer_1").jPlayer("setMedia", {
+                        mp3:data.music_url
+                    });
+                    $("#jquery_jplayer_1").jPlayer("play");
+                }
+            });
+        },
+        swfPath: "js",
+        supplied: "mp3",
+        wmode: "window",
+        smoothPlayBar: true,
+        keyEnabled: true
+    });
+
+    $("#jp-next").click(function(){
+        $.ajax({
+            type:"get",
+            url:"/api/music/next/",
+                dataType:"json",
+                async:false,
+                success:function(data){
+                    console.info(data);
+                    //var songInfo = data.music_name + "-" + data.music_artist;
+                    //$("#songTitle ul li p").replaceWith(songInfo);  
+
+                    $("#jquery_jplayer_1").jPlayer("setMedia", {
+                        mp3:data.music_url
+                    });
+                    $("#jquery_jplayer_1").jPlayer("play");
+                }
+            });
+    });
+
+});
+//]]>
+</script>
 {% end %}
 
 {% block content %}
-    <script type="text/javascript">
-        $(document).ready(function(){
-            myPlaylist = InitPage();
-            var description = '';
+<div>
+</div>
+<div id="container">
+     <div class="row-fluid">
+            <div class="span4">
+                <!--Sidebar content--> 
+                <div id="wrapper">
+                    <div id="header"><h1>西电 FM</h1></div>
+                    <div id="introduction">
+                        <blockquote>
+                          <p>Some text here!!</p>
+                          <small>Someone famous <cite title="Source Title">Source Title</cite></small>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
 
-            $('body').ttwMusicPlayer(myPlaylist, {
-                autoPlay:false, 
-                description:description,
-                jPlayer:{
-                    swfPath:'/static/jquery-jplayer' //You need to override the default swf path any time the directory structure changes
-                },
-                ratingCallback:function(index, playlistItem, rating){
-                    console.info("song over");
-                }
-            });
+            <div class="span2"></div>
 
-            $('.tracklist').hide();
-            $('.rating').hide();
-        });
-    </script>
+            <div class="span6">
+                <!-- music player-->
+
+
+                <div id="jquery_jplayer_1" class="jp-jplayer"></div>
+
+                <div id="jp_container_1" class="jp-audio">
+                    <div class="jp-type-playlist">
+                        <div class="jp-gui jp-interface">
+                            <ul class="jp-controls">
+                                <li><a href="javascript:;" class="jp-previous" tabindex="1" style="visibility:hidden">previous</a></li>
+                                <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
+                                <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+                                <li><a href="javascript:;" class="jp-next" tabindex="1" id="jp-next">next</a></li>
+                                <li><a href="javascript:;" class="jp-stop" tabindex="1" style="visibility:hidden">stop</a></li>
+                                <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+                                <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+                                <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+                            </ul>
+                            <div class="jp-progress">
+                                <div class="jp-seek-bar">
+                                    <div class="jp-play-bar"></div>
+                                </div>
+                            </div>
+                            <div class="jp-volume-bar">
+                                <div class="jp-volume-bar-value"></div>
+                            </div>
+                            <div class="jp-time-holder">
+                                <div class="jp-current-time"></div>
+                                <div class="jp-duration"></div>
+                            </div>
+                            <ul class="jp-toggles" style="visibility:hidden">
+                                <li><a href="javascript:;" class="jp-shuffle" tabindex="1" title="shuffle">shuffle</a></li>
+                                <li><a href="javascript:;" class="jp-shuffle-off" tabindex="1" title="shuffle off">shuffle off</a></li>
+                                <li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>
+                                <li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>
+                            </ul>
+                        </div>
+                        <div class="jp-playlist">
+                            <ul>
+                                <li></li>
+                            </ul>
+                        </div>
+                        <div class="jp-no-solution">
+                            <span>Update Required</span>
+                            To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+    <div id="footer">
+        <p></p>
+    </div>
+</div>
 {% end %}
 

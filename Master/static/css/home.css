@@ -1,0 +1,54 @@
+body {
+	width: 1100px;
+	margin:0 auto;
+	background-image: url(/static/img/bg.png);
+	
+}
+#container {
+	border:0px solid red;
+	height: 690px;
+	width: 1100px;
+}
+#nav {
+	width: 200px;
+	float:right;
+	margin-right: 45px;
+}
+
+#wrapper {
+	margin:100px 0px 0px 110px;
+	border: 0px solid red;
+}
+
+#header {
+	margin:5px;
+	padding:5px;
+
+}
+
+#introduction {
+	margin:5px;
+	padding:5px;
+}
+
+#headBar {
+	height: 20px;
+}
+
+#jp_container_1 {
+	float:left;
+	margin-top:200px;
+	margin-right: 100px;
+	border: 0px solid red;
+}
+
+#footer {
+	height:15px;
+	width:1100px;
+	margin-top: 80px;
+	font-size: 15px;
+	text-align: center;
+	border: 0px solid red;
+	padding:3px;
+}
+
