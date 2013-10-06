@@ -7,21 +7,20 @@ if __name__ == '__main__':
 import json
 import hashlib
 import datetime
+
 from mongoengine import *
 from bson.objectid import ObjectId
+import functools
+from tornado.web import HTTPError
 
-class UserJsonEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime.datetime):
-            return obj.strftime('%Y-%m-%d %H:%M:%S')
-        elif isinstance(obj, ObjectId):
-            return str(obj)
-        elif isinstance(obj, User):
-            return {'user_id' : obj.user_id,
-                'user_name' : obj.user_name,
-                'user_password' : obj.user_password}
-        else:
-            return json.JSONEncoder.default(self, obj)
+def authenticated(method):
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        # print self.current_user
+        if not self.current_user:
+            raise HTTPError(403)
+        return method(self, *args, **kwargs)
+    return wrapper
 
 class User(Document):
     '''
@@ -48,17 +47,14 @@ class User(Document):
         return check_password == self.user_password
 
     def remove(self):
-        '''
-        del user from db
-        '''
         self.delete()
 
-class UserControl(object):
+class UserSet(object):
     '''
     User control functions
     '''
     def __init__(self):
-        raise Exception,'UserControl can\'t be __init__'
+        raise Exception,'UserSet can\'t be __init__'
 
     @classmethod
     def add_user(cls, user_name, user_password):
@@ -68,9 +64,6 @@ class UserControl(object):
 
     @classmethod
     def get_user(cls, user_id):
-        '''
-        get user
-        '''
         try:
             return User.objects(pk=user_id).first()
         except ValidationError:
@@ -78,31 +71,19 @@ class UserControl(object):
 
     @classmethod
     def get_all_user(cls):
-        '''
-        get all user from db
-        '''
         return User.objects()
 
     @classmethod
     def remove_all_user(cls):
-        '''
-        del user info
-        '''
         for user in User.objects():
             user.remove()
 
     @classmethod
     def get_user_by_range(cls, start, end):
-        '''
-        get cdn by range
-        '''
         return [each for each in User.objects[start : end]]
 
     @classmethod
     def get_user_count(cls):
-        '''
-        get cdn count
-        '''
         return User.objects().count()
 
     @classmethod

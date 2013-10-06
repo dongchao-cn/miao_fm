@@ -1,5 +1,5 @@
-{% extends "admin_user_base.html" %}
-{% block extern_head %}
+{% extends "base.html" %}
+{% block extern_lib %}
 <script src="/static/js/jquery.form.js"></script>
 {% end %}
 
@@ -20,7 +20,7 @@
         <div class="control-group">
             <label class="control-label" for="user_password">密码</label>
             <div class="controls">
-                <input type="text" id="user_password" name="user_password"/>
+                <input type="password" id="user_password" name="user_password"/>
             </div>
         </div>
 

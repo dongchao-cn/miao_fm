@@ -2,11 +2,8 @@
 #coding:utf8
 
 # set SERVER and MASTER_CDN to one machine
-SERVER = 'search-ebooks.org'
+SERVER = 'fm.search-ebooks.org'
 MASTER_CDN = 'cdn.search-ebooks.org'
-
-# how many items in one page (for admin pages)
-ITEM_PER_PAGE = 10
 
 MASTER_MONGODB_PATH = '/data/mongo_db'
 MASTER_MONGODB_PORT = 6867
@@ -22,7 +19,7 @@ ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
 def master_nginx_config():
     server_config = '''
 upstream master_stream {
-    server 127.0.0.1:8000;
+    server 127.0.0.1:6000;
 }
 
 server {
@@ -73,12 +70,16 @@ server {
 
 def master_mongodb_config():
     master_mongodb_dir = '%s/master' % (MASTER_MONGODB_PATH)
+    log_path = '%s/mongod.log' % (master_mongodb_dir)
     config = '''
 master = true
+fork = true
 dbpath = %s
-oplogSize = 64
 port = %d
-nojournal = true''' % (master_mongodb_dir, MASTER_MONGODB_PORT)
+logpath = %s
+logappend = true
+nojournal = true
+rest = true''' % (master_mongodb_dir, MASTER_MONGODB_PORT, log_path)
     try:
         if not os.path.exists(master_mongodb_dir):
             os.makedirs(master_mongodb_dir)
@@ -89,33 +90,33 @@ nojournal = true''' % (master_mongodb_dir, MASTER_MONGODB_PORT)
         f.write(config)
 
 def add_master_cdn():
-    from cdn.model import CdnControl
-    cdn = CdnControl.get_cdn_by_name("master")
+    from cdn.model import CdnSet
+    cdn = CdnSet.get_cdn_by_name("master")
     if cdn:
         cdn.remove()
-    CdnControl.add_cdn("master", MASTER_CDN, True)
+    CdnSet.add_cdn("master", MASTER_CDN, True)
 
 def add_demo_music():
-    from music.model import MusicControl
-    music = MusicControl.get_music_by_name('To Be With You')
+    from music.model import MusicSet
+    music = MusicSet.get_music_by_name('To Be With You')
     if music:
         music.remove()
-    MusicControl.add_music(ABS_PATH+'/demo.mp3')
+    MusicSet.add_music(ABS_PATH+'/demo.mp3')
 
 def add_user_admin():
-    from user.model import UserControl
-    user = UserControl.get_user_by_name(ADMIN_NAME)
+    from user.model import UserSet
+    user = UserSet.get_user_by_name(ADMIN_NAME)
     if user:
         user.remove()
-    UserControl.add_user(ADMIN_NAME, ADMIN_PASSWORD)
+    UserSet.add_user(ADMIN_NAME, ADMIN_PASSWORD)
 
 def config():
     import mongoengine
-    mongoengine.connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
     print 'generate nginx config...'
     master_nginx_config()
     print 'generate mongodb config...'
     master_mongodb_config()
+    mongoengine.connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
     try:
         print 'add master cdn...'
         add_master_cdn()
@@ -126,7 +127,7 @@ def config():
     except mongoengine.connection.ConnectionError:
         print 'MongoDB NOT started!!!'
         print 'Please use "mongod -f %s/master_mongodb.conf" to start MongoDB.' % (ABS_PATH)
-        print 'And check %s, %s DNS settings.' % (SERVER,MASTER_CDN)
+        # print 'And check %s, %s DNS settings.' % (SERVER,MASTER_CDN)
         print 'Then re execute this file.'
         os._exit(-1)
     print 'Finish!'

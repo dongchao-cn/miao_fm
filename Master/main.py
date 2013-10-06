@@ -6,6 +6,7 @@ import tornado.web
 import cdn.view
 import music.view
 import user.view
+import report.view
 
 import gridfs
 from pymongo import Connection
@@ -14,11 +15,12 @@ from mongoengine import *
 
 from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
-con = Connection("%s:%s" % (MASTER_CDN, MASTER_MONGODB_PORT))
+con = Connection("%s:%s" % ('127.0.0.1', MASTER_MONGODB_PORT))
 db = con['miao_fm_cdn']
 fs = gridfs.GridFS(db)
 
-connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
+connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
+register_connection('miao_fm_cdn', 'miao_fm_cdn', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
 
 class FileHandler(tornado.web.RequestHandler):
     def get(self, file_id):
@@ -44,33 +46,32 @@ settings = {
 application = tornado.web.Application([
     # main page
     (r"/", MainHandler),
-    (r"/login/", user.view.UserLoginHandler),
-
-    # local music server
-    (r"/music_file/(\w{24})/", FileHandler),
 
     # api
-    # (r"/api/music/(\w{24})/", music.view.APIMusicHandler),
-    (r"/api/music/", music.view.APIMusicControlHandler),
+    (r"/api/music/", music.view.APIMusicSetHandler),
     (r"/api/music/(\w{24})/", music.view.APIMusicHandler),
-    (r"/api/music/next/", music.view.APINextMusicHandler),
+    (r"/api/music/next/", music.view.APIMusicNextHandler),
 
-    (r"/api/cdn/", cdn.view.APICdnControlHandler),
+    (r"/api/cdn/", cdn.view.APICdnSetHandler),
     (r"/api/cdn/(\w{24})/", cdn.view.APICdnHandler),
 
-    (r"/api/user/", user.view.APIUserControlHandler),
+    (r"/api/user/", user.view.APIUserSetHandler),
     (r"/api/user/(\w{24})/", user.view.APIUserHandler),
     (r"/api/user/current/", user.view.APIUserCurrentHandler),
 
+    (r"/api/report/", report.view.APIReportSetHandler),
+    (r"/api/report/(\w{24})/", report.view.APIReportHandler),
+
     # admin page
     (r"/admin/", AdminHandler),
-
-    (r"/admin/music/", music.view.MusicControlHandler),
-
-    (r"/admin/cdn/", cdn.view.CdnHandler),
+    (r"/login/", user.view.LoginHandler),
+    (r"/admin/music/", music.view.MusicHandler),
+    (r"/admin/report/", report.view.ReportHandler),
     
+    # local music server
+    (r"/music_file/(\w{24})/", FileHandler),
 ],**settings)
 
 if __name__ == "__main__":
-    application.listen(8000)
+    application.listen(6000)
     tornado.ioloop.IOLoop.instance().start()

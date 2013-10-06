@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block extern_head %}
+{% block extern_lib %}
     <link rel="stylesheet" type="text/css" href="/static/css/home.css">
     <link rel="stylesheet" type="text/css" href="/static/jPlayer/skin/blue.monday/jplayer.blue.monday.css">
     <script type="text/javascript" src="/static/js/jquery-1.10.2.js"></script>
@@ -8,7 +8,6 @@
     <script type="text/javascript" src="/static/jPlayer/js/jplayer.playlist.min.js"></script>
 
 <script type="text/javascript">
-//<![CDATA[
 
 $(document).ready(function(){
 
@@ -18,40 +17,22 @@ $(document).ready(function(){
     }, 
     [],{ 
         ready: function () {
-            var songUrl;
             $.ajax({
                 type:"get",
-                url:"/api/music/",
-                dataType:'json',
+                url:"/api/music/next/",
+                dataType:"json",
                 async:false,
                 success:function(data){
-                    var listNum = data.total_count;
-                    var randomSong = parseInt(listNum * Math.random());
-                    //console.info(randomSong);
-                    $.ajax({
-                        type:"get",
-                        url:"/api/music/",
-                        dataType:"json",
-                        data:{
-                            start:0,
-                            count:listNum
-                        },
-                        async:false,
-                        success:function(data){
-                            console.info(data[randomSong]);
-                            songUrl = data[randomSong].music_url;
-                            var songTitle = data[randomSong].music_name;
-                            var singerName = data[randomSong].music_artist;  
-                            var songInfo = songTitle + "-" + singerName;
-                            $("#songTitle ul li p").replaceWith(songInfo);                 
-                        }
+                    console.info(data);
+                    //var songInfo = data.music_name + "-" + data.music_artist;
+                    //$("#songTitle ul li p").replaceWith(songInfo);  
+
+                    $("#jquery_jplayer_1").jPlayer("setMedia", {
+                        mp3:data.music_url
                     });
-                },
+                    $("#jquery_jplayer_1").jPlayer("play");
+                }
             });
-            $(this).jPlayer("setMedia", {
-                mp3:songUrl
-            });
-            $(this).jPlayer("play");
         },
         ended: function (event) {
             $.ajax({
@@ -98,7 +79,7 @@ $(document).ready(function(){
     });
 
 });
-//]]>
+
 </script>
 {% end %}
 
@@ -110,13 +91,8 @@ $(document).ready(function(){
             <div class="span4">
                 <!--Sidebar content--> 
                 <div id="wrapper">
-                    <div id="header"><h1>西电 FM</h1></div>
-                    <div id="introduction">
-                        <blockquote>
-                          <p>Some text here!!</p>
-                          <small>Someone famous <cite title="Source Title">Source Title</cite></small>
-                        </blockquote>
-                    </div>
+                    <h1>Miao FM</h1>
+                    <p>Also see https://github.com/dccrazyboy/miao_fm</p>
                 </div>
             </div>
 

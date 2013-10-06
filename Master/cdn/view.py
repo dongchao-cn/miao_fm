@@ -2,14 +2,14 @@
 import os
 import json
 import tornado
-from user.view import authenticated, BaseHandler
-from .model import CdnControl, CdnJsonEncoder
+from util import APIBaseHandler, MainJsonEncoder
+from user.model import authenticated
+from .model import CdnSet
 
-class APICdnControlHandler(BaseHandler):
+class APICdnSetHandler(APIBaseHandler):
     '''
     get:
-        get cdn range
-        list all cdn by range
+        get cdn status or range
 
     post:
         add a new cdn
@@ -19,35 +19,33 @@ class APICdnControlHandler(BaseHandler):
     '''
     @authenticated
     def get(self):
-        '''
-        return base info about music if can't get start or end
-        else return music list
-        '''
-        try:
+        by = self.get_argument('by')
+        if by == 'status':
+            base_info = {'total_count':CdnSet.get_cdn_count()}
+            self.write(base_info)
+        elif by == 'range':
             start = int(self.get_argument("start"))
             count = int(self.get_argument("count"))
-        except:
-            base_info = {'total_count':CdnControl.get_cdn_count()}
-            self.write(base_info)
-            return
-        cdn_list = CdnControl.get_cdn_by_range(start, start+count)
-        self.write(json.dumps(cdn_list, cls=CdnJsonEncoder))
-
+            cdn_list = CdnSet.get_cdn_by_range(start, start+count)
+            self.write(json.dumps(cdn_list, cls=MainJsonEncoder))
+        else:
+            raise HTTPError(400)
+            
     @authenticated
     def post(self):
         name = self.get_argument("name")
         url_path = self.get_argument("url_path")
         online = self.get_argument("online")
         online = True if online else False
-        cdn = CdnControl.add_cdn(name, url_path, online)
-        self.write(json.dumps(cdn, cls=CdnJsonEncoder))
+        cdn = CdnSet.add_cdn(name, url_path, online)
+        self.write(json.dumps(cdn, cls=MainJsonEncoder))
 
     @authenticated
     def delete(self):
-        CdnControl.remove_all_cdn()
-        self.write('')
+        CdnSet.remove_all_cdn()
+        self.write({})
 
-class APICdnHandler(BaseHandler):
+class APICdnHandler(APIBaseHandler):
     '''
     get:
         get cdn details
@@ -60,8 +58,8 @@ class APICdnHandler(BaseHandler):
     '''
     @authenticated
     def get(self, cdn_id):
-        music = CdnControl.get_cdn(cdn_id)
-        self.write(json.dumps(music, cls=CdnJsonEncoder))
+        music = CdnSet.get_cdn(cdn_id)
+        self.write(json.dumps(music, cls=MainJsonEncoder))
 
     @authenticated
     def put(self, cdn_id):
@@ -69,17 +67,17 @@ class APICdnHandler(BaseHandler):
         url_path = self.get_argument("url_path")
         online = self.get_argument("online")
         online = True if online else False
-        cdn = CdnControl.get_cdn(cdn_id)
+        cdn = CdnSet.get_cdn(cdn_id)
         cdn.update_info(name, url_path, online)
-        cdn = CdnControl.get_cdn(cdn_id)
-        self.write(json.dumps(cdn, cls=CdnJsonEncoder))
+        cdn = CdnSet.get_cdn(cdn_id)
+        self.write(json.dumps(cdn, cls=MainJsonEncoder))
 
     @authenticated
     def delete(self, cdn_id):
-        cdn = CdnControl.get_cdn(cdn_id)
+        cdn = CdnSet.get_cdn(cdn_id)
         cdn.remove()
-        self.write('')
+        self.write({})
 
-class CdnHandler(BaseHandler):
+class CdnHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("cdn/cdn.html")

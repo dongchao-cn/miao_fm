@@ -3,15 +3,15 @@ import os
 import tornado
 import json
 
-from user.view import authenticated, BaseHandler
-from .model import MusicControl,MusicJsonEncoder
+from util import APIBaseHandler, MainJsonEncoder
+from user.model import authenticated
+from .model import MusicSet
 from master_config import ABS_PATH
 
-class APIMusicControlHandler(BaseHandler):
+class APIMusicSetHandler(APIBaseHandler):
     '''
     get:
-        get music range
-        list all music by range
+        get music status or range
 
     post:
         add a new music
@@ -21,36 +21,35 @@ class APIMusicControlHandler(BaseHandler):
     '''
     @authenticated
     def get(self):
-        '''
-        return base info about music if can't get start or end
-        else return music list
-        '''
-        try:
+        by = self.get_argument('by')
+        if by == 'status':
+            base_info = {'total_count':MusicSet.get_music_count()}
+            self.write(base_info)
+        elif by == 'range':
             start = int(self.get_argument("start"))
             count = int(self.get_argument("count"))
-        except:
-            base_info = {'total_count':MusicControl.get_music_count()}
-            self.write(base_info)
-            return
-        music_list = MusicControl.get_music_by_range(start, start+count)
-        self.write(json.dumps(music_list, cls=MusicJsonEncoder))
+            music_list = MusicSet.get_music_by_range(start, start+count)
+            self.write(json.dumps(music_list, cls=MainJsonEncoder))
+        else:
+            raise HTTPError(400)
 
     @authenticated
     def post(self):
         music_list = []
+        user_name = self.get_secure_cookie('user')
         for upload_file in self.request.files['file']:
             save_file_path = ABS_PATH + "/uploads/" + upload_file['filename']
             with open(save_file_path, 'w') as f:
                 f.write(upload_file['body'])
-                music_list.append(MusicControl.add_music(save_file_path, True))
-        self.write(json.dumps(music_list, cls=MusicJsonEncoder))
+                music_list.append(MusicSet.add_music(save_file_path, user_name, True))
+        self.write(json.dumps(music_list, cls=MainJsonEncoder))
 
     @authenticated
     def delete(self):
-        MusicControl.remove_all_music()
-        self.write('')
+        MusicSet.remove_all_music()
+        self.write({})
 
-class APIMusicHandler(BaseHandler):
+class APIMusicHandler(APIBaseHandler):
     '''
     get:
         get music details
@@ -64,35 +63,36 @@ class APIMusicHandler(BaseHandler):
 
     @authenticated
     def get(self, music_id):
-        music = MusicControl.get_music(music_id)
-        self.write(json.dumps(music, cls=MusicJsonEncoder))
+        music = MusicSet.get_music(music_id)
+        self.write(json.dumps(music, cls=MainJsonEncoder))
 
     @authenticated
     def put(self, music_id):
         music_name = self.get_argument("music_name")
         music_artist = self.get_argument("music_artist")
         music_album = self.get_argument("music_album")
+        music_genre = self.get_argument("music_genre")
 
-        music = MusicControl.get_music(music_id)
-        music.update_info(music_name, music_artist, music_album)
-        music = MusicControl.get_music(music_id)
-        self.write(json.dumps(music, cls=MusicJsonEncoder))
+        music = MusicSet.get_music(music_id)
+        music.update_info(music_name, music_artist, music_album, music_genre)
+        music = MusicSet.get_music(music_id)
+        self.write(json.dumps(music, cls=MainJsonEncoder))
 
     @authenticated
     def delete(self, music_id):
-        music = MusicControl.get_music(music_id)
+        music = MusicSet.get_music(music_id)
         music.remove()
-        self.write('')
+        self.write({})
 
-class APINextMusicHandler(BaseHandler):
+class APIMusicNextHandler(APIBaseHandler):
     '''
     get:
-        get next music for play
+        get next music info for play
     '''
     def get(self):
-        music = MusicControl.get_next_music()
-        self.write(json.dumps(music, cls=MusicJsonEncoder))
+        music = MusicSet.get_next_music()
+        self.write(json.dumps(music, cls=MainJsonEncoder))
 
-class MusicControlHandler(BaseHandler):
+class MusicHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("music/music.html")
+        self.render("music.html")
