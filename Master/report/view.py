@@ -63,6 +63,6 @@ class APIReportHandler(APIBaseHandler):
         report.remove()
         self.write({})
 
-# class ReportSetHandler(tornado.web.RequestHandler):
-#     def get(self):
-#         self.render("music.html")
+class ReportHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("report.html")

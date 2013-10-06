@@ -104,6 +104,6 @@ class APIUserCurrentHandler(APIBaseHandler):
         self.clear_cookie('user')
         self.write({})
 
-class UserLoginHandler(tornado.web.RequestHandler):
+class LoginHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("login.html")

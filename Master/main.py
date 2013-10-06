@@ -63,10 +63,10 @@ application = tornado.web.Application([
     (r"/api/report/(\w{24})/", report.view.APIReportHandler),
 
     # admin page
-    (r"/login/", user.view.UserLoginHandler),
     (r"/admin/", AdminHandler),
-    (r"/admin/music/", music.view.MusicSetHandler),
-    (r"/admin/cdn/", cdn.view.CdnHandler),
+    (r"/login/", user.view.LoginHandler),
+    (r"/admin/music/", music.view.MusicHandler),
+    (r"/admin/report/", report.view.ReportHandler),
     
     # local music server
     (r"/music_file/(\w{24})/", FileHandler),

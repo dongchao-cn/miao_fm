@@ -1,60 +1,27 @@
 {% extends "admin_base.html" %}
 
 {% block extern_lib %}
-<link href="/static/jQuery-File-Upload-8.8.5/css/jquery.fileupload-ui.css" rel="stylesheet">
 <link href="/static/css/management.css" rel="stylesheet">
 <script src="/static/js/bootstrap-paginator.js"></script>
-<script src="/static/jQuery-File-Upload-8.8.5/js/vendor/jquery.ui.widget.js"></script>
-<script src="/static/jQuery-File-Upload-8.8.5/js/jquery.iframe-transport.js"></script>
-<script src="/static/jQuery-File-Upload-8.8.5/js/jquery.fileupload.js"></script>
 <script src="/static/js/music.js"></script>
+<script src="/static/js/report.js"></script>
 {% end %}
 
 {% block content %}
     <div class="control-group">
         <div id="controls" class="controls">
             <div id="menu" align="left">
-                <a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">添加音乐</a>
-                <a href="#myModal2" role="button" class="btn btn-primary" data-toggle="modal">删除所有音乐</a>    
+                <a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Del All Report</a>
             </div>
-
-            <div align="right">
-                <input id="searchMusicId"class="input-medium search-query" type="text" name='music_id' placeholder="Music ID"/> 
-                <a href="#myModal3" role="button" class="btn btn-primary" data-toggle="modal" onClick="searchMusic()">查找</a>     
-            </div>       
         </div>
     </div>
     <hr/>
 
-    <!--add song-->
+    <!--delete all report-->
     <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="myModalLabel">Start uploading your files</h3>
-        </div>
-        <div class="modal-body"> 
-            <p class="text-info"><strong>Please choose the file you wanna upload</strong></p>
-            <div>
-                <div id="upload">
-                    <span class="btn btn-success fileinput-button" id="clearlist">
-                         <span>Add files...</span>
-                         <input id="fileupload" type="file" name="file" display="none" data-url="/api/music/" accept="audio/mpeg" multiple>
-                    </span>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn" data-dismiss="modal" aria-hidden="true" id="shutdown">关闭</button>
-            </div>
-        </div>
-    </div>
-    <!--add song end-->
-
-    <!--delete all songs-->
-    <div id="myModal2" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="myModalLabel">Do you really wanna delete all the files?</h3>
+            <h3 id="myModalLabel">Do you really wanna delete all the report?</h3>
         </div>
         <div class="modal-body"> 
             <div class="modal-footer">
@@ -83,16 +50,15 @@
     </div>
     <!--edit song end-->
 
-    <!--songlist-->
+    <!--reportlist-->
     <div class="tab-content">
         <div class="tab-pane active" id="home">
-            <table class="table table-hover" id="addSong">
+            <table class="table table-hover" id="addReport">
                 <thead>  
+                    <td><strong>report_id</strong></td>
                     <td><strong>music_id</strong></td>
-                    <td><strong>music_name</strong></td>
-                    <td><strong>music_artist</strong></td>
-                    <td><strong>music_album</strong></td>
-                    <td><strong>music_genre</strong></td>
+                    <td><strong>report_info</strong></td>
+                    <td><strong>report_date</strong></td>
                 </thead>
                 <tbody ></tbody>
             </table>
@@ -114,35 +80,34 @@ $('#shutdown').bind('click',function(event){
 $('#deleteListAll').bind('click',function(event){
     $.ajax({
         type: 'delete',
-        url: "/api/music/",
+        url: "/api/report/",
         async : false,
         success:function(){
-            $("#addSong > tbody").empty(); 
+            $("#addReport > tbody").empty(); 
          }
     });
 });
 
 //delete song 
-function delSong(event){
-    //console.info(event.id);
-    var musicId = event.id;
-    url = '/api/music/' + musicId + '/';
+function delReport(event){
+    var reportId = event.id;
+    url = '/api/report/' + reportId + '/';
     $.ajax({
         type:'delete',
         url:url,
         async : false,
         success:function(data){
             //console.info("delete" + data + "success!");
-            $('.' + musicId).remove();
+            $('.' + reportId).remove();
         },
     });
-    
 }
 
 //edit song 
 function editSong(event){
-    //console.info($(event).next().attr('id'));
-    var musicId = $(event).next().attr('id');
+    // console.info($(event).next().attr('id'))
+    // console.info($('.'+$(event).next().attr('id'))[0].cells[1].innerText);
+    var musicId = $('.'+$(event).next().attr('id'))[0].cells[1].innerText;
     $.ajax({
         type:'get',
         url: "/api/music/" + musicId + '/',
@@ -183,33 +148,20 @@ $('#updateSongInfo').bind('click',function(event){
         async : false,
         success:function(){
            //parent.location.reload();
-           console.info($(this));
+           // console.info($(this));
            var tdstr = '<tr class="' + musicId + '"><td>'+ musicId +'</td> \
                             <td>'+ musicName +'</td> \
                             <td>' + musicArtist +'</td> \
                             <td>'+ musicAlbum +'</td> \
                             <td>'+ musicGenre +'</td> \
                             <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp \
-                            <button id="' + musicId + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
+                            <button id="' + musicId + '"class="btn btn btn-danger btn-xs" onClick ="delReport(this)">del</button></td> \
                             </tr>';
            $('.' + musicId).replaceWith(tdstr);
          }
     });
 });
-    
-//search song info
-function searchMusic(){
-    var musicId = $('#searchMusicId').val();
-    // console.info(musicId);
-    $.ajax({
-        type:'get',
-        url: "/api/music/" + musicId + '/',
-        async : false,
-        dataType: 'json',
-        success:edit_music_success_modal,
-        error:edit_music_error_modal
-    });
-}
+
 
 $('#myModal3').on('hidden', function () {
     $("#editSong").empty();
@@ -219,34 +171,11 @@ $('#myModal').on('hidden', function () {
     location.reload();
 })
 
-//上传文件
-$(function(){
-    $('#fileupload').fileupload({
-        dataType: 'json',
-        add: function (e, data) { 
-            console.info(data.files[0].name);           
-            $('<h6/>').text(data.files[0].name).appendTo($('#upload'));           
-            console.info(data);
-            data.context = $('<button type="button" class="btn btn-mini btn-info"/>').text('start upload')
-                .appendTo($('#upload'))
-                .click(function () {
-                    data.context = $('<button type="button" class="btn btn-mini btn-info"/>').text('uploading......').replaceAll($(this));
-                    data.submit();
-                });
-        },
-        done: function (e, data) {
-            data.context.text('upload finished!');
-            console.info(data.result[0]);
-            console.info(data.files[0]);
-        }
-    });
-});
-
 items_pre_page = 10
 
 $(document).ready(function(){
     $.ajax({
-        url:'/api/music/',// 跳转到 action
+        url:'/api/report/',// 跳转到 action
         type:'get',
         dataType:'json',
         data: {
@@ -259,7 +188,7 @@ $(document).ready(function(){
                 onPageClicked: function(e,originalEvent,type,page){
                     $.ajax({
                         type: 'get',
-                        url: "/api/music/",
+                        url: "/api/report/",
                         dataType:'json',
                         data: {
                             by:'range',
@@ -267,7 +196,7 @@ $(document).ready(function(){
                             count:items_pre_page
                         },
                         async : false,
-                        success:render_music_list
+                        success:render_report_list
                     });
                 },
             }
@@ -283,7 +212,7 @@ $(document).ready(function(){
 $(document).ready(function(){
     $.ajax({
         type: 'get',
-        url: "/api/music/",
+        url: "/api/report/",
         dataType:'json',
         data: {
             by:'range',
@@ -291,7 +220,7 @@ $(document).ready(function(){
             count:items_pre_page
         },
         async:false,
-        success:render_music_list
+        success:render_report_list
     });
 });
 

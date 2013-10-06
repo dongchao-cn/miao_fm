@@ -92,6 +92,6 @@ class APIMusicNextHandler(APIBaseHandler):
         music = MusicSet.get_next_music()
         self.write(json.dumps(music, cls=MainJsonEncoder))
 
-class MusicSetHandler(tornado.web.RequestHandler):
+class MusicHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("music.html")
