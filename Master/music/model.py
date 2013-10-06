@@ -20,6 +20,7 @@ from bson.objectid import ObjectId
 from cdn.model import CdnSet
 from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
+from user.model import User, UserSet
 # connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
 # register_connection('miao_fm_cdn', 'miao_fm_cdn', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
 
@@ -37,7 +38,7 @@ class Music(Document):
     music_file = FileField('miao_fm_cdn')
 
     # upload info
-    # upload_user = ReferenceField('')
+    upload_user = ReferenceField(User)
     upload_date = DateTimeField()
 
     @property
@@ -93,10 +94,12 @@ class MusicSet(object):
         raise Exception,'MusicSet can\'t be __init__'
 
     @classmethod
-    def add_music(cls, file, remove=False):
+    def add_music(cls, file, user_name, remove=False):
         music_name, music_artist, music_album, music_genre = _get_info_from_id3(file)
+        user = UserSet.get_user_by_name(user_name)
         music = Music(music_name=music_name, music_artist=music_artist, 
-            music_album=music_album, music_genre=music_genre, upload_date=datetime.datetime.now(),
+            music_album=music_album, music_genre=music_genre, 
+            upload_user=user, upload_date=datetime.datetime.now(),
             music_file=open(file, 'r').read()).save()
         multiprocessing.Process(target=_lame_mp3, args=(file, music, remove)).start()
         return music

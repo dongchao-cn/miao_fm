@@ -36,11 +36,12 @@ class APIMusicSetHandler(APIBaseHandler):
     @authenticated
     def post(self):
         music_list = []
+        user_name = self.get_secure_cookie('user')
         for upload_file in self.request.files['file']:
             save_file_path = ABS_PATH + "/uploads/" + upload_file['filename']
             with open(save_file_path, 'w') as f:
                 f.write(upload_file['body'])
-                music_list.append(MusicSet.add_music(save_file_path, True))
+                music_list.append(MusicSet.add_music(save_file_path, user_name, True))
         self.write(json.dumps(music_list, cls=MainJsonEncoder))
 
     @authenticated

@@ -43,6 +43,7 @@ class MainJsonEncoder(json.JSONEncoder):
                 'music_genre' : obj.music_genre,
                 'file_id' : obj.file_id,
                 'music_url' : obj.music_url,
+                'upload_user' : obj.upload_user,
                 'upload_date' : obj.upload_date}
         elif isinstance(obj, Report):
             return {'report_id' : obj.report_id,
