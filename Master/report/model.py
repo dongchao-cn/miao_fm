@@ -22,7 +22,7 @@ class Report(Document):
     report_music = ReferenceField(Music)
 
     report_info = StringField(max_length=200, default='')
-    report_date = DateTimeField(default=datetime.datetime.now())
+    report_date = DateTimeField()
 
     @property
     def report_id(self):
@@ -50,7 +50,8 @@ class ReportSet(object):
     @classmethod
     def add_report(cls, report_music_id, report_info):
         music = MusicSet.get_music(report_music_id)
-        report = Report(report_music=music, report_info=report_info).save()
+        report = Report(report_music=music, report_info=report_info,
+            report_date=datetime.datetime.now()).save()
         return report
 
     @classmethod

@@ -38,7 +38,7 @@ class Music(Document):
 
     # upload info
     # upload_user = ReferenceField('')
-    upload_date = DateTimeField(default=datetime.datetime.now())
+    upload_date = DateTimeField()
 
     @property
     def music_id(self):
@@ -96,7 +96,8 @@ class MusicSet(object):
     def add_music(cls, file, remove=False):
         music_name, music_artist, music_album, music_genre = _get_info_from_id3(file)
         music = Music(music_name=music_name, music_artist=music_artist, 
-            music_album=music_album, music_genre=music_genre, music_file=open(file, 'r').read()).save()
+            music_album=music_album, music_genre=music_genre, upload_date=datetime.datetime.now(),
+            music_file=open(file, 'r').read()).save()
         multiprocessing.Process(target=_lame_mp3, args=(file, music, remove)).start()
         return music
 
