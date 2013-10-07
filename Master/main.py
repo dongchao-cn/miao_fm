@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #coding:utf8
 import os
+import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import cdn.view
@@ -12,9 +13,11 @@ import gridfs
 from pymongo import Connection
 from bson.objectid import ObjectId
 from mongoengine import *
+from tornado.options import define, options
 
 from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 
+define("port", default=6000)
 con = Connection("%s:%s" % ('127.0.0.1', MASTER_MONGODB_PORT))
 db = con['miao_fm_cdn']
 fs = gridfs.GridFS(db)
@@ -73,5 +76,7 @@ application = tornado.web.Application([
 ],**settings)
 
 if __name__ == "__main__":
-    application.listen(6000)
+    tornado.options.parse_command_line()
+    http_server = tornado.httpserver.HTTPServer(application)
+    http_server.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
