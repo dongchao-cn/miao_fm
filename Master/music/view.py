@@ -29,7 +29,7 @@ class APIMusicSetHandler(APIBaseHandler):
             start = int(self.get_argument("start"))
             count = int(self.get_argument("count"))
             music_list = MusicSet.get_music_by_range(start, start+count)
-            self.write(json.dumps(music_list, cls=MainJsonEncoder))
+            self.write(music_list)
         else:
             raise HTTPError(400)
 
@@ -42,12 +42,12 @@ class APIMusicSetHandler(APIBaseHandler):
             with open(save_file_path, 'w') as f:
                 f.write(upload_file['body'])
                 music_list.append(MusicSet.add_music(save_file_path, user_name, True))
-        self.write(json.dumps(music_list, cls=MainJsonEncoder))
+        self.write(music_list)
 
     @authenticated
     def delete(self):
         MusicSet.remove_all_music()
-        self.write({})
+        self.write(None)
 
 class APIMusicHandler(APIBaseHandler):
     '''
@@ -64,7 +64,7 @@ class APIMusicHandler(APIBaseHandler):
     @authenticated
     def get(self, music_id):
         music = MusicSet.get_music(music_id)
-        self.write(json.dumps(music, cls=MainJsonEncoder))
+        self.write(music)
 
     @authenticated
     def put(self, music_id):
@@ -76,13 +76,13 @@ class APIMusicHandler(APIBaseHandler):
         music = MusicSet.get_music(music_id)
         music.update_info(music_name, music_artist, music_album, music_genre)
         music = MusicSet.get_music(music_id)
-        self.write(json.dumps(music, cls=MainJsonEncoder))
+        self.write(music)
 
     @authenticated
     def delete(self, music_id):
         music = MusicSet.get_music(music_id)
         music.remove()
-        self.write({})
+        self.write(None)
 
 class APIMusicNextHandler(APIBaseHandler):
     '''
@@ -91,7 +91,7 @@ class APIMusicNextHandler(APIBaseHandler):
     '''
     def get(self):
         music = MusicSet.get_next_music()
-        self.write(json.dumps(music, cls=MainJsonEncoder))
+        self.write(music)
 
 class MusicHandler(tornado.web.RequestHandler):
     def get(self):

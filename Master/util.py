@@ -24,6 +24,11 @@ class APIBaseHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
         self.set_header ('Content-Type', 'application/json')
 
+    def write(self, chunk):
+        '''rewrite it to serialize obj to json'''
+        chunk = json.dumps(chunk, cls=MainJsonEncoder)
+        super(APIBaseHandler, self).write(chunk)
+
 class MainJsonEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime.datetime):

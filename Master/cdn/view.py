@@ -27,7 +27,7 @@ class APICdnSetHandler(APIBaseHandler):
             start = int(self.get_argument("start"))
             count = int(self.get_argument("count"))
             cdn_list = CdnSet.get_cdn_by_range(start, start+count)
-            self.write(json.dumps(cdn_list, cls=MainJsonEncoder))
+            self.write(cdn_list)
         else:
             raise HTTPError(400)
             
@@ -38,12 +38,12 @@ class APICdnSetHandler(APIBaseHandler):
         online = self.get_argument("online")
         online = True if online else False
         cdn = CdnSet.add_cdn(name, url_path, online)
-        self.write(json.dumps(cdn, cls=MainJsonEncoder))
+        self.write(cdn)
 
     @authenticated
     def delete(self):
         CdnSet.remove_all_cdn()
-        self.write({})
+        self.write(None)
 
 class APICdnHandler(APIBaseHandler):
     '''
@@ -59,7 +59,7 @@ class APICdnHandler(APIBaseHandler):
     @authenticated
     def get(self, cdn_id):
         music = CdnSet.get_cdn(cdn_id)
-        self.write(json.dumps(music, cls=MainJsonEncoder))
+        self.write(music)
 
     @authenticated
     def put(self, cdn_id):
@@ -70,14 +70,14 @@ class APICdnHandler(APIBaseHandler):
         cdn = CdnSet.get_cdn(cdn_id)
         cdn.update_info(name, url_path, online)
         cdn = CdnSet.get_cdn(cdn_id)
-        self.write(json.dumps(cdn, cls=MainJsonEncoder))
+        self.write(cdn)
 
     @authenticated
     def delete(self, cdn_id):
         cdn = CdnSet.get_cdn(cdn_id)
         cdn.remove()
-        self.write({})
+        self.write(None)
 
 class CdnHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("cdn/cdn.html")
+        self.render("cdn.html")
