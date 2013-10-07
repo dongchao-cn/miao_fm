@@ -87,9 +87,10 @@ class APIUserCurrentHandler(APIBaseHandler):
     '''
 
     def get(self):
-        user = self.get_secure_cookie('user')
-        self.write({'user_name':user})
-
+        user_name = self.get_secure_cookie('user')
+        user = UserSet.get_user_by_name(user_name)
+        self.write(json.dumps(user, cls=MainJsonEncoder))
+        
     def post(self):
         user_name = self.get_argument('user_name')
         user_password = self.get_argument('user_password')
@@ -102,7 +103,7 @@ class APIUserCurrentHandler(APIBaseHandler):
 
     def delete(self):
         self.clear_cookie('user')
-        self.write({})
+        self.write(json.dumps(None, cls=MainJsonEncoder))
 
 class LoginHandler(tornado.web.RequestHandler):
     def get(self):

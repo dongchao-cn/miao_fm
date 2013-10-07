@@ -17,7 +17,7 @@
                 url: "/api/user/current/",
                 async : false,
                 success:function(data){
-                    if (data.user_name == null)
+                    if (data == null)
                     {
                         // not login
                         location.href = '/login/'
