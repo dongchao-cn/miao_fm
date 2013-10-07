@@ -19,7 +19,7 @@ class Report(Document):
     '''
     store report info
     '''
-    report_music = ReferenceField(Music)
+    report_music = ReferenceField(Music, reverse_delete_rule=CASCADE)
 
     report_info = StringField(max_length=200, default='')
     report_date = DateTimeField()

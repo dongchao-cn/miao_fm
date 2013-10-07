@@ -38,7 +38,7 @@ class Music(Document):
     music_file = FileField('miao_fm_cdn')
 
     # upload info
-    upload_user = ReferenceField(User)
+    upload_user = ReferenceField(User, reverse_delete_rule=NULLIFY)
     upload_date = DateTimeField()
 
     @property
