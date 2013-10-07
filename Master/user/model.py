@@ -25,6 +25,7 @@ def authenticated(method):
 class User(Document):
     '''
     store user info
+    all item and functions start with *user_* will be auto serialized
     '''
     user_name = StringField(max_length = 50, unique = True)
     user_password = StringField(max_length = 40, required = True)

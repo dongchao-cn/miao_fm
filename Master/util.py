@@ -41,28 +41,20 @@ class MainJsonEncoder(json.JSONEncoder):
         elif isinstance(obj, ObjectId):
             return str(obj)
         elif isinstance(obj, Music):
-            return {'music_id' : obj.music_id,
-                'music_name' : obj.music_name,
-                'music_artist' : obj.music_artist,
-                'music_album' : obj.music_album,
-                'music_genre' : obj.music_genre,
-                'file_id' : obj.file_id,
-                'music_url' : obj.music_url,
-                'upload_user' : obj.upload_user,
-                'upload_date' : obj.upload_date}
+            return _serialize_obj(obj, Music)
         elif isinstance(obj, Report):
-            return {'report_id' : obj.report_id,
-                'report_music' : obj.report_music,
-                'report_info' : obj.report_info,
-                'report_date' : obj.report_date}
+            return _serialize_obj(obj, Report)
         elif isinstance(obj, Cdn):
-            return {'cdn_id' : obj.cdn_id,
-                'name' : obj.name,
-                'url_path' : obj.url_path,
-                'online' : obj.online}
+            return _serialize_obj(obj, Cdn)
         elif isinstance(obj, User):
-            return {'user_id' : obj.user_id,
-                'user_name' : obj.user_name,
-                'user_password' : obj.user_password}
+            return _serialize_obj(obj, User)
         else:
             return json.JSONEncoder.default(self, obj)
+
+def _serialize_obj(obj, cls):
+    prefix = cls.__name__.lower() + '_'
+    d = {}
+    for each in dir(obj):
+        if each.startswith(prefix):
+            d[each] = eval("obj."+each)
+    return d

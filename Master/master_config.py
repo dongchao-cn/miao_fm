@@ -2,8 +2,8 @@
 #coding:utf8
 
 # set SERVER and MASTER_CDN to one machine
-SERVER = 'fm.search-ebooks.org'
-MASTER_CDN = 'cdn.search-ebooks.org'
+SERVER = 'xdfm.com'
+MASTER_CDN = 'cdn.xdfm.com'
 
 MASTER_MONGODB_PATH = '/data/mongo_db'
 MASTER_MONGODB_PORT = 6867
@@ -101,7 +101,7 @@ def add_demo_music():
     music = MusicSet.get_music_by_name('To Be With You')
     if music:
         music.remove()
-    MusicSet.add_music(ABS_PATH+'/demo.mp3')
+    MusicSet.add_music(ABS_PATH+'/demo.mp3', ADMIN_NAME)
 
 def add_user_admin():
     from user.model import UserSet
@@ -116,8 +116,9 @@ def config():
     master_nginx_config()
     print 'generate mongodb config...'
     master_mongodb_config()
-    mongoengine.connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
     try:
+        mongoengine.connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
+        mongoengine.register_connection('miao_fm_cdn', 'miao_fm_cdn', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
         print 'add master cdn...'
         add_master_cdn()
         print 'add admin user...'
@@ -127,8 +128,7 @@ def config():
     except mongoengine.connection.ConnectionError:
         print 'MongoDB NOT started!!!'
         print 'Please use "mongod -f %s/master_mongodb.conf" to start MongoDB.' % (ABS_PATH)
-        # print 'And check %s, %s DNS settings.' % (SERVER,MASTER_CDN)
-        print 'Then re execute this file.'
+        print 'Then re-execute this file.'
         os._exit(-1)
     print 'Finish!'
     print 'Please include "%s/master_nginx.conf" in nginx.conf.' % (ABS_PATH)

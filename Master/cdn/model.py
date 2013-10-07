@@ -14,26 +14,27 @@ from master_config import MASTER_CDN, MASTER_MONGODB_PORT
 class Cdn(Document):
     '''
     store cdn info
+    all item and functions start with *cdn_* will be auto serialized
     '''
-    name = StringField(max_length=100,unique=True)
-    url_path = StringField(max_length=50)
-    online = BooleanField(default=False)
+    cdn_name = StringField(max_length=100,unique=True)
+    cdn_url = StringField(max_length=50)
+    cdn_online = BooleanField(default=False)
 
     def __str__(self):
-        return ('%s' % (self.name)).encode('utf-8')
+        return ('%s' % (self.cdn_name)).encode('utf-8')
 
     @property
     def cdn_id(self):
         return self.pk
 
-    @property
-    def url(self):
-        return self.url_path
+    # @property
+    # def url(self):
+    #     return self.cdn_url
 
     def update_info(self, name, url_path, online=False):
-        self.name = name
-        self.url_path = url_path
-        self.online = online
+        self.cdn_name = name
+        self.cdn_url = url_path
+        self.cdn_online = online
         self.save()
 
     def remove(self):
@@ -61,7 +62,7 @@ class CdnSet(object):
     @classmethod
     def get_cdn_by_name(cls, name):
         try:
-            return Cdn.objects(name=name).first()
+            return Cdn.objects(cdn_name=name).first()
         except ValidationError:
             return None
 
@@ -89,7 +90,7 @@ class CdnSet(object):
 
 
 def _get_random_cdn():
-    online_cdn = [cdn for cdn in Cdn.objects() if cdn.online]
+    online_cdn = [cdn for cdn in Cdn.objects() if cdn.cdn_online]
     num = random.randint(0, len(online_cdn)-1)
     return online_cdn[num]
 

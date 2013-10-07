@@ -18,6 +18,7 @@ from music.model import Music, MusicSet
 class Report(Document):
     '''
     store report info
+    all item and functions start with *report_* will be auto serialized
     '''
     report_music = ReferenceField(Music, reverse_delete_rule=CASCADE)
 
@@ -50,9 +51,12 @@ class ReportSet(object):
     @classmethod
     def add_report(cls, report_music_id, report_info):
         music = MusicSet.get_music(report_music_id)
-        report = Report(report_music=music, report_info=report_info,
-            report_date=datetime.datetime.now()).save()
-        return report
+        if music:
+            report = Report(report_music=music, report_info=report_info,
+                report_date=datetime.datetime.now()).save()
+            return report
+        else:
+            return
 
     @classmethod
     def get_report(cls, report_id):
