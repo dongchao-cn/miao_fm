@@ -37,8 +37,8 @@ function render_music_list(data)
             <td>' + data[i].music_artist+'</td> \
             <td>'+ data[i].music_album +'</td> \
             <td>'+data[i].music_genre+'</td> \
-            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp\
-            <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
+            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">Edit</a>&nbsp\
+            <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">Del</button></td> \
             </tr>';
         //console.info(tdstr);
         $("#addSong > tbody:last").append(tdstr);
