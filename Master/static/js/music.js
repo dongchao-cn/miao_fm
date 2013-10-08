@@ -13,8 +13,6 @@ function edit_music_success_modal(data)
         <input  type="text" class="form-control" value="' + data.music_artist +'"></br>\
         <span class="input-group-addon">music_album</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
         <input  type="text" class="form-control" value="' + data.music_album +'"></br>\
-        <span class="input-group-addon">music_genre</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
-        <input  type="text" class="form-control" value="' + data.music_genre +'"></br>\
         <audio controls ="controls" preload="none" src="' + data.music_url +'"/><audio/>\
         </div>';
     $("#editSong").append(strInputText);
@@ -36,7 +34,6 @@ function render_music_list(data)
             <td>'+data[i].music_name+'</td> \
             <td>' + data[i].music_artist+'</td> \
             <td>'+ data[i].music_album +'</td> \
-            <td>'+data[i].music_genre+'</td> \
             <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">Edit</a>&nbsp\
             <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">Del</button></td> \
             </tr>';

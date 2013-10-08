@@ -28,7 +28,6 @@ class Music(Document):
     music_name = StringField(max_length=200, default='')
     music_artist = StringField(max_length=50, default='')
     music_album = StringField(max_length=100, default='')
-    music_genre = StringField(max_length=100, default='')
 
     # file info
     music_file = FileField('miao_fm_cdn')
@@ -60,11 +59,10 @@ class Music(Document):
         return ('music_name = %s\nmusic_file = %s\n' % \
             (self.music_name, self.music_file)).encode('utf-8')
     
-    def update_info(self, music_name, music_artist, music_album, music_genre):
+    def update_info(self, music_name, music_artist, music_album):
         self.music_name = music_name
         self.music_artist = music_artist
         self.music_album = music_album
-        self.music_genre = music_genre
         self.music_upload_date = datetime.datetime.now()
         self.save()
 
@@ -91,10 +89,10 @@ class MusicSet(object):
 
     @classmethod
     def add_music(cls, file, user_name, remove=False):
-        music_name, music_artist, music_album, music_genre = _get_info_from_id3(file)
+        music_name, music_artist, music_album = _get_info_from_id3(file)
         user = UserSet.get_user_by_name(user_name)
         music = Music(music_name=music_name, music_artist=music_artist, 
-            music_album=music_album, music_genre=music_genre, 
+            music_album=music_album,
             music_upload_user=user, music_upload_date=datetime.datetime.now(),
             music_file=open(file, 'r').read()).save()
         multiprocessing.Process(target=_lame_mp3, args=(file, music, remove)).start()
@@ -153,7 +151,6 @@ def _get_info_from_id3(file):
     music_name = ''
     music_artist = ''
     music_album = ''
-    music_genre = ''
 
     os.system('mid3iconv -q -e GBK "%s"' % (file.encode('utf8')))
     try:
@@ -161,7 +158,7 @@ def _get_info_from_id3(file):
     except:
         print 'On mutagen.File : %s' % (file)
         traceback.print_exc()
-        return music_name, music_artist, music_album, music_genre
+        return music_name, music_artist, music_album
 
     try:
         music_name = audio['title'][0]
@@ -178,12 +175,7 @@ def _get_info_from_id3(file):
     except:
         pass
 
-    try:
-        music_genre = audio['genre'][0]
-    except:
-        pass
-
-    return music_name, music_artist, music_album, music_genre
+    return music_name, music_artist, music_album
 
 def _get_random_music():
     num = random.randint(0,Music.objects().count()-1)

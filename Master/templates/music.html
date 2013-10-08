@@ -92,7 +92,6 @@
                     <td><strong>music_name</strong></td>
                     <td><strong>music_artist</strong></td>
                     <td><strong>music_album</strong></td>
-                    <td><strong>music_genre</strong></td>
                 </thead>
                 <tbody ></tbody>
             </table>
@@ -178,7 +177,6 @@ $('#updateSongInfo').bind('click',function(event){
             music_name: musicName,
             music_artist: musicArtist,
             music_album: musicAlbum,
-            music_genre: musicGenre,
         },
         async : false,
         success:function(){
@@ -188,9 +186,8 @@ $('#updateSongInfo').bind('click',function(event){
                             <td>'+ musicName +'</td> \
                             <td>' + musicArtist +'</td> \
                             <td>'+ musicAlbum +'</td> \
-                            <td>'+ musicGenre +'</td> \
-                            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp \
-                            <button id="' + musicId + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
+                            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">Edit</a>&nbsp \
+                            <button id="' + musicId + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">Del</button></td> \
                             </tr>';
            $('.' + musicId).replaceWith(tdstr);
          }

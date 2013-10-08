@@ -71,12 +71,14 @@ class APIMusicHandler(APIBaseHandler):
         music_name = self.get_argument("music_name")
         music_artist = self.get_argument("music_artist")
         music_album = self.get_argument("music_album")
-        music_genre = self.get_argument("music_genre")
 
         music = MusicSet.get_music(music_id)
-        music.update_info(music_name, music_artist, music_album, music_genre)
-        music = MusicSet.get_music(music_id)
-        self.write(music)
+        if music:
+            music.update_info(music_name, music_artist, music_album)
+            music = MusicSet.get_music(music_id)
+            self.write(music)
+        else:
+            self.write(None)
 
     @authenticated
     def delete(self, music_id):
