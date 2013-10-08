@@ -17,7 +17,7 @@ class APIReportSetHandler(APIBaseHandler):
     del:
         del all report
     '''
-    @authenticated
+    @authenticated(['uploader', 'admin'])
     def get(self):
         by = self.get_argument('by')
         if by == 'status':
@@ -37,7 +37,7 @@ class APIReportSetHandler(APIBaseHandler):
         report = ReportSet.add_report(music_id, report_info)
         self.write(report)
 
-    @authenticated
+    @authenticated(['uploader', 'admin'])
     def delete(self):
         ReportSet.remove_all_report()
         self.write(None)
@@ -51,12 +51,12 @@ class APIReportHandler(APIBaseHandler):
         delete report
     '''
 
-    @authenticated
+    @authenticated(['uploader', 'admin'])
     def get(self, report_id):
         report = ReportSet.get_report(report_id)
         self.write(report)
 
-    @authenticated
+    @authenticated(['uploader', 'admin'])
     def delete(self, report_id):
         report = ReportSet.get_report(report_id)
         report.remove()

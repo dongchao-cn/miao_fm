@@ -16,9 +16,10 @@ def add_user_admin():
     from user.model import UserSet
     user = UserSet.get_user_by_name(ADMIN_NAME)
     if user:
-        user.update_info(ADMIN_PASSWORD)
+        user.update_pw(ADMIN_PASSWORD)
+        user.update_info('admin')
     else:
-        UserSet.add_user(ADMIN_NAME, ADMIN_PASSWORD)
+        user = UserSet.add_user(ADMIN_NAME, ADMIN_PASSWORD, 'admin')
 
 def add_demo_music():
     from music.model import MusicSet
