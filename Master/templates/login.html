@@ -40,13 +40,13 @@ var options = {
     dataType: 'json',
     success: function(data) {
         $('#loginForm').clearForm();
-        if (data.status)
+        if (data == null)
         {
-            location.href = '/admin/music/'
+            alert('用户名或密码错误!');
         }
         else
         {
-            alert('用户名或密码错误!');
+            location.href = '/admin/music/';
         }
     }
 };

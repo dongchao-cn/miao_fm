@@ -14,13 +14,13 @@
     <div class="control-group">
         <div id="controls" class="controls">
             <div id="menu" align="left">
-                <a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">添加音乐</a>
-                <a href="#myModal2" role="button" class="btn btn-primary" data-toggle="modal">删除所有音乐</a>    
+                <a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Add Music</a>
+                <a href="#myModal2" role="button" class="btn btn-danger" data-toggle="modal">Del All Music</a>    
             </div>
 
             <div align="right">
                 <input id="searchMusicId"class="input-medium search-query" type="text" name='music_id' placeholder="Music ID"/> 
-                <a href="#myModal3" role="button" class="btn btn-primary" data-toggle="modal" onClick="searchMusic()">查找</a>     
+                <a href="#myModal3" role="button" class="btn btn-primary" data-toggle="modal" onClick="searchMusic()">Search</a>     
             </div>       
         </div>
     </div>
@@ -92,7 +92,6 @@
                     <td><strong>music_name</strong></td>
                     <td><strong>music_artist</strong></td>
                     <td><strong>music_album</strong></td>
-                    <td><strong>music_genre</strong></td>
                 </thead>
                 <tbody ></tbody>
             </table>
@@ -169,7 +168,6 @@ $('#updateSongInfo').bind('click',function(event){
     var musicName = $(info[0].children[1].children[1].children).val();
     var musicArtist = $(info[0].children[2].children[1].children).val();
     var musicAlbum = $(info[0].children[3].children[1].children).val();
-    var musicGenre = $(info[0].children[4].children[1].children).val();
     //console.info($(info[0].children[0].children[1].children).val());
     $.ajax({
         type:'put',
@@ -178,7 +176,6 @@ $('#updateSongInfo').bind('click',function(event){
             music_name: musicName,
             music_artist: musicArtist,
             music_album: musicAlbum,
-            music_genre: musicGenre,
         },
         async : false,
         success:function(){
@@ -189,9 +186,8 @@ $('#updateSongInfo').bind('click',function(event){
                             <td>'+ musicName +'</td> \
                             <td>' + musicArtist +'</td> \
                             <td>'+ musicAlbum +'</td> \
-                            <td>'+ musicGenre +'</td> \
-                            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp \
-                            <button id="' + musicId + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">del</button></td> \
+                            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">Edit</a>&nbsp \
+                            <button id="' + musicId + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">Del</button></td> \
                             </tr>';
            $('.' + musicId).replaceWith(tdstr);
          }

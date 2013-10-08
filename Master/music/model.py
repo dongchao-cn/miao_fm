@@ -17,29 +17,24 @@ import mongoengine.errors
 from mongoengine import *
 from bson.objectid import ObjectId
 
-from cdn.model import CdnSet
-from master_config import MASTER_CDN, MASTER_MONGODB_PORT
-
 from user.model import User, UserSet
-# connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
-# register_connection('miao_fm_cdn', 'miao_fm_cdn', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
 
 class Music(Document):
     '''
     store music info
+    all item and functions start with *music_* will be auto serialized
     '''
     # music meta
     music_name = StringField(max_length=200, default='')
     music_artist = StringField(max_length=50, default='')
     music_album = StringField(max_length=100, default='')
-    music_genre = StringField(max_length=100, default='')
 
     # file info
     music_file = FileField('miao_fm_cdn')
 
     # upload info
-    upload_user = ReferenceField(User)
-    upload_date = DateTimeField()
+    music_upload_user = ReferenceField(User, reverse_delete_rule=NULLIFY)
+    music_upload_date = DateTimeField()
 
     @property
     def music_id(self):
@@ -47,7 +42,7 @@ class Music(Document):
 
     @property
     def music_url(self):
-        return 'http://%s/music_file/%s/' % (CdnSet.get_free_cdn().url, self.file_id)
+        return '/music_file/%s/' % (self.file_id)
 
     @property
     def file_id(self):
@@ -57,19 +52,18 @@ class Music(Document):
             return ''
 
     meta = {
-        'ordering': ['-upload_date']
+        'ordering': ['-music_upload_date']
     }
 
     def __str__(self):
         return ('music_name = %s\nmusic_file = %s\n' % \
             (self.music_name, self.music_file)).encode('utf-8')
     
-    def update_info(self, music_name, music_artist, music_album, music_genre):
+    def update_info(self, music_name, music_artist, music_album):
         self.music_name = music_name
         self.music_artist = music_artist
         self.music_album = music_album
-        self.music_genre = music_genre
-        self.upload_date = datetime.datetime.now()
+        self.music_upload_date = datetime.datetime.now()
         self.save()
 
     def update_file(self, file):
@@ -95,11 +89,11 @@ class MusicSet(object):
 
     @classmethod
     def add_music(cls, file, user_name, remove=False):
-        music_name, music_artist, music_album, music_genre = _get_info_from_id3(file)
+        music_name, music_artist, music_album = _get_info_from_id3(file)
         user = UserSet.get_user_by_name(user_name)
         music = Music(music_name=music_name, music_artist=music_artist, 
-            music_album=music_album, music_genre=music_genre, 
-            upload_user=user, upload_date=datetime.datetime.now(),
+            music_album=music_album,
+            music_upload_user=user, music_upload_date=datetime.datetime.now(),
             music_file=open(file, 'r').read()).save()
         multiprocessing.Process(target=_lame_mp3, args=(file, music, remove)).start()
         return music
@@ -118,7 +112,7 @@ class MusicSet(object):
 
     @classmethod
     def get_next_music(cls):
-        assert Music.objects().count() != 0
+        assert Music.objects().count() != 0,'Empty Music List!!'
         return _get_random_music()
 
     @classmethod
@@ -157,7 +151,6 @@ def _get_info_from_id3(file):
     music_name = ''
     music_artist = ''
     music_album = ''
-    music_genre = ''
 
     os.system('mid3iconv -q -e GBK "%s"' % (file.encode('utf8')))
     try:
@@ -165,7 +158,7 @@ def _get_info_from_id3(file):
     except:
         print 'On mutagen.File : %s' % (file)
         traceback.print_exc()
-        return music_name, music_artist, music_album, music_genre
+        return music_name, music_artist, music_album
 
     try:
         music_name = audio['title'][0]
@@ -182,71 +175,39 @@ def _get_info_from_id3(file):
     except:
         pass
 
-    try:
-        music_genre = audio['genre'][0]
-    except:
-        pass
-
-    return music_name, music_artist, music_album, music_genre
+    return music_name, music_artist, music_album
 
 def _get_random_music():
     num = random.randint(0,Music.objects().count()-1)
     return Music.objects[num]
 
 if __name__ == '__main__':
-    # connect('miao_fm', host=MASTER_CDN ,port=MASTER_MONGODB_PORT)
+    from master_config import MONGODB_URL, MONGODB_PORT
+    # connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
+    # register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
+
     # try:
     #     MusicSet()
     # except Exception:
     #     pass
+    music = MusicSet.get_music('52526db656a9e5144d800dd5')
+    # print music.to_json()
+    # print help(Music)
+    print Music.__name__.lower()
+    # print dir(music)
+    # for each in dir(music):
+    #     if each.startswith('music'):
+    #         print each
 
-    # music = MusicSet.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
-    # print music
-    # import time
-    # time.sleep(10)
-    # music = MusicSet.get_music(u'兄妹')
-    # print music.play_data
-    # print music.local_url
-
-    # MusicSet.del_music(u'兄妹')
-    # music = MusicSet.get_music(u'兄妹')
-    # print music
-
-    # MusicSet.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
-    # for i in range(8):
-    #     MusicSet.add_music(u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
-    # print MusicSet.get_music_page_count()
-    # print MusicSet.get_music_by_page(1)
-    # print MusicSet.get_music_by_page(2)
-
-    # music = MusicSet.get_music(u'兄妹')
-    # print music.local_url
-    # MusicSet.del_music(u'兄妹')
-    # print MusicSet.get_music(u'兄妹')
-    # MusicSet.add_music(u'兄妹','eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
-
-    # music = MusicSet.get_music(u'兄妹')
-    # print music.play_data
-
-    # print MusicSet.get_next_music()
-
-    # MusicSet.add_music(u'兄妹','eason',u'/media/823E59BF3E59AD43/Music/01兄妹.mp3')
-    # music = MusicSet.get_music(u'兄妹')
-    # print music.play_data
-    # music.update("dsdsds")
-    # print music.play_data
-
-    # print MusicSet.get_music_page_count()
-
-    list_dirs = os.walk('/media/823E59BF3E59AD43/Music/')
-    for root, dirs, files in list_dirs: 
-        for f in files: 
-            if os.path.join(root, f).endswith('.mp3'):
-                print os.path.join(root, f)
-                for each in _get_info_from_id3(os.path.join(root, f)):
-                    print each.encode('utf8')
-                    pass
-                print
+    # list_dirs = os.walk('/media/823E59BF3E59AD43/Music/')
+    # for root, dirs, files in list_dirs: 
+    #     for f in files: 
+    #         if os.path.join(root, f).endswith('.mp3'):
+    #             print os.path.join(root, f)
+    #             for each in _get_info_from_id3(os.path.join(root, f)):
+    #                 print each.encode('utf8')
+    #                 pass
+    #             print
     
     # for each in _get_info_from_id3('/media/823E59BF3E59AD43/Music/mariah carey - without you - 玛丽亚凯莉 失去你.mp3'):
     #     print each

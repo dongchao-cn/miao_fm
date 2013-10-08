@@ -27,7 +27,7 @@ class APIUserSetHandler(APIBaseHandler):
             start = int(self.get_argument("start"))
             count = int(self.get_argument("count"))
             user_list = UserSet.get_user_by_range(start, start+count)
-            self.write(json.dumps(user_list, cls=MainJsonEncoder))
+            self.write(user_list)
         else:
             raise HTTPError(400)
 
@@ -36,12 +36,12 @@ class APIUserSetHandler(APIBaseHandler):
         user_name = self.get_argument("user_name")
         user_password = self.get_argument("user_password")
         user = UserSet.add_user(user_name, user_password)
-        self.write(json.dumps(user, cls=MainJsonEncoder))
+        self.write(user)
 
     @authenticated
     def delete(self):
         UserSet.remove_all_user()
-        self.write({})
+        self.write(None)
 
 class APIUserHandler(APIBaseHandler):
     '''
@@ -58,7 +58,7 @@ class APIUserHandler(APIBaseHandler):
     @authenticated
     def get(self, user_id):
         user = UserSet.get_user(user_id)
-        self.write(json.dumps(user, cls=MainJsonEncoder))
+        self.write(user)
 
     @authenticated
     def put(self, user_id):
@@ -66,13 +66,13 @@ class APIUserHandler(APIBaseHandler):
         user = UserSet.get_user(user_id)
         user.update_info(user_password)
         user = UserSet.get_user(user_id)
-        self.write(json.dumps(user, cls=MainJsonEncoder))
+        self.write(user)
 
     @authenticated
     def delete(self, user_id):
         user = UserSet.get_user(user_id)
         user.remove()
-        self.write({})
+        self.write(None)
 
 class APIUserCurrentHandler(APIBaseHandler):
     '''
@@ -87,22 +87,23 @@ class APIUserCurrentHandler(APIBaseHandler):
     '''
 
     def get(self):
-        user = self.get_secure_cookie('user')
-        self.write({'user_name':user})
-
+        user_name = self.get_secure_cookie('user')
+        user = UserSet.get_user_by_name(user_name)
+        self.write(user)
+        
     def post(self):
         user_name = self.get_argument('user_name')
         user_password = self.get_argument('user_password')
         user = UserSet.get_user_by_name(user_name)
         if user and user.check_pw(user_password):
             self.set_secure_cookie('user', user_name)
-            self.write({'status':True})
+            self.write(user)
             return
-        self.write({'status':False})
+        self.write(None)
 
     def delete(self):
         self.clear_cookie('user')
-        self.write({})
+        self.write(None)
 
 class LoginHandler(tornado.web.RequestHandler):
     def get(self):

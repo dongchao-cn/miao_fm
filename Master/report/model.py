@@ -9,17 +9,14 @@ import datetime
 from mongoengine import *
 from bson.objectid import ObjectId
 
-from master_config import MASTER_CDN, MASTER_MONGODB_PORT
-
 from music.model import Music, MusicSet
-
-# connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
 
 class Report(Document):
     '''
     store report info
+    all item and functions start with *report_* will be auto serialized
     '''
-    report_music = ReferenceField(Music)
+    report_music = ReferenceField(Music, reverse_delete_rule=CASCADE)
 
     report_info = StringField(max_length=200, default='')
     report_date = DateTimeField()
@@ -50,9 +47,12 @@ class ReportSet(object):
     @classmethod
     def add_report(cls, report_music_id, report_info):
         music = MusicSet.get_music(report_music_id)
-        report = Report(report_music=music, report_info=report_info,
-            report_date=datetime.datetime.now()).save()
-        return report
+        if music:
+            report = Report(report_music=music, report_info=report_info,
+                report_date=datetime.datetime.now()).save()
+            return report
+        else:
+            return
 
     @classmethod
     def get_report(cls, report_id):
@@ -75,7 +75,8 @@ class ReportSet(object):
         return Report.objects().count()
 
 if __name__ == '__main__':
-    connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
+    from master_config import MONGODB_URL, MONGODB_PORT
+    connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
     # report = ReportSet.add_report('524ffdf056a9e50cbb93a443','dasd')
     # print report
     report = ReportSet.get_report_by_range(0,10)[0]
