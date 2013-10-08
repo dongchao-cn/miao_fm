@@ -2,21 +2,14 @@
 function edit_music_success_modal(data)
 {
     $("#editSong").empty();
-    var strInputText = 
-        '<div class="input-group"><span class="input-group-addon">music_id</span>\
-        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
-        <input type="text" class="form-control" disabled="disabled" value="' + data.music_id +'"></br>\
-        <span class="input-group-addon">music_name</span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
-        <input  type="text" class="form-control" value="' + data.music_name +'"></br>\
-        <span class="input-group-addon">music_artist</span>\
-        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp\
-        <input  type="text" class="form-control" value="' + data.music_artist +'"></br>\
-        <span class="input-group-addon">music_album</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
-        <input  type="text" class="form-control" value="' + data.music_album +'"></br>\
-        <span class="input-group-addon">music_genre</span>&nbsp&nbsp&nbsp&nbsp&nbsp\
-        <input  type="text" class="form-control" value="' + data.music_genre +'"></br>\
-        <audio controls ="controls" preload="none" src="' + data.music_url +'"/><audio/>\
-        </div>';
+    var strInputText =
+    '<table> \
+        <tr><td><span class="input-group-addon">music_id</span></td><td><input disabled="disabled" type="text" class="form-control" value="' + data.music_id +'"></td></tr>\
+        <tr><td><span class="input-group-addon">music_name</span></td><td><input type="text" class="form-control"  value="' + data.music_name +'"></td></tr>\
+        <tr><td><span class="input-group-addon">music_artist</span></td><td><input type="text" class="form-control"  value="' + data.music_artist +'"></td></tr>\
+        <tr><td><span class="input-group-addon">music_album</span></td><td><input type="text" class="form-control"  value="' + data.music_album +'"></td></tr>\
+        <tr><td><span class="input-group-addon">music_genre</span></td><td><input type="text" class="form-control"  value="' + data.music_genre +'"></td></tr>\
+        </table><audio controls ="controls" preload="none" src="' + data.music_url +'"/><audio/>';
     $("#editSong").append(strInputText);
 }
 

@@ -2,8 +2,8 @@
 #coding:utf8
 
 # set SERVER and MASTER_CDN to one machine
-SERVER = 'fm.search-ebooks.org'
-MASTER_CDN = 'cdn.search-ebooks.org'
+SERVER = 'xdfm.com'
+MASTER_CDN = 'cdn.xdfm.com'
 
 MASTER_MONGODB_PATH = '/data/mongo_db'
 MASTER_MONGODB_PORT = 6867

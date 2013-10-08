@@ -141,7 +141,7 @@ function delSong(event){
 
 //edit song 
 function editSong(event){
-    //console.info($(event).next().attr('id'));
+    console.info($(event).next().attr('id'));
     var musicId = $(event).next().attr('id');
     $.ajax({
         type:'get',
@@ -156,7 +156,7 @@ function editSong(event){
 //update song info
 $('#updateSongInfo').bind('click',function(event){
     //$('#clearlist').nextAll().remove();
-    var info = $('#editSong div').children();
+    var info = $('#editSong table').children();
     // console.info("##########");
     // console.info(info);
     // console.info($(info[1]).val()); // id
@@ -165,12 +165,12 @@ $('#updateSongInfo').bind('click',function(event){
     // console.info($(info[10]).val());// album
     // console.info($(info[13]).val());// genre
 
-    var musicId = $(info[1]).val();
-    var musicName = $(info[4]).val();
-    var musicArtist = $(info[7]).val();
-    var musicAlbum = $(info[10]).val();
-    var musicGenre = $(info[13]).val();
-    
+    var musicId = $(info[0].children[0].children[1].children).val();
+    var musicName = $(info[0].children[1].children[1].children).val();
+    var musicArtist = $(info[0].children[2].children[1].children).val();
+    var musicAlbum = $(info[0].children[3].children[1].children).val();
+    var musicGenre = $(info[0].children[4].children[1].children).val();
+    //console.info($(info[0].children[0].children[1].children).val());
     $.ajax({
         type:'put',
         url: '/api/music/' + musicId + '/',
@@ -184,6 +184,7 @@ $('#updateSongInfo').bind('click',function(event){
         success:function(){
            //parent.location.reload();
            console.info($(this));
+           console.info("update");
            var tdstr = '<tr class="' + musicId + '"><td>'+ musicId +'</td> \
                             <td>'+ musicName +'</td> \
                             <td>' + musicArtist +'</td> \

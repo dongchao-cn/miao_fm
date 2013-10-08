@@ -8,7 +8,7 @@
     <script type="text/javascript" src="/static/jPlayer/js/jplayer.playlist.min.js"></script>
 
 <script type="text/javascript">
-
+var currentSongInfo = [];
 $(document).ready(function(){
 
     new jPlayerPlaylist({
@@ -23,9 +23,14 @@ $(document).ready(function(){
                 dataType:"json",
                 async:false,
                 success:function(data){
-                    console.info(data);
-                    //var songInfo = data.music_name + "-" + data.music_artist;
-                    //$("#songTitle ul li p").replaceWith(songInfo);  
+                    //console.info(data);
+                    currentSongUrl = [data.music_id,data.music_name,data.music_artist,data.music_album,data.music_genre];
+                    var singer = data.music_artist;
+                    var name = data.music_name;
+                    var album = data.music_album;
+                    $("#jp-singer").text(singer); 
+                    $("#jp-name").text(name);  
+                    $("#jp-album").text(album);   
 
                     $("#jquery_jplayer_1").jPlayer("setMedia", {
                         mp3:data.music_url
@@ -41,9 +46,12 @@ $(document).ready(function(){
                 dataType:"json",
                 async:false,
                 success:function(data){
-                    //console.info(data);
-                    //var songInfo = data.music_name + "-" + data.music_artist;
-                    //$("#songTitle ul li p").replaceWith(songInfo);  
+                    var singer = data.music_artist;
+                    var name = data.music_name;
+                    var album = data.music_album;
+                    $("#jp-singer").text(singer); 
+                    $("#jp-name").text(name);  
+                    $("#jp-album").text(album); 
 
                     $("#jquery_jplayer_1").jPlayer("setMedia", {
                         mp3:data.music_url
@@ -66,10 +74,13 @@ $(document).ready(function(){
                 dataType:"json",
                 async:false,
                 success:function(data){
-                    console.info(data);
-                    //var songInfo = data.music_name + "-" + data.music_artist;
-                    //$("#songTitle ul li p").replaceWith(songInfo);  
-
+                    //console.info(data);
+                    var singer = data.music_artist;
+                    var name = data.music_name;
+                    var album = data.music_album;
+                    $("#jp-singer").text(singer); 
+                    $("#jp-name").text(name);  
+                    $("#jp-album").text(album); 
                     $("#jquery_jplayer_1").jPlayer("setMedia", {
                         mp3:data.music_url
                     });
@@ -80,6 +91,42 @@ $(document).ready(function(){
 
 });
 
+function reportError(){
+    //console.info(currentSongUrl[0]);
+    $("#reportInfo").empty();
+     var strInputText = 
+        '<table> \
+            <tr><td><span class="input-group-addon">歌曲ID</span></td><td><input type="text" class="form-control" disabled="disabled" value="' + currentSongUrl[0] +'"></td></tr>\
+            <tr><td><span class="input-group-addon">歌名</span></td><td><input type="text" class="form-control" disabled="disabled" value="' + currentSongUrl[1] +'"></td></tr>\
+            <tr><td><span class="input-group-addon">歌手</span></td><td><input type="text" class="form-control" disabled="disabled" value="' + currentSongUrl[2] +'"></td></tr>\
+            <tr><td><span class="input-group-addon">专辑</span></td><td><input type="text" class="form-control" disabled="disabled" value="' + currentSongUrl[3] +'"></td></tr>\
+            <tr><td><span class="input-group-addon">错误信息</span></td><td> <textarea id="reportContent" placeholder="请输入错误信息" type="textarea" class="form-control" value="" rows="3" cols="80"></textarea></td></tr>\
+        </table>';
+    $("#reportInfo").append(strInputText);
+    
+
+}
+function submitReport(){
+    var reportContent = $("#reportContent").val();
+    console.info(reportContent);
+    $.ajax({
+        type:"post",
+        url:"/api/report/",
+        async:false,
+        dataType:"json",
+        data:{
+            music_id:currentSongUrl[0],
+            report_info:reportContent
+        },
+        success:function(){
+            console.info("success");
+        },
+        error:function(){
+            console.info("error");
+        }
+    });
+}
+
 </script>
 {% end %}
 
@@ -87,68 +134,76 @@ $(document).ready(function(){
 <div>
 </div>
 <div id="container">
-     <div class="row-fluid">
-            <div class="span4">
-                <!--Sidebar content--> 
-                <div id="wrapper">
-                    <h1>Miao FM</h1>
-                    <p>Also see https://github.com/dccrazyboy/miao_fm</p>
-                </div>
+    <div class="row-fluid">
+        <div class="span4">
+             <!--Sidebar content--> 
+            <div id="wrapper">
+                <h1>Miao FM</h1>
+                <p>Also see https://github.com/dccrazyboy/miao_fm</p>
             </div>
+        </div>
 
-            <div class="span2"></div>
+        <div class="span2"></div>
 
-            <div class="span6">
-                <!-- music player-->
+        <div class="span6">
+            <div id="jquery_jplayer_1" class="jp-jplayer"></div>
+            
+            <div id="jp_container_1" class="jp-audio">   
 
+                <div id="jp-report"><a href="#myModal"  data-toggle="modal" alt="report" onClick="reportError(this)"><img src="../static/img/report.png"></img></a></div>
 
-                <div id="jquery_jplayer_1" class="jp-jplayer"></div>
-
-                <div id="jp_container_1" class="jp-audio">
-                    <div class="jp-type-playlist">
-                        <div class="jp-gui jp-interface">
-                            <ul class="jp-controls">
-                                <li><a href="javascript:;" class="jp-previous" tabindex="1" style="visibility:hidden">previous</a></li>
-                                <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
-                                <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
-                                <li><a href="javascript:;" class="jp-next" tabindex="1" id="jp-next">next</a></li>
-                                <li><a href="javascript:;" class="jp-stop" tabindex="1" style="visibility:hidden">stop</a></li>
-                                <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
-                                <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
-                                <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
-                            </ul>
-                            <div class="jp-progress">
-                                <div class="jp-seek-bar">
-                                    <div class="jp-play-bar"></div>
-                                </div>
-                            </div>
-                            <div class="jp-volume-bar">
-                                <div class="jp-volume-bar-value"></div>
-                            </div>
-                            <div class="jp-time-holder">
-                                <div class="jp-current-time"></div>
-                                <div class="jp-duration"></div>
-                            </div>
-                            <ul class="jp-toggles" style="visibility:hidden">
-                                <li><a href="javascript:;" class="jp-shuffle" tabindex="1" title="shuffle">shuffle</a></li>
-                                <li><a href="javascript:;" class="jp-shuffle-off" tabindex="1" title="shuffle off">shuffle off</a></li>
-                                <li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>
-                                <li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>
-                            </ul>
-                        </div>
-                        <div class="jp-playlist">
-                            <ul>
-                                <li></li>
-                            </ul>
-                        </div>
-                        <div class="jp-no-solution">
-                            <span>Update Required</span>
-                            To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
-                        </div>
+                <!--  report window -->
+                <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h3 id="myModalLabel">报告信息</h3>
+                    </div>
+                    <div class="modal-body">
+                         <div id="reportInfo"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" data-dismiss="modal" onClick="submitReport()" aria-hidden="true">报告错误</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
                     </div>
                 </div>
-                
-            </div>
+                <!-- report window end -->
+
+                <div id="jp-singer"></div>   
+                <div id="jp-nameAlbum"><span id="jp-name"></span><span id="jp-album"></span></div>       
+                <div class="jp-type-playlist">
+                    <div class="jp-gui jp-interface">
+                        <ul class="jp-controls">
+                            <li><a href="javascript:;" class="jp-previous" tabindex="1" style="visibility:hidden">previous</a></li>
+                            <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
+                            <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+                            <li><a href="javascript:;" class="jp-next" tabindex="1" id="jp-next">next</a></li>
+                            <li><a href="javascript:;" class="jp-stop" tabindex="1" style="visibility:hidden">stop</a></li>
+                            <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+                            <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+                            <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+                        </ul>
+                        <div class="jp-progress">
+                            <div class="jp-seek-bar">
+                                 <div class="jp-play-bar"></div>
+                            </div>
+                        </div>
+                        <div class="jp-volume-bar">
+                            <div class="jp-volume-bar-value"></div>
+                        </div>
+                        <div class="jp-time-holder">
+                            <div class="jp-current-time"></div>
+                            <div class="jp-duration"></div>
+                        </div>
+                        <ul class="jp-toggles" style="visibility:hidden">
+                            <li><a href="javascript:;" class="jp-shuffle" tabindex="1" title="shuffle">shuffle</a></li>
+                            <li><a href="javascript:;" class="jp-shuffle-off" tabindex="1" title="shuffle off">shuffle off</a></li>
+                            <li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>
+                            <li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>               
+        </div>
     <div id="footer">
         <p></p>
     </div>
