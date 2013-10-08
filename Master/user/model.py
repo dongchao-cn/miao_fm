@@ -61,7 +61,10 @@ class UserSet(object):
     def add_user(cls, user_name, user_password):
         save_password = hashlib.md5(user_password + 
             user_name).hexdigest().upper()
-        return User(user_name, save_password).save()
+        try:
+            return User(user_name, save_password).save()
+        except NotUniqueError:
+            return None
 
     @classmethod
     def get_user(cls, user_id):

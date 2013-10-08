@@ -9,11 +9,7 @@ import datetime
 from mongoengine import *
 from bson.objectid import ObjectId
 
-from master_config import MASTER_CDN, MASTER_MONGODB_PORT
-
 from music.model import Music, MusicSet
-
-# connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
 
 class Report(Document):
     '''
@@ -79,7 +75,8 @@ class ReportSet(object):
         return Report.objects().count()
 
 if __name__ == '__main__':
-    connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
+    from master_config import MONGODB_URL, MONGODB_PORT
+    connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
     # report = ReportSet.add_report('524ffdf056a9e50cbb93a443','dasd')
     # print report
     report = ReportSet.get_report_by_range(0,10)[0]

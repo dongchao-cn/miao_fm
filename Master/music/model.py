@@ -17,12 +17,7 @@ import mongoengine.errors
 from mongoengine import *
 from bson.objectid import ObjectId
 
-from cdn.model import CdnSet
-from master_config import MASTER_CDN, MASTER_MONGODB_PORT
-
 from user.model import User, UserSet
-# connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
-# register_connection('miao_fm_cdn', 'miao_fm_cdn', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
 
 class Music(Document):
     '''
@@ -48,7 +43,7 @@ class Music(Document):
 
     @property
     def music_url(self):
-        return 'http://%s/music_file/%s/' % (CdnSet.get_free_cdn().cdn_url, self.file_id)
+        return '/music_file/%s/' % (self.file_id)
 
     @property
     def file_id(self):
@@ -119,7 +114,7 @@ class MusicSet(object):
 
     @classmethod
     def get_next_music(cls):
-        assert Music.objects().count() != 0
+        assert Music.objects().count() != 0,'Empty Music List!!'
         return _get_random_music()
 
     @classmethod
@@ -195,7 +190,10 @@ def _get_random_music():
     return Music.objects[num]
 
 if __name__ == '__main__':
-    connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
+    from master_config import MONGODB_URL, MONGODB_PORT
+    # connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
+    # register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
+
     # try:
     #     MusicSet()
     # except Exception:

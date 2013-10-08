@@ -4,7 +4,6 @@ import os
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
-import cdn.view
 import music.view
 import user.view
 import report.view
@@ -15,15 +14,15 @@ from bson.objectid import ObjectId
 from mongoengine import *
 from tornado.options import define, options
 
-from master_config import MASTER_CDN, MASTER_MONGODB_PORT
+from master_config import MONGODB_URL, MONGODB_PORT
 
-define("port", default=6000)
-con = Connection("%s:%s" % ('127.0.0.1', MASTER_MONGODB_PORT))
+define("port", default=8000, help="run on the given port", type=int)
+con = Connection("%s:%s" % (MONGODB_URL, MONGODB_PORT))
 db = con['miao_fm_cdn']
 fs = gridfs.GridFS(db)
 
-connect('miao_fm', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
-register_connection('miao_fm_cdn', 'miao_fm_cdn', host='127.0.0.1' ,port=MASTER_MONGODB_PORT)
+connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
+register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
 
 class FileHandler(tornado.web.RequestHandler):
     def get(self, file_id):
@@ -39,10 +38,10 @@ class AdminHandler(tornado.web.RequestHandler):
         self.render("admin_base.html")
 
 settings = {
+    "static_path": os.path.join(os.path.dirname(__file__), "static"),
     "template_path" : os.path.join(os.path.dirname(__file__), "templates"),
     "debug" : True,
     "cookie_secret": "63oETzKXQkGaYdkLqw421fdasqw12335uYh7EQnp2XdTP1o/Vo=",
-    "login_url": "/login/",
     # "xsrf_cookies": True,
 }
 
@@ -54,9 +53,6 @@ application = tornado.web.Application([
     (r"/api/music/", music.view.APIMusicSetHandler),
     (r"/api/music/(\w{24})/", music.view.APIMusicHandler),
     (r"/api/music/next/", music.view.APIMusicNextHandler),
-
-    (r"/api/cdn/", cdn.view.APICdnSetHandler),
-    (r"/api/cdn/(\w{24})/", cdn.view.APICdnHandler),
 
     (r"/api/user/", user.view.APIUserSetHandler),
     (r"/api/user/(\w{24})/", user.view.APIUserHandler),

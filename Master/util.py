@@ -4,10 +4,9 @@ import json
 import tornado
 from mongoengine import *
 from bson.objectid import ObjectId
-
+from bson.dbref import DBRef
 from music.model import Music
 from report.model import Report
-from cdn.model import Cdn
 from user.model import User
 
 class APIBaseHandler(tornado.web.RequestHandler):
@@ -44,8 +43,6 @@ class MainJsonEncoder(json.JSONEncoder):
             return _serialize_obj(obj, Music)
         elif isinstance(obj, Report):
             return _serialize_obj(obj, Report)
-        elif isinstance(obj, Cdn):
-            return _serialize_obj(obj, Cdn)
         elif isinstance(obj, User):
             return _serialize_obj(obj, User)
         else:
