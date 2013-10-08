@@ -16,7 +16,7 @@ $(document).ready(function(){
         cssSelectorAncestor: "#jp_container_1"
     }, 
     [],{ 
-        ready: function () {
+        ready: function (){
             $.ajax({
                 type:"get",
                 url:"/api/music/next/",
@@ -60,7 +60,7 @@ $(document).ready(function(){
                 }
             });
         },
-        swfPath: "js",
+        swfPath: "/static/jPlayer/js",
         supplied: "mp3",
         wmode: "window",
         smoothPlayBar: true,
@@ -71,22 +71,23 @@ $(document).ready(function(){
         $.ajax({
             type:"get",
             url:"/api/music/next/",
-                dataType:"json",
-                async:false,
-                success:function(data){
-                    //console.info(data);
-                    var singer = data.music_artist;
-                    var name = data.music_name;
-                    var album = data.music_album;
-                    $("#jp-singer").text(singer); 
-                    $("#jp-name").text(name);  
-                    $("#jp-album").text(album); 
-                    $("#jquery_jplayer_1").jPlayer("setMedia", {
-                        mp3:data.music_url
-                    });
-                    $("#jquery_jplayer_1").jPlayer("play");
-                }
-            });
+            dataType:"json",
+            cache:false,
+            async:false,
+            success:function(data){
+                //console.info(data);
+                var singer = data.music_artist;
+                var name = data.music_name;
+                var album = data.music_album;
+                $("#jp-singer").text(singer); 
+                $("#jp-name").text(name);  
+                $("#jp-album").text(album); 
+                $("#jquery_jplayer_1").jPlayer("setMedia", {
+                    mp3:data.music_url
+                });
+                $("#jquery_jplayer_1").jPlayer("play");
+            }
+        });
     });
 
 });
