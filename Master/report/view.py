@@ -31,7 +31,6 @@ class APIReportSetHandler(APIBaseHandler):
         else:
             raise HTTPError(400)
 
-    @authenticated
     def post(self):
         music_id = self.get_argument("music_id")
         report_info = self.get_argument("report_info")
