@@ -36,7 +36,7 @@ class User(Document):
     user_name = StringField(max_length = 50, unique = True)
     user_password = StringField(max_length = 40, required = True)
     
-    # 3 user level : normal, uploader, admin
+    # 4 user level : disable, normal, uploader, admin
     user_level = StringField(max_length = 20, default='normal')
 
     def __str__(self):

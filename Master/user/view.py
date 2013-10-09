@@ -127,7 +127,7 @@ class APIUserCurrentHandler(APIBaseHandler):
         user_name = self.get_argument('user_name')
         user_password = self.get_argument('user_password')
         user = UserSet.get_user_by_name(user_name)
-        if user and user.check_pw(user_password):
+        if user and user.check_pw(user_password) and user.user_level != 'disable':
             self.set_secure_cookie('user', user_name)
             self.write(user)
             return

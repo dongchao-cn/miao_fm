@@ -104,9 +104,10 @@ function delUser(event){
 
 //edit user 
 function editUser(event){
-    console.info($(event).next().attr('id'))
+    // console.info($(event).next().attr('id'))
+    // console.info($(event).attr('id'))
     // console.info($('.'+$(event).next().attr('id'))[0].cells[1].innerText);
-    var user_id = $(event).next().attr('id');
+    var user_id = $(event).attr('id');
     $.ajax({
         type:'get',
         url: "/api/user/" + user_id + '/',

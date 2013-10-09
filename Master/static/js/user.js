@@ -1,7 +1,7 @@
 
 function edit_user_success_modal(data)
 {
-    console.info(data)
+    // console.info(data)
     $("#editUser").empty();
     var strInputText =
     '<table> \
@@ -13,6 +13,7 @@ function edit_user_success_modal(data)
         <option value="normal">normal</option>\
         <option value="uploader">uploader</option>\
         <option value="admin">admin</option>\
+        <option value="disable">disable</option>\
         </select></td></tr>\
         </table>';
     $("#editUser").append(strInputText);
@@ -35,8 +36,8 @@ function render_report_list(data)
             <td>'+data[i].user_name+'</td> \
             <td>' + data[i].user_password+'</td> \
             <td>'+ data[i].user_level +'</td> \
-            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editUser(this)">Edit</a>&nbsp\
-            <button id="' + data[i].user_id + '"class="btn btn btn-danger btn-xs" onClick ="delUser(this)">Del</button></td> \
+            <td><a id="' + data[i].user_id + '"" href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editUser(this)">Edit</a>&nbsp\
+            </td> \
             </tr>';
         //console.info(tdstr);
         $("#addUser > tbody:last").append(tdstr);
