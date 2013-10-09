@@ -21,7 +21,7 @@ def authenticated(req):
             if not user:
                 raise HTTPError(403)
             user_level = user.user_level
-            print self.current_user,user_level,req
+            # print self.current_user,user_level,req
             if user_level not in req:
                 raise HTTPError(403)
             return method(self, *args, **kwargs)

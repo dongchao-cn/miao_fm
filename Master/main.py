@@ -65,6 +65,7 @@ application = tornado.web.Application([
     # admin page
     (r"/admin/", AdminHandler),
     (r"/login/", user.view.LoginHandler),
+    (r"/regist/", user.view.RegistHandler),
     (r"/admin/music/", music.view.MusicHandler),
     (r"/admin/report/", report.view.ReportHandler),
     
