@@ -16,8 +16,8 @@ def add_user_admin():
     from user.model import UserSet
     user = UserSet.get_user_by_name(ADMIN_NAME)
     if user:
-        user.update_pw(ADMIN_PASSWORD)
-        user.update_info('admin')
+        user.update_info(ADMIN_PASSWORD)
+        user.update_level('admin')
     else:
         user = UserSet.add_user(ADMIN_NAME, ADMIN_PASSWORD, 'admin')
 
