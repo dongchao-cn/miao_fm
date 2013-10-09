@@ -144,3 +144,7 @@ class LoginHandler(tornado.web.RequestHandler):
 class RegistHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("regist.html")
+
+class UserHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render("user.html")

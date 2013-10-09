@@ -47,13 +47,13 @@ class User(Document):
         return self.pk
 
     def update_info(self, user_password):
-        self.user_password = hashlib.md5(user_password +
-            self.user_name).hexdigest().upper()
+        self.user_password = hashlib.md5(user_password.encode('utf8') +
+            self.user_name.encode('utf8')).hexdigest().upper()
         self.save()
 
     def check_pw(self, user_password):
-        check_password = hashlib.md5(user_password +
-            self.user_name).hexdigest().upper()
+        check_password = hashlib.md5(user_password.encode('utf8') +
+            self.user_name.encode('utf8')).hexdigest().upper()
         return check_password == self.user_password
 
     def update_level(self, user_level):
@@ -72,11 +72,12 @@ class UserSet(object):
 
     @classmethod
     def add_user(cls, user_name, user_password, user_level):
-        save_password = hashlib.md5(user_password + 
-            user_name).hexdigest().upper()
+        save_password = hashlib.md5(user_password.encode('utf8') + 
+            user_name.encode('utf8')).hexdigest().upper()
         try:
             return User(user_name, save_password, user_level).save()
-        except NotUniqueError:
+        # except NotUniqueError:
+        except:
             return None
 
     @classmethod

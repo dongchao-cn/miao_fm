@@ -68,6 +68,7 @@ application = tornado.web.Application([
     (r"/regist/", user.view.RegistHandler),
     (r"/admin/music/", music.view.MusicHandler),
     (r"/admin/report/", report.view.ReportHandler),
+    (r"/admin/user/", user.view.UserHandler),
     
     # local music server
     (r"/music_file/(\w{24})/", FileHandler),

@@ -3,25 +3,24 @@
 {% block extern_lib %}
 <link href="/static/css/management.css" rel="stylesheet">
 <script src="/static/js/bootstrap-paginator.js"></script>
-<script src="/static/js/music.js"></script>
-<script src="/static/js/report.js"></script>
+<script src="/static/js/user.js"></script>
 {% end %}
 
 {% block content %}
     <div class="control-group">
         <div id="controls" class="controls">
             <div id="menu" align="left">
-                <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal">Del All Report</a>
+<!--                 <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal">Del All User</a> -->
             </div>  
         </div>
     </div>
     <hr/>
 
-    <!--delete all report-->
+    <!--delete all user-->
     <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="myModalLabel">Do you really wanna delete all the report?</h3>
+            <h3 id="myModalLabel">Do you really wanna delete all the user?</h3>
         </div>
         <div class="modal-body"> 
             <div class="modal-footer">
@@ -30,35 +29,35 @@
             </div>
         </div>
     </div>
-    <!--delete all report end-->
+    <!--delete all user end-->
 
-    <!--edit report-->
+    <!--edit user-->
     <div id="myModal3" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 id="myModalLabel">The file information is as follows</h3>
         </div>
         <div class="modal-body"> 
-            <div id="editSong">
+            <div id="editUser">
             </div>
 
             <div class="modal-footer">
-                <button id="updateSongInfo" class="btn btn btn-primary" data-dismiss="modal" aria-hidden="true">I'm done!</button>
+                <button id="updateUserInfo" class="btn btn btn-primary" data-dismiss="modal" aria-hidden="true">I'm done!</button>
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel it </button>
             </div>
         </div>
     </div>
-    <!--edit report end-->
+    <!--edit user end-->
 
     <!--reportlist-->
     <div class="tab-content">
         <div class="tab-pane active" id="home">
-            <table class="table table-hover" id="addReport">
+            <table class="table table-hover" id="addUser">
                 <thead>  
-                    <td><strong>report_id</strong></td>
-                    <td><strong>music_id</strong></td>
-                    <td><strong>report_info</strong></td>
-                    <td><strong>report_date</strong></td>
+                    <td><strong>user_id</strong></td>
+                    <td><strong>user_name</strong></td>
+                    <td><strong>user_password</strong></td>
+                    <td><strong>user_level</strong></td>
                 </thead>
                 <tbody ></tbody>
             </table>
@@ -71,99 +70,94 @@
 
 <script type='text/javascript'>
 
-//clear uploaded song list
+//clear uploaded user list
 $('#shutdown').bind('click',function(event){
     $('#clearlist').nextAll().remove();
 });
 
-//delete all the song list 
+//delete all the user list 
 $('#deleteListAll').bind('click',function(event){
     $.ajax({
         type: 'delete',
-        url: "/api/report/",
+        url: "/api/user/",
         async : false,
         success:function(){
-            $("#addReport > tbody").empty(); 
+            $("#addUser > tbody").empty(); 
          }
     });
 });
 
-//delete song 
-function delReport(event){
-    var reportId = event.id;
-    url = '/api/report/' + reportId + '/';
+//delete user 
+function delUser(event){
+    var userId = event.id;
+    url = '/api/user/' + userId + '/';
     $.ajax({
         type:'delete',
         url:url,
         async : false,
         success:function(data){
             //console.info("delete" + data + "success!");
-            $('.' + reportId).remove();
+            $('.' + userId).remove();
         },
     });
 }
 
-//edit song 
-function editSong(event){
-    // console.info($(event).next().attr('id'))
+//edit user 
+function editUser(event){
+    console.info($(event).next().attr('id'))
     // console.info($('.'+$(event).next().attr('id'))[0].cells[1].innerText);
-    var musicId = $('.'+$(event).next().attr('id'))[0].cells[1].innerText;
+    var user_id = $(event).next().attr('id');
     $.ajax({
         type:'get',
-        url: "/api/music/" + musicId + '/',
+        url: "/api/user/" + user_id + '/',
         async : false,
         dataType:'json',
-        success:edit_music_success_modal,
-        error:edit_music_error_modal
+        success:edit_user_success_modal,
+        error:edit_user_error_modal
     });
 }
 
-//update song info
-$('#updateSongInfo').bind('click',function(event){
+//update user info
+$('#updateUserInfo').bind('click',function(event){
     //$('#clearlist').nextAll().remove();
-    var info = $('#editSong div').children();
+    var info = $('#editUser table').children();
     // console.info("##########");
     // console.info(info);
-    // console.info($(info[1]).val()); // id
-    // console.info($(info[4]).val()); // name
-    // console.info($(info[7]).val()); // artist
-    // console.info($(info[10]).val());// album
-    // console.info($(info[13]).val());// genre
+    // console.info($(info[0].children[0].children[1].children).val());
+    // console.info($(info[0].children[1].children[1].children).val());
+    // console.info($(info[0].children[2].children[1].children).val());
+    // console.info($(info[0].children[3].children[1].children).val());
 
-    var musicId = $(info[1]).val();
-    var musicName = $(info[4]).val();
-    var musicArtist = $(info[7]).val();
-    var musicAlbum = $(info[10]).val();
-    var musicGenre = $(info[13]).val();
+    var user_id = $(info[0].children[0].children[1].children).val();
+    var user_name = $(info[0].children[1].children[1].children).val();
+    var user_password = $(info[0].children[2].children[1].children).val();
+    var user_level = $(info[0].children[3].children[1].children).val();
     
     $.ajax({
         type:'put',
-        url: '/api/music/' + musicId + '/',
+        url: '/api/user/' + user_id + '/user_level/',
         data:{
-            music_name: musicName,
-            music_artist: musicArtist,
-            music_album: musicAlbum,
+            user_level : user_level
         },
         async : false,
         success:function(){
            //parent.location.reload();
            // console.info($(this));
-           var tdstr = '<tr class="' + musicId + '"><td>'+ musicId +'</td> \
-                            <td>'+ musicName +'</td> \
-                            <td>' + musicArtist +'</td> \
-                            <td>'+ musicAlbum +'</td> \
-                            <td>'+ musicGenre +'</td> \
-                            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp \
-                            <button id="' + musicId + '"class="btn btn btn-danger btn-xs" onClick ="delReport(this)">del</button></td> \
+           var tdstr = '<tr class="' + user_id + '"><td>'+ user_id +'</td> \
+                            <td>'+ user_name +'</td> \
+                            <td>' + user_password +'</td> \
+                            <td>'+ user_level +'</td> \
+                            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editUser(this)">edit</a>&nbsp \
+                            <button id="' + user_id + '"class="btn btn btn-danger btn-xs" onClick ="delUser(this)">del</button></td> \
                             </tr>';
-           $('.' + musicId).replaceWith(tdstr);
+           $('.' + user_id).replaceWith(tdstr);
          }
     });
 });
 
 
 $('#myModal3').on('hidden', function () {
-    $("#editSong").empty();
+    $("#editUser").empty();
 })
 
 $('#myModal').on('hidden', function () {
@@ -174,7 +168,7 @@ items_pre_page = 10
 
 $(document).ready(function(){
     $.ajax({
-        url:'/api/report/',// 跳转到 action
+        url:'/api/user/',// 跳转到 action
         type:'get',
         dataType:'json',
         data: {
@@ -187,7 +181,7 @@ $(document).ready(function(){
                 onPageClicked: function(e,originalEvent,type,page){
                     $.ajax({
                         type: 'get',
-                        url: "/api/report/",
+                        url: "/api/user/",
                         dataType:'json',
                         data: {
                             by:'range',
@@ -207,11 +201,11 @@ $(document).ready(function(){
     });
 });
 
-// add fist page of song list
+// add fist page of user list
 $(document).ready(function(){
     $.ajax({
         type: 'get',
-        url: "/api/report/",
+        url: "/api/user/",
         dataType:'json',
         data: {
             by:'range',

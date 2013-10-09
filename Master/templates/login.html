@@ -9,18 +9,19 @@
         {% module xsrf_form_html() %}
         
         <legend>用户登录</legend>
+        <p id='nowStatus'></p>
 
         <div class="control-group">
             <label class="control-label" for="user_name">用户名</label>
             <div class="controls">
-                <input type="text" id="user_name" name="user_name"/>
+                <input type="text" id="user_name" name="user_name" maxlength="50"/>
             </div>
         </div>
 
         <div class="control-group">
             <label class="control-label" for="user_password">密码</label>
             <div class="controls">
-                <input type="password" id="user_password" name="user_password"/>
+                <input type="password" id="user_password" name="user_password" maxlength="40"/>
             </div>
         </div>
 
@@ -46,13 +47,34 @@ var options = {
         }
         else
         {
-            location.href = '/admin/music/';
+            if (data.user_level == 'normal')
+            {
+                location.href = '/';
+            }
+            else
+            {
+                location.href = '/admin/music/';
+            }
         }
     }
 };
 
 $(document).ready(function() { 
-    $('#loginForm').ajaxForm(options); 
+    $('#loginForm').ajaxForm(options);
+    $.ajax({
+        type: 'get',
+        url: "/api/user/current/",
+        async : false,
+        success:function(data){
+            if (data != null)
+            {
+                $(document).ready(function(){
+                    $("#nowStatus").text('当前登录用户为:'+data.user_name)
+                });
+            }
+        }
+    });
+    
 }); 
 </script>
 {% end %}
