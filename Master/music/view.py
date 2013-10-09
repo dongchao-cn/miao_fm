@@ -19,7 +19,7 @@ class APIMusicSetHandler(APIBaseHandler):
     del:
         del all music
     '''
-    @authenticated
+    @authenticated(['uploader', 'admin'])
     def get(self):
         by = self.get_argument('by')
         if by == 'status':
@@ -33,7 +33,7 @@ class APIMusicSetHandler(APIBaseHandler):
         else:
             raise HTTPError(400)
 
-    @authenticated
+    @authenticated(['uploader', 'admin'])
     def post(self):
         music_list = []
         user_name = self.get_secure_cookie('user')
@@ -44,7 +44,7 @@ class APIMusicSetHandler(APIBaseHandler):
                 music_list.append(MusicSet.add_music(save_file_path, user_name, True))
         self.write(music_list)
 
-    @authenticated
+    @authenticated(['uploader', 'admin'])
     def delete(self):
         MusicSet.remove_all_music()
         self.write(None)
@@ -61,12 +61,12 @@ class APIMusicHandler(APIBaseHandler):
         delete music
     '''
 
-    @authenticated
+    @authenticated(['uploader', 'admin'])
     def get(self, music_id):
         music = MusicSet.get_music(music_id)
         self.write(music)
 
-    @authenticated
+    @authenticated(['uploader', 'admin'])
     def put(self, music_id):
         music_name = self.get_argument("music_name")
         music_artist = self.get_argument("music_artist")
@@ -80,7 +80,7 @@ class APIMusicHandler(APIBaseHandler):
         else:
             self.write(None)
 
-    @authenticated
+    @authenticated(['uploader', 'admin'])
     def delete(self, music_id):
         music = MusicSet.get_music(music_id)
         music.remove()

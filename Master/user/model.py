@@ -13,14 +13,20 @@ from bson.objectid import ObjectId
 import functools
 from tornado.web import HTTPError
 
-def authenticated(method):
-    @functools.wraps(method)
-    def wrapper(self, *args, **kwargs):
-        # print self.current_user
-        if not self.current_user:
-            raise HTTPError(403)
-        return method(self, *args, **kwargs)
-    return wrapper
+def authenticated(req):
+    def actualDecorator(method):
+        @functools.wraps(method)
+        def wrapper(self, *args, **kwargs):
+            user = UserSet.get_user_by_name(self.current_user)
+            if not user:
+                raise HTTPError(403)
+            user_level = user.user_level
+            # print self.current_user,user_level,req
+            if user_level not in req:
+                raise HTTPError(403)
+            return method(self, *args, **kwargs)
+        return wrapper
+    return actualDecorator
 
 class User(Document):
     '''
@@ -29,6 +35,9 @@ class User(Document):
     '''
     user_name = StringField(max_length = 50, unique = True)
     user_password = StringField(max_length = 40, required = True)
+    
+    # 4 user level : disable, normal, uploader, admin
+    user_level = StringField(max_length = 20, default='normal')
 
     def __str__(self):
         return ('user_name = %s\n') % (self.user_name).encode('utf-8')
@@ -38,14 +47,18 @@ class User(Document):
         return self.pk
 
     def update_info(self, user_password):
-        self.user_password = hashlib.md5(user_password +
-            self.user_name).hexdigest().upper()
+        self.user_password = hashlib.md5(user_password.encode('utf8') +
+            self.user_name.encode('utf8')).hexdigest().upper()
         self.save()
 
     def check_pw(self, user_password):
-        check_password = hashlib.md5(user_password +
-            self.user_name).hexdigest().upper()
+        check_password = hashlib.md5(user_password.encode('utf8') +
+            self.user_name.encode('utf8')).hexdigest().upper()
         return check_password == self.user_password
+
+    def update_level(self, user_level):
+        self.user_level = user_level
+        self.save()
 
     def remove(self):
         self.delete()
@@ -58,12 +71,13 @@ class UserSet(object):
         raise Exception,'UserSet can\'t be __init__'
 
     @classmethod
-    def add_user(cls, user_name, user_password):
-        save_password = hashlib.md5(user_password + 
-            user_name).hexdigest().upper()
+    def add_user(cls, user_name, user_password, user_level):
+        save_password = hashlib.md5(user_password.encode('utf8') + 
+            user_name.encode('utf8')).hexdigest().upper()
         try:
-            return User(user_name, save_password).save()
-        except NotUniqueError:
+            return User(user_name, save_password, user_level).save()
+        # except NotUniqueError:
+        except:
             return None
 
     @classmethod
