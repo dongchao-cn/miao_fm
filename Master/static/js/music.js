@@ -1,6 +1,7 @@
 
 function edit_music_success_modal(data)
-{
+{   
+    //console.info(data);
     $("#editSong").empty();
     var strInputText =
     '<table> \
@@ -8,7 +9,10 @@ function edit_music_success_modal(data)
         <tr><td><span class="input-group-addon">music_name</span></td><td><input type="text" class="form-control"  value="' + data.music_name +'"></td></tr>\
         <tr><td><span class="input-group-addon">music_artist</span></td><td><input type="text" class="form-control"  value="' + data.music_artist +'"></td></tr>\
         <tr><td><span class="input-group-addon">music_album</span></td><td><input type="text" class="form-control"  value="' + data.music_album +'"></td></tr>\
-        </table><audio controls ="controls" preload="none" src="' + data.music_url +'"/><audio/>';
+        </table>\
+        <audio controls ="controls" preload="none" src="' + data.music_url +'"/><audio/></br>\
+        <button id="' + data.music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">Del</button>';
+        
     $("#editSong").append(strInputText);
 }
 

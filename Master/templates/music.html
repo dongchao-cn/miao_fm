@@ -156,14 +156,6 @@ function editSong(event){
 $('#updateSongInfo').bind('click',function(event){
     //$('#clearlist').nextAll().remove();
     var info = $('#editSong table').children();
-    // console.info("##########");
-    // console.info(info);
-    // console.info($(info[1]).val()); // id
-    // console.info($(info[4]).val()); // name
-    // console.info($(info[7]).val()); // artist
-    // console.info($(info[10]).val());// album
-    // console.info($(info[13]).val());// genre
-
     var musicId = $(info[0].children[0].children[1].children).val();
     var musicName = $(info[0].children[1].children[1].children).val();
     var musicArtist = $(info[0].children[2].children[1].children).val();

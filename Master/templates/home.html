@@ -109,7 +109,7 @@ function reportError(){
 }
 function submitReport(){
     var reportContent = $("#reportContent").val();
-    console.info(reportContent);
+    //console.info(reportContent);
     $.ajax({
         type:"post",
         url:"/api/report/",
@@ -132,8 +132,14 @@ function submitReport(){
 {% end %}
 
 {% block content %}
-<div>
+<div id="navBar"></div>
+<div id="nav">
+    <ul class="breadcrumb">
+      <li><a href="#">登录</a> <span class="divider">/</span></li>
+      <li class="active"><a href="#">注册</a></li>
+    </ul>
 </div>
+<div class="clear"></div>
 <div id="container">
     <div class="row-fluid">
         <div class="span4">
@@ -205,9 +211,11 @@ function submitReport(){
                 </div>
             </div>               
         </div>
-    <div id="footer">
-        <p></p>
-    </div>
+    </div> 
+</div>       
+<div id="footer">
+    <p></p>
 </div>
+
 {% end %}
 

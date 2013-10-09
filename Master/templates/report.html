@@ -43,6 +43,7 @@
             </div>
 
             <div class="modal-footer">
+                <button id="delSong" class="btn btn btn-danger" data-dismiss="modal" aria-hidden="true" onClick="delSong(this)">Delete</button>
                 <button id="updateSongInfo" class="btn btn btn-primary" data-dismiss="modal" aria-hidden="true">I'm done!</button>
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel it </button>
             </div>
@@ -121,7 +122,7 @@ function editSong(event){
 //update song info
 $('#updateSongInfo').bind('click',function(event){
     //$('#clearlist').nextAll().remove();
-    var info = $('#editSong div').children();
+    var info = $('#editSong ').children();
     // console.info("##########");
     // console.info(info);
     // console.info($(info[1]).val()); // id
@@ -135,7 +136,8 @@ $('#updateSongInfo').bind('click',function(event){
     var musicArtist = $(info[7]).val();
     var musicAlbum = $(info[10]).val();
     var musicGenre = $(info[13]).val();
-    
+    console.info("fsaf");
+    console.info(info);
     $.ajax({
         type:'put',
         url: '/api/music/' + musicId + '/',
@@ -147,8 +149,8 @@ $('#updateSongInfo').bind('click',function(event){
         async : false,
         success:function(){
            //parent.location.reload();
-           // console.info($(this));
-           var tdstr = '<tr class="' + musicId + '"><td>'+ musicId +'</td> \
+            console.info($(this));
+            var tdstr = '<tr class="' + musicId + '"><td>'+ musicId +'</td> \
                             <td>'+ musicName +'</td> \
                             <td>' + musicArtist +'</td> \
                             <td>'+ musicAlbum +'</td> \

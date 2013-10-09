@@ -15,3 +15,19 @@ function render_report_list(data)
         $("#addReport > tbody:last").append(tdstr);
     }
 }
+//delete song 
+function delSong(event){
+    //console.info(event.id);
+    var musicId = event.id;
+    url = '/api/music/' + musicId + '/';
+    $.ajax({
+        type:'delete',
+        url:url,
+        async : false,
+        success:function(data){
+            //console.info("delete" + data + "success!");
+            $('.' + musicId).remove();
+        },
+    });
+    
+}
