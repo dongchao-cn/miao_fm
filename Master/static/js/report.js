@@ -14,6 +14,21 @@ function render_report_list(data){
         $("#addReport > tbody:last").append(tdstr);
     }
 }
+function delReport(event){
+    var reportId = event.id;
+    url = '/api/report/' + reportId + '/';
+    console.info(reportId);
+    $.ajax({
+        type:'delete',
+        url:url,
+        async : false,
+        success:function(data){
+            //console.info("delete" + data + "success!");
+            $('.' + reportId).remove();
+        },
+    });
+
+}
 
 //delete Edit report
 function delEditReport(evnet){
@@ -24,7 +39,7 @@ function delEditReport(evnet){
 
 //edit report 
 function editReport(event){
-    console.info($(event).next().attr("id"));
+    //console.info($(event).next().attr("id"));
     // console.info($(event).next().attr('id'))
     // console.info($('.'+$(event).next().attr('id'))[0].cells[1].innerText);
     var musicId = $('.'+$(event).next().attr('id'))[0].cells[1].innerText;
