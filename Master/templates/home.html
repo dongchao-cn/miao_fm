@@ -3,146 +3,24 @@
 {% block extern_lib %}
     <link rel="stylesheet" type="text/css" href="/static/css/home.css">
     <link rel="stylesheet" type="text/css" href="/static/jPlayer/skin/blue.monday/jplayer.blue.monday.css">
+    <script type="text/javascript" src="/static/js/home.js"></script>
     <script type="text/javascript" src="/static/js/jquery-1.10.2.js"></script>
     <script type="text/javascript" src="/static/jPlayer/js/jquery.jplayer.min.js"></script>
     <script type="text/javascript" src="/static/jPlayer/js/jplayer.playlist.min.js"></script>
-
-<script type="text/javascript">
-var currentSongInfo = [];
-$(document).ready(function(){
-
-    new jPlayerPlaylist({
-        jPlayer: "#jquery_jplayer_1",
-        cssSelectorAncestor: "#jp_container_1"
-    }, 
-    [],{ 
-        ready: function (){
-            $.ajax({
-                type:"get",
-                url:"/api/music/next/",
-                dataType:"json",
-                async:false,
-                success:function(data){
-                    //console.info(data);
-                    currentSongUrl = [data.music_id,data.music_name,data.music_artist,data.music_album,data.music_genre];
-                    var singer = data.music_artist;
-                    var name = data.music_name;
-                    var album = data.music_album;
-                    $("#jp-singer").text(singer); 
-                    $("#jp-name").text(name);  
-                    $("#jp-album").text(album);   
-
-                    $("#jquery_jplayer_1").jPlayer("setMedia", {
-                        mp3:data.music_url
-                    });
-                    $("#jquery_jplayer_1").jPlayer("play");
-                }
-            });
-        },
-        ended: function (event) {
-            $.ajax({
-                type:"get",
-                url:"/api/music/next/",
-                dataType:"json",
-                async:false,
-                success:function(data){
-                    var singer = data.music_artist;
-                    var name = data.music_name;
-                    var album = data.music_album;
-                    $("#jp-singer").text(singer); 
-                    $("#jp-name").text(name);  
-                    $("#jp-album").text(album); 
-
-                    $("#jquery_jplayer_1").jPlayer("setMedia", {
-                        mp3:data.music_url
-                    });
-                    $("#jquery_jplayer_1").jPlayer("play");
-                }
-            });
-        },
-        swfPath: "/static/jPlayer/js",
-        supplied: "mp3",
-        wmode: "window",
-        smoothPlayBar: true,
-        keyEnabled: true
-    });
-
-    $("#jp-next").click(function(){
-        $.ajax({
-            type:"get",
-            url:"/api/music/next/",
-            dataType:"json",
-            cache:false,
-            async:false,
-            success:function(data){
-                //console.info(data);
-                var singer = data.music_artist;
-                var name = data.music_name;
-                var album = data.music_album;
-                $("#jp-singer").text(singer); 
-                $("#jp-name").text(name);  
-                $("#jp-album").text(album); 
-                $("#jquery_jplayer_1").jPlayer("setMedia", {
-                    mp3:data.music_url
-                });
-                $("#jquery_jplayer_1").jPlayer("play");
-            }
-        });
-    });
-
-});
-
-function reportError(){
-    //console.info(currentSongUrl[0]);
-    $("#reportInfo").empty();
-     var strInputText = 
-        '<table> \
-            <tr><td><span class="input-group-addon">歌曲ID</span></td><td><input type="text" class="form-control" disabled="disabled" value="' + currentSongUrl[0] +'"></td></tr>\
-            <tr><td><span class="input-group-addon">歌名</span></td><td><input type="text" class="form-control" disabled="disabled" value="' + currentSongUrl[1] +'"></td></tr>\
-            <tr><td><span class="input-group-addon">歌手</span></td><td><input type="text" class="form-control" disabled="disabled" value="' + currentSongUrl[2] +'"></td></tr>\
-            <tr><td><span class="input-group-addon">专辑</span></td><td><input type="text" class="form-control" disabled="disabled" value="' + currentSongUrl[3] +'"></td></tr>\
-            <tr><td><span class="input-group-addon">错误信息</span></td><td> <textarea id="reportContent" placeholder="请输入错误信息" type="textarea" class="form-control" value="" rows="3" cols="80"></textarea></td></tr>\
-        </table>';
-    $("#reportInfo").append(strInputText);
-    
-
-}
-function submitReport(){
-    var reportContent = $("#reportContent").val();
-    //console.info(reportContent);
-    $.ajax({
-        type:"post",
-        url:"/api/report/",
-        async:false,
-        dataType:"json",
-        data:{
-            music_id:currentSongUrl[0],
-            report_info:reportContent
-        },
-        success:function(){
-            console.info("success");
-        },
-        error:function(){
-            console.info("error");
-        }
-    });
-}
-
-</script>
 {% end %}
 
 {% block content %}
-<div id="navBar"></div>
-<div id="nav">
+<!-- <div id="navBar"></div> -->
+<!-- <div id="nav">
     <ul class="breadcrumb">
-      <li><a href="/login/">登录</a> <span class="divider">/</span></li>
+      <li ><a href="/login/">登录</a><span class="divider">/</span></li>
       <li class="active"><a href="/regist/">注册</a></li>
     </ul>
-</div>
+</div> -->
 <div class="clear"></div>
 <div id="container">
     <div class="row-fluid">
-        <div class="span6">
+        <div class="span5">
              <!--Sidebar content--> 
             <div id="wrapper">
                 <h1>Miao FM</h1>
@@ -152,7 +30,14 @@ function submitReport(){
 
         <div class="span1"></div>
 
-        <div class="span5">
+        <div class="span6">
+            <div id="nav">
+                <ul class="breadcrumb">
+                  <li ><a href="/login/">登录</a><span class="divider">/</span></li>
+                  <li class="active"><a href="/regist/">注册</a></li>
+                </ul>
+            </div>
+
             <div id="jquery_jplayer_1" class="jp-jplayer"></div>
             
             <div id="jp_container_1" class="jp-audio">   
@@ -216,6 +101,5 @@ function submitReport(){
 <div id="footer">
     <p></p>
 </div>
-
 {% end %}
 

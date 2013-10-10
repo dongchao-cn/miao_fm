@@ -25,7 +25,7 @@
         </div>
         <div class="modal-body"> 
             <div class="modal-footer">
-                <button id="deleteListAll" class="btn btn btn-primary" data-dismiss="modal" aria-hidden="true">I'm sure!</button>
+                <button id="deleteReportAll" class="btn btn btn-primary" data-dismiss="modal" aria-hidden="true">I'm sure!</button>
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel </button>
             </div>
         </div>
@@ -43,7 +43,7 @@
             </div>
 
             <div class="modal-footer">
-                <button id="delSong" class="btn btn btn-danger" data-dismiss="modal" aria-hidden="true" onClick="delSong(this)">Delete</button>
+                <button id="delSong" class="btn btn btn-danger" data-dismiss="modal" aria-hidden="true" onClick="delEditReport(this)">Delete</button>
                 <button id="updateSongInfo" class="btn btn btn-primary" data-dismiss="modal" aria-hidden="true">I'm done!</button>
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel it </button>
             </div>
@@ -72,13 +72,8 @@
 
 <script type='text/javascript'>
 
-//clear uploaded song list
-$('#shutdown').bind('click',function(event){
-    $('#clearlist').nextAll().remove();
-});
-
-//delete all the song list 
-$('#deleteListAll').bind('click',function(event){
+//delete all the reportList 
+$('#deleteReportAll').on('click',function(event){
     $.ajax({
         type: 'delete',
         url: "/api/report/",
@@ -89,20 +84,7 @@ $('#deleteListAll').bind('click',function(event){
     });
 });
 
-//delete song 
-function delReport(event){
-    var reportId = event.id;
-    url = '/api/report/' + reportId + '/';
-    $.ajax({
-        type:'delete',
-        url:url,
-        async : false,
-        success:function(data){
-            //console.info("delete" + data + "success!");
-            $('.' + reportId).remove();
-        },
-    });
-}
+
 
 //edit song 
 function editSong(event){
@@ -122,22 +104,11 @@ function editSong(event){
 //update song info
 $('#updateSongInfo').bind('click',function(event){
     //$('#clearlist').nextAll().remove();
-    var info = $('#editSong ').children();
-    // console.info("##########");
-    // console.info(info);
-    // console.info($(info[1]).val()); // id
-    // console.info($(info[4]).val()); // name
-    // console.info($(info[7]).val()); // artist
-    // console.info($(info[10]).val());// album
-    // console.info($(info[13]).val());// genre
-
-    var musicId = $(info[1]).val();
-    var musicName = $(info[4]).val();
-    var musicArtist = $(info[7]).val();
-    var musicAlbum = $(info[10]).val();
-    var musicGenre = $(info[13]).val();
-    console.info("fsaf");
-    console.info(info);
+    var info = $('#editSong table tbody input');
+    var musicId = $(info[0]).val();
+    var musicName = $(info[1]).val();
+    var musicArtist = $(info[2]).val();
+    var musicAlbum = $(info[3]).val();
     $.ajax({
         type:'put',
         url: '/api/music/' + musicId + '/',
@@ -149,12 +120,11 @@ $('#updateSongInfo').bind('click',function(event){
         async : false,
         success:function(){
            //parent.location.reload();
-            console.info($(this));
+            //console.info($(this));
             var tdstr = '<tr class="' + musicId + '"><td>'+ musicId +'</td> \
                             <td>'+ musicName +'</td> \
                             <td>' + musicArtist +'</td> \
                             <td>'+ musicAlbum +'</td> \
-                            <td>'+ musicGenre +'</td> \
                             <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">edit</a>&nbsp \
                             <button id="' + musicId + '"class="btn btn btn-danger btn-xs" onClick ="delReport(this)">del</button></td> \
                             </tr>';
@@ -166,6 +136,7 @@ $('#updateSongInfo').bind('click',function(event){
 
 $('#myModal3').on('hidden', function () {
     $("#editSong").empty();
+    location.reload();
 })
 
 $('#myModal').on('hidden', function () {

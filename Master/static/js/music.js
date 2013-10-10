@@ -10,8 +10,7 @@ function edit_music_success_modal(data)
         <tr><td><span class="input-group-addon">music_artist</span></td><td><input type="text" class="form-control"  value="' + data.music_artist +'"></td></tr>\
         <tr><td><span class="input-group-addon">music_album</span></td><td><input type="text" class="form-control"  value="' + data.music_album +'"></td></tr>\
         </table>\
-        <audio controls ="controls" preload="none" src="' + data.music_url +'"/><audio/></br>\
-        <button id="' + data.music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">Del</button>';
+        <audio controls ="controls" preload="none" src="' + data.music_url +'"/><audio/></br>';
         
     $("#editSong").append(strInputText);
 }
@@ -39,3 +38,23 @@ function render_music_list(data)
         $("#addSong > tbody:last").append(tdstr);
     }
 }
+
+//delete Edit song 
+function delEditSong(){
+    console.info($("#editSong table input").val());
+    var musicId = $("#editSong table input").val();
+    url = '/api/music/' + musicId + '/';
+    $.ajax({
+        type:'delete',
+        url:url,
+        async : false,
+        success:function(data){
+            //console.info("delete" + data + "success!");
+            $('.' + musicId).remove();
+        },
+    });
+    
+}
+
+
+

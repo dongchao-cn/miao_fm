@@ -17,6 +17,7 @@
                 type: 'get',
                 url: "/api/user/current/",
                 async : false,
+                dataType: "json",
                 success:function(data){
                     if (data == null)
                     {
@@ -52,7 +53,7 @@
                 </ul>
                 <ul class="nav pull-right">
                     <li><a id='userLable'></a></li>
-                    <li><a id='logoutButton' href="/api/user/current/">Sign out</a></li>
+                    <li><a id='logoutButton' href="#">Sign out</a></li>
                 </ul>
             </div>
         </div>
@@ -67,7 +68,7 @@
                     url: "/api/user/current/",
                     async : false,
                     success:function(data){
-                        location.href = '/login/'
+                        location.href = '/'
                     }
                 });
             });

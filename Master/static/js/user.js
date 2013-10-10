@@ -27,7 +27,7 @@ function edit_user_error_modal(data)
 }
 
 
-function render_report_list(data)
+function render_user_list(data)
 {
     $("#addUser > tbody").empty();
     // console.info(data);
@@ -37,7 +37,7 @@ function render_report_list(data)
             <td>' + data[i].user_password+'</td> \
             <td>'+ data[i].user_level +'</td> \
             <td><a id="' + data[i].user_id + '"" href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editUser(this)">Edit</a>&nbsp\
-            </td> \
+            <button class="btn btn-danger btn-xs" onClick ="delUser(this)">del</button></td> \
             </tr>';
         //console.info(tdstr);
         $("#addUser > tbody:last").append(tdstr);

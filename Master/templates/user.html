@@ -10,14 +10,14 @@
     <div class="control-group">
         <div id="controls" class="controls">
             <div id="menu" align="left">
-<!--                 <a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal">Del All User</a> -->
+        <!--<a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal">Del All User</a> -->
             </div>  
         </div>
     </div>
     <hr/>
 
     <!--delete all user-->
-    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <!-- <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             <h3 id="myModalLabel">Do you really wanna delete all the user?</h3>
@@ -28,7 +28,7 @@
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel </button>
             </div>
         </div>
-    </div>
+    </div> -->
     <!--delete all user end-->
 
     <!--edit user-->
@@ -49,7 +49,7 @@
     </div>
     <!--edit user end-->
 
-    <!--reportlist-->
+    <!--userlist-->
     <div class="tab-content">
         <div class="tab-pane active" id="home">
             <table class="table table-hover" id="addUser">
@@ -89,14 +89,14 @@ $('#deleteListAll').bind('click',function(event){
 
 //delete user 
 function delUser(event){
-    var userId = event.id;
+    //console.info("del user");
+    var userId = $(event).prev().attr("id");
     url = '/api/user/' + userId + '/';
     $.ajax({
         type:'delete',
         url:url,
         async : false,
         success:function(data){
-            //console.info("delete" + data + "success!");
             $('.' + userId).remove();
         },
     });
@@ -108,6 +108,7 @@ function editUser(event){
     // console.info($(event).attr('id'))
     // console.info($('.'+$(event).next().attr('id'))[0].cells[1].innerText);
     var user_id = $(event).attr('id');
+    console.info(event);
     $.ajax({
         type:'get',
         url: "/api/user/" + user_id + '/',
@@ -122,18 +123,13 @@ function editUser(event){
 $('#updateUserInfo').bind('click',function(event){
     //$('#clearlist').nextAll().remove();
     var info = $('#editUser table').children();
-    // console.info("##########");
-    // console.info(info);
-    // console.info($(info[0].children[0].children[1].children).val());
-    // console.info($(info[0].children[1].children[1].children).val());
-    // console.info($(info[0].children[2].children[1].children).val());
-    // console.info($(info[0].children[3].children[1].children).val());
+    console.info(info);
 
     var user_id = $(info[0].children[0].children[1].children).val();
     var user_name = $(info[0].children[1].children[1].children).val();
     var user_password = $(info[0].children[2].children[1].children).val();
     var user_level = $(info[0].children[3].children[1].children).val();
-    
+    console.info(user_id);
     $.ajax({
         type:'put',
         url: '/api/user/' + user_id + '/user_level/',
@@ -142,14 +138,13 @@ $('#updateUserInfo').bind('click',function(event){
         },
         async : false,
         success:function(){
-           //parent.location.reload();
            // console.info($(this));
            var tdstr = '<tr class="' + user_id + '"><td>'+ user_id +'</td> \
                             <td>'+ user_name +'</td> \
                             <td>' + user_password +'</td> \
                             <td>'+ user_level +'</td> \
-                            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editUser(this)">edit</a>&nbsp \
-                            <button id="' + user_id + '"class="btn btn btn-danger btn-xs" onClick ="delUser(this)">del</button></td> \
+                            <td><a id="' + user_id + '"" href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editUser(this)">Edit</a>&nbsp&nbsp\
+                                <button class="btn btn-danger btn-xs" onClick ="delUser(this)">del</button></td>  \
                             </tr>';
            $('.' + user_id).replaceWith(tdstr);
          }
@@ -190,7 +185,7 @@ $(document).ready(function(){
                             count:items_pre_page
                         },
                         async : false,
-                        success:render_report_list
+                        success:render_user_list
                     });
                 },
             }
@@ -204,6 +199,7 @@ $(document).ready(function(){
 
 // add fist page of user list
 $(document).ready(function(){
+    console.info("user");
     $.ajax({
         type: 'get',
         url: "/api/user/",
@@ -214,7 +210,7 @@ $(document).ready(function(){
             count:items_pre_page
         },
         async:false,
-        success:render_report_list
+        success:render_user_list
     });
 });
 

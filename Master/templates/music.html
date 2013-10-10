@@ -76,6 +76,7 @@
             </div>
 
             <div class="modal-footer">
+                <button id="delSong" class="btn btn btn-danger" data-dismiss="modal" aria-hidden="true" onClick="delEditSong(this)">Delete</button>
                 <button id="updateSongInfo" class="btn btn btn-primary" data-dismiss="modal" aria-hidden="true">I'm done!</button>
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel it </button>
             </div>
@@ -123,7 +124,7 @@ $('#deleteListAll').bind('click',function(event){
 
 //delete song 
 function delSong(event){
-    //console.info(event.id);
+    console.info(event);
     var musicId = event.id;
     url = '/api/music/' + musicId + '/';
     $.ajax({
@@ -155,12 +156,11 @@ function editSong(event){
 //update song info
 $('#updateSongInfo').bind('click',function(event){
     //$('#clearlist').nextAll().remove();
-    var info = $('#editSong table').children();
-    var musicId = $(info[0].children[0].children[1].children).val();
-    var musicName = $(info[0].children[1].children[1].children).val();
-    var musicArtist = $(info[0].children[2].children[1].children).val();
-    var musicAlbum = $(info[0].children[3].children[1].children).val();
-    //console.info($(info[0].children[0].children[1].children).val());
+    var info = $('#editSong table tbody input');
+    var musicId = $(info[0]).val();
+    var musicName = $(info[1]).val();
+    var musicArtist = $(info[2]).val();
+    var musicAlbum = $(info[3]).val();
     $.ajax({
         type:'put',
         url: '/api/music/' + musicId + '/',
@@ -171,9 +171,8 @@ $('#updateSongInfo').bind('click',function(event){
         },
         async : false,
         success:function(){
-           //parent.location.reload();
-           console.info($(this));
-           console.info("update");
+           //console.info($(this));
+           //console.info("update");
            var tdstr = '<tr class="' + musicId + '"><td>'+ musicId +'</td> \
                             <td>'+ musicName +'</td> \
                             <td>' + musicArtist +'</td> \
@@ -213,9 +212,9 @@ $(function(){
     $('#fileupload').fileupload({
         dataType: 'json',
         add: function (e, data) { 
-            console.info(data.files[0].name);           
+            //console.info(data.files[0].name);           
             $('<h6/>').text(data.files[0].name).appendTo($('#upload'));           
-            console.info(data);
+            //console.info(data);
             data.context = $('<button type="button" class="btn btn-mini btn-info"/>').text('start upload')
                 .appendTo($('#upload'))
                 .click(function () {
@@ -224,20 +223,13 @@ $(function(){
                 });
         },
         done:function (e, data) {
-            console.info(data);
+            //console.info(data);
             data.context.text('upload finished!');
             //console.info(data.result[0]);
-            //console.info(data.files[0]);
         },
         fail:function(e,data) {
             //alert("sfsf");
-            
-            console.info(data);
-        
-            console.info(e);
             data.context.text('upload error!!!!!!!!!!!!!!!!!');
-            //console.info(data.result[0]);
-            //console.info(data.files[0]);
         }
     });
 });
