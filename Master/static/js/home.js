@@ -102,7 +102,9 @@ function loginAndLogoff(){
                 if(currentUser[1] == 'normal'){
                     $("#nav li a").eq(0).text(currentUser[0]).attr("href","#");
                 }else{
-                    $("#nav li a").eq(0).text(currentUser[0]).attr("href","/admin/music/");
+                    $("#nav li a").eq(0).text(currentUser[0]).attr("href","#");
+                    console.info($("#nav li ").eq(1));
+                    $("#nav ul").append("<li><span class='divider'>/</span><a href='/admin/music/'>管理</a></li>");
                 }
                     
                 $("#nav li a").eq(1).html("注销").click(function(){

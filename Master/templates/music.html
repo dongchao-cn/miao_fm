@@ -124,7 +124,7 @@ $('#deleteListAll').bind('click',function(event){
 
 //delete song 
 function delSong(event){
-    console.info(event);
+    //console.info(event);
     var musicId = event.id;
     url = '/api/music/' + musicId + '/';
     $.ajax({
@@ -141,7 +141,7 @@ function delSong(event){
 
 //edit song 
 function editSong(event){
-    console.info($(event).next().attr('id'));
+    //console.info($(event).next().attr('id'));
     var musicId = $(event).next().attr('id');
     $.ajax({
         type:'get',

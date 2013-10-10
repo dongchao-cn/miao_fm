@@ -41,7 +41,7 @@ function render_music_list(data)
 
 //delete Edit song 
 function delEditSong(){
-    console.info($("#editSong table input").val());
+    //console.info($("#editSong table input").val());
     var musicId = $("#editSong table input").val();
     url = '/api/music/' + musicId + '/';
     $.ajax({
