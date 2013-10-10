@@ -190,10 +190,10 @@ if __name__ == '__main__':
     #     MusicSet()
     # except Exception:
     #     pass
-    music = MusicSet.get_music('52526db656a9e5144d800dd5')
+    # music = MusicSet.get_music('52526db656a9e5144d800dd5')
     # print music.to_json()
     # print help(Music)
-    print Music.__name__.lower()
+    # print Music.__name__.lower()
     # print dir(music)
     # for each in dir(music):
     #     if each.startswith('music'):
@@ -211,8 +211,8 @@ if __name__ == '__main__':
     
     # for each in _get_info_from_id3('/media/823E59BF3E59AD43/Music/mariah carey - without you - 玛丽亚凯莉 失去你.mp3'):
     #     print each
-    # for each in _get_info_from_id3('/media/823E59BF3E59AD43/Music/01兄妹.mp3'):
-    #     print each
+    for each in _get_info_from_id3('/media/823E59BF3E59AD43/test_music/Joanna Wang - Dirty Work.mp3'):
+        print each
 
 
 
