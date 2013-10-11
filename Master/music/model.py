@@ -148,7 +148,8 @@ def _lame_mp3(infile, music, remove=False):
         os.remove(infile)
 
 def _get_info_from_id3(file_name):
-    file_name = file_name.encode('utf8')
+    # print file_name
+    # file_name = file_name.encode('utf8')
     music_name = ''
     music_artist = ''
     music_album = ''
