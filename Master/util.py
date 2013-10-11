@@ -20,6 +20,9 @@ class APIBaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
         return self.get_secure_cookie('user')
 
+    def set_current_user(self, user_name):
+        self.set_secure_cookie('user', user_name)
+
     def set_default_headers(self):
         self.set_header ('Content-Type', 'application/json')
 

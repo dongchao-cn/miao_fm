@@ -56,7 +56,6 @@ application = tornado.web.Application([
 
     (r"/api/user/", user.view.APIUserSetHandler),
     (r"/api/user/(\w{24})/", user.view.APIUserHandler),
-    (r"/api/user/(\w{24})/user_level/", user.view.APIUserLevelHandler),
     (r"/api/user/current/", user.view.APIUserCurrentHandler),
 
     (r"/api/report/", report.view.APIReportSetHandler),

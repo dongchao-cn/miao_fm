@@ -57,54 +57,28 @@ class APIUserHandler(APIBaseHandler):
         delete user
     '''
 
-    @authenticated(['normal', 'uploader', 'admin'])
+    @authenticated(['admin'])
     def get(self, user_id):
-        current_user = UserSet.get_user_by_name(self.current_user)
-        if current_user.user_level == 'admin' or \
-            str(UserSet.get_user_by_name(self.current_user).user_id) == user_id:
-            user = UserSet.get_user(user_id)
-            self.write(user)
-        else:
-            self.write(None)
-
-    @authenticated(['normal', 'uploader', 'admin'])
-    def put(self, user_id):
-        '''
-        only update info NO LEVEL
-        '''
-        user_password = self.get_argument("user_password")
-        current_user = UserSet.get_user_by_name(self.current_user)
-        if current_user.user_level == 'admin' or \
-            str(UserSet.get_user_by_name(self.current_user).user_id) == user_id:
-            user = UserSet.get_user(user_id)
-            user.update_info(user_password)
-            user = UserSet.get_user(user_id)
-            self.write(user)
-        else:
-            self.write(None)
-
-    @authenticated(['admin'])
-    def delete(self, user_id):
         user = UserSet.get_user(user_id)
-        user.remove()
-        self.write(None)
-
-class APIUserLevelHandler(APIBaseHandler):
-    '''
-    put:
-        update user level
-    '''
+        self.write(user)
 
     @authenticated(['admin'])
     def put(self, user_id):
         '''
-        only update level
+        only update info for admin
+        only update user level
         '''
         user_level = self.get_argument("user_level")
         user = UserSet.get_user(user_id)
         user.update_level(user_level)
         user = UserSet.get_user(user_id)
         self.write(user)
+
+    @authenticated(['admin'])
+    def delete(self, user_id):
+        user = UserSet.get_user(user_id)
+        user.remove()
+        self.write(None)
 
 class APIUserCurrentHandler(APIBaseHandler):
     '''
@@ -114,13 +88,15 @@ class APIUserCurrentHandler(APIBaseHandler):
     post:
         login
 
+    put:
+        update self info
+
     delete:
         logout
     '''
 
     def get(self):
-        user_name = self.get_secure_cookie('user')
-        user = UserSet.get_user_by_name(user_name)
+        user = UserSet.get_user_by_name(self.current_user)
         self.write(user)
         
     def post(self):
@@ -128,10 +104,17 @@ class APIUserCurrentHandler(APIBaseHandler):
         user_password = self.get_argument('user_password')
         user = UserSet.get_user_by_name(user_name)
         if user and user.check_pw(user_password) and user.user_level != 'disable':
-            self.set_secure_cookie('user', user_name)
+            self.set_current_user(user_name)
             self.write(user)
             return
         self.write(None)
+
+    def put(self):
+        user_password = self.get_argument("user_password")
+        user = UserSet.get_user_by_name(self.current_user)
+        user.update_info(user_password)
+        user = UserSet.get_user_by_name(self.current_user)
+        self.write(user)
 
     def delete(self):
         self.clear_cookie('user')

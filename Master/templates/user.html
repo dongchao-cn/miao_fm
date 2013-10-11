@@ -132,7 +132,7 @@ $('#updateUserInfo').bind('click',function(event){
     console.info(user_id);
     $.ajax({
         type:'put',
-        url: '/api/user/' + user_id + '/user_level/',
+        url: '/api/user/' + user_id + '/',
         data:{
             user_level : user_level
         },
