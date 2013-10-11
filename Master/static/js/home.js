@@ -3,7 +3,7 @@ var currentSongInfo = [];
 
 $(document).ready(function(){
 
-    loginAndLogoff();
+    // loginAndLogoff();
 
     new jPlayerPlaylist({
         jPlayer: "#jquery_jplayer_1",
@@ -85,40 +85,40 @@ function submitReport(){
     });
 }
 
-function loginAndLogoff(){
-    var currentUser = [];
-    //console.info("user confirm");
-    $.ajax({
-        type: 'get',
-        url: "/api/user/current/",
-        dataType: 'json',
-        async : false,
-        success:function(data){
-            //console.info(data.user_name); 
-            if(data == null){
-                //console.info("user null");
-            }else{
-                currentUser = [data.user_name,data.user_level];
-                if(currentUser[1] == 'normal'){
-                    $("#nav li a").eq(0).text(currentUser[0]).attr("href","#");
-                }else{
-                    $("#nav li a").eq(0).text(currentUser[0]).attr("href","#");
-                    console.info($("#nav li ").eq(1));
-                    $("#nav ul").append("<li><span class='divider'>/</span><a href='/admin/music/'>管理</a></li>");
-                }
+// function loginAndLogoff(){
+//     var currentUser = [];
+//     //console.info("user confirm");
+//     $.ajax({
+//         type: 'get',
+//         url: "/api/user/current/",
+//         dataType: 'json',
+//         async : false,
+//         success:function(data){
+//             //console.info(data.user_name); 
+//             if(data == null){
+//                 //console.info("user null");
+//             }else{
+//                 currentUser = [data.user_name,data.user_level];
+//                 if(currentUser[1] == 'normal'){
+//                     $("#nav li a").eq(0).text(currentUser[0]).attr("href","#");
+//                 }else{
+//                     $("#nav li a").eq(0).text(currentUser[0]).attr("href","#");
+//                     console.info($("#nav li ").eq(1));
+//                     $("#nav ul").append("<li><span class='divider'>/</span><a href='/admin/music/'>管理</a></li>");
+//                 }
                     
-                $("#nav li a").eq(1).html("注销").click(function(){
-                    event.preventDefault();
-                    $.ajax({
-                        type: 'delete',
-                        url: "/api/user/current/",
-                        async : false,
-                        success:function(data){
-                            location.href = '/'
-                        }
-                    });
-                });
-            }            
-        }     
-    });       
-}
+//                 $("#nav li a").eq(1).html("注销").click(function(){
+//                     event.preventDefault();
+//                     $.ajax({
+//                         type: 'delete',
+//                         url: "/api/user/current/",
+//                         async : false,
+//                         success:function(data){
+//                             location.href = '/'
+//                         }
+//                     });
+//                 });
+//             }            
+//         }     
+//     });       
+// }
