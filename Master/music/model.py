@@ -88,14 +88,14 @@ class MusicSet(object):
         raise Exception,'MusicSet can\'t be __init__'
 
     @classmethod
-    def add_music(cls, file, user_name, remove=False):
-        music_name, music_artist, music_album = _get_info_from_id3(file)
+    def add_music(cls, file_name, user_name, remove=False):
+        music_name, music_artist, music_album = _get_info_from_id3(file_name)
         user = UserSet.get_user_by_name(user_name)
         music = Music(music_name=music_name, music_artist=music_artist, 
             music_album=music_album,
             music_upload_user=user, music_upload_date=datetime.datetime.now(),
-            music_file=open(file, 'r').read()).save()
-        multiprocessing.Process(target=_lame_mp3, args=(file, music, remove)).start()
+            music_file=open(file_name, 'r').read()).save()
+        multiprocessing.Process(target=_lame_mp3, args=(file_name, music, remove)).start()
         return music
 
     @classmethod
@@ -147,16 +147,17 @@ def _lame_mp3(infile, music, remove=False):
     if remove:
         os.remove(infile)
 
-def _get_info_from_id3(file):
+def _get_info_from_id3(file_name):
+    file_name = file_name.encode('utf8')
     music_name = ''
     music_artist = ''
     music_album = ''
 
-    os.system('mid3iconv -q -e GBK "%s"' % (file.encode('utf8')))
+    os.system('mid3iconv -q -e GBK "%s"' % (file_name))
     try:
-        audio = mutagen.File(file, easy=True)
+        audio = mutagen.File(file_name, easy=True)
     except:
-        print 'On mutagen.File : %s' % (file)
+        print 'On mutagen.File : %s' % (file_name)
         traceback.print_exc()
         return music_name, music_artist, music_album
 

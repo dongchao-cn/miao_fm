@@ -39,6 +39,7 @@ class APIMusicSetHandler(APIBaseHandler):
         user_name = self.get_secure_cookie('user')
         for upload_file in self.request.files['file']:
             save_file_path = ABS_PATH + "/uploads/" + upload_file['filename']
+            # save_file_path = save_file_path.encode('utf8')
             with open(save_file_path, 'w') as f:
                 f.write(upload_file['body'])
                 music_list.append(MusicSet.add_music(save_file_path, user_name, True))
