@@ -23,7 +23,7 @@ body {
 	height: 20px;
 }
 #wrapper {
-	margin:150px 0px 0px 110px;
+	margin:100px 0px 0px 110px;
 	border: 0px solid red;
 }
 
@@ -43,7 +43,7 @@ body {
 }
 
 #jp_container_1 {
-	margin-top:120px;
+	margin-top:150px;
 	float:right;
 	margin-right: 100px;
 	border: 0px solid red;
