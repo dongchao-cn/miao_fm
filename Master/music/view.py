@@ -94,9 +94,9 @@ class APIMusicNextHandler(APIBaseHandler):
         get next music info for play
     '''
     def get(self):
-        print 'APIMusicNextHandler'
+        # print 'APIMusicNextHandler'
         user = UserSet.get_user_by_name(self.current_user)
-        print user
+        # print user
         if user:
             user.user_listened += 1
             user.save()

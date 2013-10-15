@@ -46,6 +46,11 @@ function playNextSong(){
                 mp3:data.music_url
             });
             $("#jquery_jplayer_1").jPlayer("play");
+            str_listened = $("#user_listened").text();
+            int_listened = parseInt(str_listened.substring(2, str_listened.length-1))
+            // console.info(int_listened)
+            int_listened += 1
+            $("#user_listened").text("听过"+int_listened+"首");
         }
     });
 }
