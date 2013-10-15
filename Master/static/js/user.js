@@ -8,6 +8,7 @@ function edit_user_success_modal(data)
         <tr><td><span class="input-group-addon">user_id</span></td><td><input disabled="disabled" type="text" class="form-control" value="' + data.user_id +'"></td></tr>\
         <tr><td><span class="input-group-addon">user_name</span></td><td><input disabled="disabled" type="text" class="form-control"  value="' + data.user_name +'"></td></tr>\
         <tr><td><span class="input-group-addon">user_password</span></td><td><input disabled="disabled" type="text" class="form-control"  value="' + data.user_password +'"></td></tr>\
+        <tr><td><span class="input-group-addon">user_listened</span></td><td><input disabled="disabled" type="text" class="form-control"  value="' + data.user_listened +'"></td></tr>\
         <tr><td><span class="input-group-addon">user_level</span></td><td>\
         <select class="form-control">\
         <option value="normal">normal</option>\
