@@ -123,12 +123,13 @@ function editUser(event){
 $('#updateUserInfo').bind('click',function(event){
     //$('#clearlist').nextAll().remove();
     var info = $('#editUser table').children();
-    console.info(info);
+    // console.info(info);
 
     var user_id = $(info[0].children[0].children[1].children).val();
     var user_name = $(info[0].children[1].children[1].children).val();
     var user_password = $(info[0].children[2].children[1].children).val();
-    var user_level = $(info[0].children[3].children[1].children).val();
+    var user_listened = $(info[0].children[3].children[1].children).val();
+    var user_level = $(info[0].children[4].children[1].children).val();
     console.info(user_id);
     $.ajax({
         type:'put',

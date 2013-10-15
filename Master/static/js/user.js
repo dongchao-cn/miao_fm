@@ -3,6 +3,8 @@ function edit_user_success_modal(data)
 {
     // console.info(data)
     $("#editUser").empty();
+    // console.info('asdasdsa')
+    // console.info(data.user_level)
     var strInputText =
     '<table> \
         <tr><td><span class="input-group-addon">user_id</span></td><td><input disabled="disabled" type="text" class="form-control" value="' + data.user_id +'"></td></tr>\
