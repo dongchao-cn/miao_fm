@@ -38,6 +38,7 @@ class User(Document):
     
     # 4 user level : disable, normal, uploader, admin
     user_level = StringField(max_length = 20, default='normal')
+    user_listened = IntField(default=0)
 
     def __str__(self):
         return ('user_name = %s\n') % (self.user_name).encode('utf-8')

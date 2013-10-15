@@ -5,6 +5,7 @@ import json
 
 from util import APIBaseHandler, MainJsonEncoder
 from user.model import authenticated
+from user.model import UserSet
 from .model import MusicSet
 from master_config import ABS_PATH
 
@@ -93,6 +94,12 @@ class APIMusicNextHandler(APIBaseHandler):
         get next music info for play
     '''
     def get(self):
+        print 'APIMusicNextHandler'
+        user = UserSet.get_user_by_name(self.current_user)
+        print user
+        if user:
+            user.user_listened += 1
+            user.save()
         music = MusicSet.get_next_music()
         self.write(music)
 
