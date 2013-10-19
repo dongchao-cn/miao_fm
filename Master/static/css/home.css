@@ -86,14 +86,11 @@ body {
 	border:0px solid red;
 }
 
-
-
 #jp-nameAlbum {
 	margin-left:10px;
 	margin-right:10px;
 	border-bottom:1px solid #009be3;
 }
-
 
 #jp-report {
 	width: 25px;
@@ -102,10 +99,33 @@ body {
 	margin-right:10px;
 	border:0px solid red;
 }
+
 #jp-report img {
 	size:25px 25px;
 }
 
+#jp-trash {
+	width: 25px;
+	height: 25px;
+	float:right;
+	margin-right:10px;
+	border:0px solid red;
+}
+
+#jp-trash img {
+	size:25px 25px;
+}
+
+#jp-favorite {
+	width: 25px;
+	height: 25px;
+	float:right;
+	margin-right:10px;
+	border:0px solid red;
+}
+#jp-favorite img {
+	size:25px 25px;
+}
 
 #footer {
 	height:15px;

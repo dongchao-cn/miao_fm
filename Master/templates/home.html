@@ -24,21 +24,23 @@
         <div class="span1"></div>
 
         <div class="span6">
-<!--             <div id="nav">
-                <ul class="breadcrumb">
-                  <li ><a href="/login/">登录</a><span class="divider">/</span></li>
-                  <li class="active"><a href="/regist/">注册</a></li>
-                </ul>
-            </div> -->
-
-            <div id="jquery_jplayer_1" class="jp-jplayer"></div>
-            
+            <div id="jquery_jplayer_1" class="jp-jplayer"></div>           
             <div id="jp_container_1" class="jp-audio">   
+                 <div id="jp-report">
+                    <a href="#myModal" data-toggle="modal" alt="report" onClick="reportError(this)"><img src="../static/img/report.png"></img></a>
+                </div>
 
-                <div id="jp-report"><a href="#myModal"  data-toggle="modal" alt="report" onClick="reportError(this)"><img src="../static/img/report.png"></img></a></div>
+                <div id="jp-favorite">
+                    <a href="#myModal1"  data-toggle="modal" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite.png"></img></a>
+                </div>
 
+                <div id="jp-trash">
+                    <a href="#myModal2"  data-toggle="modal" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash.png"></img></a>
+                </div>
+
+               
                 <!--  report window -->
-                <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div id="myModal" align="middle"class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                         <h3 id="myModalLabel">报告信息</h3>

@@ -1,6 +1,5 @@
 
-function edit_music_success_modal(data)
-{   
+function edit_music_success_modal(data){   
     //console.info(data);
     $("#editSong").empty();
     var strInputText =
@@ -15,15 +14,13 @@ function edit_music_success_modal(data)
     $("#editSong").append(strInputText);
 }
 
-function edit_music_error_modal(data)
-{
+function edit_music_error_modal(data){
     $("#editSong").empty();
     var strInputText = '<p>Sorry,the song you find does not exist!</p>';
     $("#editSong").append(strInputText);
 }
 
-function render_music_list(data)
-{
+function render_music_list(data){
     $("#addSong > tbody").empty();
     // console.info(data);
     for(var i = 0;i < data.length;++i){
@@ -39,7 +36,7 @@ function render_music_list(data)
     }
 }
 
-//delete Edit song 
+//delete song in edit box
 function delEditSong(){
     //console.info($("#editSong table input").val());
     var musicId = $("#editSong table input").val();
