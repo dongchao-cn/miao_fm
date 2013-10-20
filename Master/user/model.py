@@ -39,6 +39,8 @@ class User(Document):
     # 4 user level : disable, normal, uploader, admin
     user_level = StringField(max_length = 20, default='normal')
     user_listened = IntField(default=0)
+    user_favour = ListField(StringField(max_length = 24), default=[])
+    user_dislike = ListField(StringField(max_length = 24), default=[])
 
     def __str__(self):
         return ('user_name = %s\n') % (self.user_name).encode('utf-8')
@@ -59,6 +61,28 @@ class User(Document):
 
     def update_level(self, user_level):
         self.user_level = user_level
+        self.save()
+
+    def add_favour(self, music_id):
+        self.update(add_to_set__user_favour=music_id)
+
+    def remove_favour(self, music_id):
+        self.user_favour.remove(music_id)
+        self.save()
+
+    def remove_all_favour(self):
+        self.user_favour = []
+        self.save()
+
+    def add_dislike(self, music_id):
+        self.update(add_to_set__user_dislike=music_id)
+
+    def remove_dislike(self, music_id):
+        self.user_dislike.remove(music_id)
+        self.save()
+
+    def remove_all_dislike(self):
+        self.user_dislike = []
         self.save()
 
     def remove(self):

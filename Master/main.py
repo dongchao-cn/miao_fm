@@ -57,6 +57,10 @@ application = tornado.web.Application([
     (r"/api/user/", user.view.APIUserSetHandler),
     (r"/api/user/(\w{24})/", user.view.APIUserHandler),
     (r"/api/user/current/", user.view.APIUserCurrentHandler),
+    (r"/api/user/current/favour/", user.view.APIUserFavourSetHandler),
+    (r"/api/user/current/favour/(\w{24})/", user.view.APIUserFavourHandler),
+    (r"/api/user/current/dislike/", user.view.APIUserDislikeSetHandler),
+    (r"/api/user/current/dislike/(\w{24})/", user.view.APIUserDislikeHandler),
 
     (r"/api/report/", report.view.APIReportSetHandler),
     (r"/api/report/(\w{24})/", report.view.APIReportHandler),

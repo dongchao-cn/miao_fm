@@ -17,7 +17,7 @@ import mongoengine.errors
 from mongoengine import *
 from bson.objectid import ObjectId
 
-from user.model import User, UserSet
+from user.model import UserSet
 
 class Music(Document):
     '''
@@ -33,7 +33,7 @@ class Music(Document):
     music_file = FileField('miao_fm_cdn')
 
     # upload info
-    music_upload_user = ReferenceField(User, reverse_delete_rule=NULLIFY)
+    music_upload_user = ReferenceField('user.model.User', reverse_delete_rule=NULLIFY)
     music_upload_date = DateTimeField()
 
     @property

@@ -4,6 +4,7 @@ import json
 import tornado
 
 from util import APIBaseHandler, MainJsonEncoder
+from music.model import MusicSet
 from .model import UserSet, authenticated
 
 class APIUserSetHandler(APIBaseHandler):
@@ -119,6 +120,82 @@ class APIUserCurrentHandler(APIBaseHandler):
     def delete(self):
         self.clear_cookie('user')
         self.write(None)
+
+class APIUserFavourSetHandler(APIBaseHandler):
+    '''
+    get:
+        get favours
+
+    post:
+        add a new favour
+
+    del:
+        del all favours
+    '''
+
+    def get(self):
+        user = UserSet.get_user_by_name(self.current_user)
+        self.write(user.user_favour)
+
+    def post(self):
+        music_id = self.get_argument("music_id")
+        user = UserSet.get_user_by_name(self.current_user)
+        user.add_favour(music_id)
+        user = UserSet.get_user_by_name(self.current_user)
+        self.write(user)
+
+    def delete(self):
+        user = UserSet.get_user_by_name(self.current_user)
+        user.remove_all_favour()
+        self.write(None)
+
+class APIUserFavourHandler(APIBaseHandler):
+    '''
+    del:
+        del favour
+    '''
+    def delete(self, music_id):
+        user = UserSet.get_user_by_name(self.current_user)
+        user.remove_favour(music_id)
+        self.write(user)
+
+class APIUserDislikeSetHandler(APIBaseHandler):
+    '''
+    get:
+        get dislikes
+
+    post:
+        add a new dislike
+
+    del:
+        del all dislikes
+    '''
+
+    def get(self):
+        user = UserSet.get_user_by_name(self.current_user)
+        self.write(user.user_dislike)
+
+    def post(self):
+        music_id = self.get_argument("music_id")
+        user = UserSet.get_user_by_name(self.current_user)
+        user.add_dislike(music_id)
+        user = UserSet.get_user_by_name(self.current_user)
+        self.write(user)
+
+    def delete(self):
+        user = UserSet.get_user_by_name(self.current_user)
+        user.remove_all_dislike()
+        self.write(None)
+
+class APIUserDislikeHandler(APIBaseHandler):
+    '''
+    del:
+        del dislike
+    '''
+    def delete(self, music_id):
+        user = UserSet.get_user_by_name(self.current_user)
+        user.remove_dislike(music_id)
+        self.write(user)
 
 class LoginHandler(tornado.web.RequestHandler):
     def get(self):
