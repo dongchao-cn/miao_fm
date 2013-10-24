@@ -8,12 +8,15 @@ import re
 import datetime
 from bs4 import BeautifulSoup
 from mongoengine import *
-from master_config import MONGODB_URL, MONGODB_PORT, update_tag_time
+from master_config import MONGODB_URL, MONGODB_PORT, update_tag_time, update_tag_thresh_day
 
 schedule = sched.scheduler(time.time, time.sleep) 
 
 def getmusicnum(musicname, singername):
     print musicname,singername
+    if musicname == '':
+        print 'no name'
+        return None
     url = 'http://www.xiami.com/search?key='+musicname
     header = {'Referer':'http://www.xiami.com','User-Agent':'Mozilla/5.0'}
     try:
@@ -31,7 +34,7 @@ def getmusicnum(musicname, singername):
     for each in retr[1:]:
         # tdartist = each.findAll(class_='song_artist')[0].a['title'].encode('utf-8')
         tdartist = each.findAll(class_='song_artist')[0].a['title']
-        if ''.join(tdartist.split()).upper() == ''.join(singername.split()).upper():
+        if ''.join(tdartist.split()).upper() == ''.join(singername.split()).upper() or singername == '':
             tdname = each.findAll(class_='song_name')[0].a#.findNextSibling('a')['href']
             while tdname['href'] == "javascript:;":
                 tdname = tdname.findNextSibling('a')
@@ -43,7 +46,6 @@ def getmusicnum(musicname, singername):
 def getmusictags(song_num):
     tagurl = 'http://www.xiami.com/song/moretags/id/'+str(song_num)
     header = {'Referer':'http://www.xiami.com','User-Agent':'Mozilla/5.0'}
-    print tagurl
     try:
         r = requests.get(tagurl,headers = header)
     except:
@@ -60,6 +62,7 @@ def getmusictags(song_num):
 
 def getmusicimg(song_num):
     imgurl = 'http://www.xiami.com/song/'+str(song_num)
+    print imgurl
     header = {'Referer':'http://www.xiami.com','User-Agent':'Mozilla/5.0'}
     try:
         r = requests.get(imgurl,headers = header)
@@ -78,10 +81,16 @@ def perform_command( inc):
     print 'start at %s' % (datetime.datetime.now())
     Musics = Music.objects()
     for music in Musics:
+        nowday = datetime.datetime.now()
+        if music['music_tag'].has_key('update_datetime') and (nowday - music['music_tag']['update_datetime']).days < update_tag_thresh_day:
+            # print 'continue'
+            continue
         music_name = music['music_name']
         music_artist = music['music_artist']
         music_num = getmusicnum(music_name,music_artist)
+        music['music_tag']['update_datetime'] = nowday
         if not music_num:
+            music.save()
             return
         music_tags = getmusictags(music_num)
         music_img = getmusicimg(music_num)

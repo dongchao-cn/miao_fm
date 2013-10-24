@@ -11,6 +11,7 @@ ADMIN_PASSWORD = 'admin'
 
 # music tag
 update_tag_time = 10
+update_tag_thresh_day = 30
 import os
 ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
 
