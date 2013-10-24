@@ -16,6 +16,8 @@ Depends
 1. tornado
 2. mongoengine
 3. mutagen
+4. requests
+5. beautifulsoup4
 
 Settings
 --------
