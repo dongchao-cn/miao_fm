@@ -28,7 +28,9 @@ class Music(Document):
     music_name = StringField(max_length=200, default='')
     music_artist = StringField(max_length=50, default='')
     music_album = StringField(max_length=100, default='')
-
+    music_tag = DictField()
+    music_img = StringField(max_length=200,default ='')
+    
     # file info
     music_file = FileField('miao_fm_cdn')
 

@@ -9,6 +9,8 @@ MONGODB_PORT = 27017
 ADMIN_NAME = 'admin'
 ADMIN_PASSWORD = 'admin'
 
+# music tag
+update_tag_time = 10
 import os
 ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
 
