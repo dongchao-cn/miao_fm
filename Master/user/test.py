@@ -35,7 +35,7 @@ if __name__ == "__main__":
     users = init_userdata(tag='programming')
     print users
     fillItems(users)
-    user = user.keys()[random.randint(0, len(users) - 1)]
+    user = users.keys()[random.randint(0, len(users) - 1)]
     print user
     recommendations.getRecommendations(users, user)
      
