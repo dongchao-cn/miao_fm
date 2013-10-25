@@ -91,7 +91,7 @@ def perform_command( inc):
         music['music_tag']['update_datetime'] = nowday
         if not music_num:
             music.save()
-            return
+            continue
         music_tags = getmusictags(music_num)
         music_img = getmusicimg(music_num)
         print music_tags
