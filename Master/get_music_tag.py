@@ -98,7 +98,10 @@ def perform_command( inc):
         print music_img
         music['music_tag'] = music_tags
         music['music_img'] = music_img
-        music.save()
+        try:
+            music.save()
+        except:
+            print 'on save error!'
         # print music['music_name']
         # print music['music_artist']
         # print music['music_tag']
