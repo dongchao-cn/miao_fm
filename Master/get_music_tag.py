@@ -34,13 +34,26 @@ def getmusicnum(musicname, singername):
     for each in retr[1:]:
         # tdartist = each.findAll(class_='song_artist')[0].a['title'].encode('utf-8')
         tdartist = each.findAll(class_='song_artist')[0].a['title']
-        if ''.join(tdartist.split()).upper() == ''.join(singername.split()).upper() or singername == '':
+        if ''.join(tdartist.split()).upper() == ''.join(singername.split()).upper():
             tdname = each.findAll(class_='song_name')[0].a#.findNextSibling('a')['href']
             while tdname['href'] == "javascript:;":
                 tdname = tdname.findNextSibling('a')
+            print tdname['href']
+            song_num = tdname['href'][len(u'/song/'):]
+            return song_num
+    for each in retr[1:]:
+        tdname = each.findAll(class_ = 'song_name')[0].a
+        if tdname['href'] == "javascript:;":
+            while tdname['href'] == "javascript:;":
+                tdname = tdname.findNextSibling('a')
+        # tdartist = each.findAll(class_='song_artist')[0].a['title'].encode('utf-8')
+        if ''.join(tdname['title'].split()).upper() == ''.join(musicname.split()).upper():
+            # tdname = each.findAll(class_='song_name')[0].a#.findNextSibling('a')['href']
+            # while tdname['href'] == "javascript:;":
+            #     tdname = tdname.findNextSibling('a')
             # print tdname['href']
             song_num = tdname['href'][len(u'/song/'):]
-            break
+            return song_num
     return song_num
 
 def getmusictags(song_num):
@@ -82,9 +95,9 @@ def perform_command( inc):
     Musics = Music.objects()
     for music in Musics:
         nowday = datetime.datetime.now()
-        if music['music_tag'].has_key('update_datetime') and (nowday - music['music_tag']['update_datetime']).days < update_tag_thresh_day:
-            # print 'continue'
-            continue
+        # if music['music_tag'].has_key('update_datetime') and (nowday - music['music_tag']['update_datetime']).days < update_tag_thresh_day:
+        #     # print 'continue'
+        #     continue
         music_name = music['music_name']
         music_artist = music['music_artist']
         music_num = getmusicnum(music_name,music_artist)
