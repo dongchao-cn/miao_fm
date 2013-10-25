@@ -38,7 +38,7 @@ def getmusicnum(musicname, singername):
             tdname = each.findAll(class_='song_name')[0].a#.findNextSibling('a')['href']
             while tdname['href'] == "javascript:;":
                 tdname = tdname.findNextSibling('a')
-            print tdname['href']
+            # print tdname['href']
             song_num = tdname['href'][len(u'/song/'):]
             return song_num
     for each in retr[1:]:
