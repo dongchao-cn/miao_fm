@@ -15,10 +15,9 @@ function login(){
             if (data === null){
                 alert('用户名或密码错误!');
                 location.href = '/';
-            }
-            else{
+            }else{
                location.href = '/';
-             }
+            }
         }
     });
 }
@@ -41,12 +40,9 @@ function register(){
             },
             async: false,
             success: function(data) {
-                if (data == null)
-                {
+                if (data == null){
                     alert('注册失败:用户名已存在!');
-                }
-                else
-                {
+                }else{
                     alert('注册成功!');
                     location.href = '/';
                 }
