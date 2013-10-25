@@ -107,10 +107,10 @@ def perform_command( inc):
        
 def timming_exe(inc = 60): 
     # enter用来安排某事件的发生时间，从现在起第n秒开始启动 
-    schedule.enter(inc, 0, perform_command, ( inc,)) 
+    schedule.enter(0, 0, perform_command, ( inc,)) 
     # 持续运行，直到计划时间队列变成空为止 
-    schedule.run() 
-       
+    schedule.run()
+    
 if __name__ == '__main__':
     connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
     # print("show time after 10 seconds:") 
