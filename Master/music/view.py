@@ -7,6 +7,7 @@ from util import APIBaseHandler, MainJsonEncoder
 from user.model import authenticated
 from user.model import UserSet
 from .model import MusicSet
+from .recommendations import get_next_music
 from master_config import ABS_PATH
 
 class APIMusicSetHandler(APIBaseHandler):
@@ -100,7 +101,9 @@ class APIMusicNextHandler(APIBaseHandler):
         if user:
             user.user_listened += 1
             user.save()
-        music = MusicSet.get_next_music()
+        # music = MusicSet.get_next_music()
+        music_id = get_next_music(user.user_id)
+        music = MusicSet.get_music(music_id)
         self.write(music)
 
 class MusicHandler(tornado.web.RequestHandler):
