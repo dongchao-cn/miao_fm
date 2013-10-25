@@ -80,8 +80,8 @@ def get_recommendations_with_item_based(prefs, user_id):
     total_sim = {}
     item_mat = calc_item_similarity_items(prefs)
     for (item, rating) in user_rating.items():
-        for (similarity, other_item) in item_mat:
-            if other_item in user_rating:
+        for (similarity, other_item) in item_mat[item]:
+            if other_item in user_rating and user_rating[other_item] != 0:
                 continue
             scores.setdefault(other_item, 0)
             scores[other_item] += similarity * rating
