@@ -3,33 +3,55 @@ import os
 import tornado
 import json
 
-from .model import MusicControl,MusicJsonEncoder
+from util import APIBaseHandler, MainJsonEncoder
+from user.model import authenticated
+from user.model import UserSet
+from .model import MusicSet
 from master_config import ABS_PATH
 
-class APIMusicControlHandler(tornado.web.RequestHandler):
+class APIMusicSetHandler(APIBaseHandler):
     '''
     get:
-        list all music by range
+        get music status or range
 
     post:
         add a new music
-    '''
-    def get(self):
-        start = int(self.get_argument("start",0))
-        end = int(self.get_argument("end",0))
-        music_list = MusicControl.get_music_by_range(start, end)
-        self.write(json.dumps(music_list, cls=MusicJsonEncoder))
 
+    del:
+        del all music
+    '''
+    @authenticated(['uploader', 'admin'])
+    def get(self):
+        by = self.get_argument('by')
+        if by == 'status':
+            base_info = {'total_count':MusicSet.get_music_count()}
+            self.write(base_info)
+        elif by == 'range':
+            start = int(self.get_argument("start"))
+            count = int(self.get_argument("count"))
+            music_list = MusicSet.get_music_by_range(start, start+count)
+            self.write(music_list)
+        else:
+            raise HTTPError(400)
+
+    @authenticated(['uploader', 'admin'])
     def post(self):
         music_list = []
+        user_name = self.get_secure_cookie('user')
         for upload_file in self.request.files['file']:
             save_file_path = ABS_PATH + "/uploads/" + upload_file['filename']
+            save_file_path = save_file_path.encode('utf8')
             with open(save_file_path, 'w') as f:
                 f.write(upload_file['body'])
-                music_list.append(MusicControl.add_music(save_file_path, True))
-        self.write(json.dumps(music_list, cls=MusicJsonEncoder))
+                music_list.append(MusicSet.add_music(save_file_path, user_name, True))
+        self.write(music_list)
 
-class APIMusicHandler(tornado.web.RequestHandler):
+    @authenticated(['uploader', 'admin'])
+    def delete(self):
+        MusicSet.remove_all_music()
+        self.write(None)
+
+class APIMusicHandler(APIBaseHandler):
     '''
     get:
         get music details
@@ -40,83 +62,47 @@ class APIMusicHandler(tornado.web.RequestHandler):
     delete:
         delete music
     '''
-    def get(self, music_id):
-        music = MusicControl.get_music(music_id)
-        self.write(json.dumps(music, cls=MusicJsonEncoder))
 
+    @authenticated(['uploader', 'admin'])
+    def get(self, music_id):
+        music = MusicSet.get_music(music_id)
+        self.write(music)
+
+    @authenticated(['uploader', 'admin'])
     def put(self, music_id):
-        music_id = self.get_argument("music_id")
         music_name = self.get_argument("music_name")
         music_artist = self.get_argument("music_artist")
         music_album = self.get_argument("music_album")
 
-        music = MusicControl.get_music(music_id)
-        music.update_info(music_name, music_artist, music_album)
-        music = MusicControl.get_music(music_id)
-        self.write(json.dumps(music, cls=MusicJsonEncoder))
+        music = MusicSet.get_music(music_id)
+        if music:
+            music.update_info(music_name, music_artist, music_album)
+            music = MusicSet.get_music(music_id)
+            self.write(music)
+        else:
+            self.write(None)
 
+    @authenticated(['uploader', 'admin'])
     def delete(self, music_id):
-        MusicControl.del_music(music_id)
-        self.write('')
+        music = MusicSet.get_music(music_id)
+        music.remove()
+        self.write(None)
 
-class APIMusicNextHandler(tornado.web.RequestHandler):
+class APIMusicNextHandler(APIBaseHandler):
     '''
     get:
-        get next music for play
+        get next music info for play
     '''
     def get(self):
-        music = MusicControl.get_next_music()
-        self.write(json.dumps(music, cls=MusicJsonEncoder))
+        # print 'APIMusicNextHandler'
+        user = UserSet.get_user_by_name(self.current_user)
+        # print user
+        if user:
+            user.user_listened += 1
+            user.save()
+        music = MusicSet.get_next_music()
+        self.write(music)
 
 class MusicHandler(tornado.web.RequestHandler):
     def get(self):
-        page = int(self.get_argument("page",1))
-        music_list = MusicControl.get_music_by_page(page)
-        page_num = MusicControl.get_music_page_count()
-        self.render("music/music.html", music_list=music_list, page_num=page_num)
-
-class AddMusicHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render("music/add_music.html")
-
-    def post(self):
-        music_list = []
-        for upload_file in self.request.files['file']:
-            save_file_path = ABS_PATH + "/uploads/" + upload_file['filename']
-            with open(save_file_path, 'w') as f:
-                f.write(upload_file['body'])
-                music_list.append(MusicControl.add_music(save_file_path, True))
-        self.redirect('/admin/music/')
-
-class EditMusicHandler(tornado.web.RequestHandler):
-    def get(self):
-        music_id = self.get_argument("music_id")
-        self.render("music/edit_music.html", msg=u'编辑歌曲', 
-            music=MusicControl.get_music(music_id))
-
-    def post(self):
-        music_id = self.get_argument("music_id")
-        music_name = self.get_argument("music_name")
-        music_artist = self.get_argument("music_artist")
-        music_album = self.get_argument("music_album")
-
-        music = MusicControl.get_music(music_id)
-        ret = music.update_info(music_name, music_artist, music_album)
-        self.redirect('/admin/music/edit_music/?music_id='+music_id)
-
-class DelMusicHandler(tornado.web.RequestHandler):
-    def get(self):
-        music_id = self.get_argument("music_id")
-        MusicControl.del_music(music_id)
-        self.redirect('/admin/music/')
-
-class FindMusicHandler(tornado.web.RequestHandler):
-    def get(self):
-        music_id = self.get_argument("music_id")
-        music = MusicControl.get_music(music_id)
-        if music:
-            self.render("music/edit_music.html", msg='', music=music)
-            return
-        else:
-            self.redirect('/admin/music/')
-            return
+        self.render("music.html")

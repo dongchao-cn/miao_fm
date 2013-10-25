@@ -1,21 +1,29 @@
 #!/usr/bin/env python
 #coding:utf8
 import os
+import tornado.httpserver
 import tornado.ioloop
 import tornado.web
-import cdn.view
 import music.view
 import user.view
+import report.view
 
 import gridfs
 from pymongo import Connection
 from bson.objectid import ObjectId
+from mongoengine import *
+from tornado.options import define, options
 
-from master_config import MASTER_CDN, MASTER_MONGODB_PORT
+from master_config import MONGODB_URL, MONGODB_PORT
 
-con = Connection("%s:%s" % (MASTER_CDN, MASTER_MONGODB_PORT))
+define("port", default=8000, help="run on the given port", type=int)
+con = Connection("%s:%s" % (MONGODB_URL, MONGODB_PORT))
 db = con['miao_fm_cdn']
 fs = gridfs.GridFS(db)
+
+connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
+register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
+
 
 class FileHandler(tornado.web.RequestHandler):
     def get(self, file_id):
@@ -31,43 +39,47 @@ class AdminHandler(tornado.web.RequestHandler):
         self.render("admin_base.html")
 
 settings = {
+    "static_path": os.path.join(os.path.dirname(__file__), "static"),
     "template_path" : os.path.join(os.path.dirname(__file__), "templates"),
     "debug" : True,
     "cookie_secret": "63oETzKXQkGaYdkLqw421fdasqw12335uYh7EQnp2XdTP1o/Vo=",
-    "login_url": "/login",
-    "xsrf_cookies": True,
+    # "xsrf_cookies": True,
 }
 
 application = tornado.web.Application([
     # main page
     (r"/", MainHandler),
 
-    # local music server
-    (r"/music_file/(\w{24})/", FileHandler),
-
     # api
-    (r"/api/music/", music.view.APIMusicControlHandler),
+    (r"/api/music/", music.view.APIMusicSetHandler),
     (r"/api/music/(\w{24})/", music.view.APIMusicHandler),
     (r"/api/music/next/", music.view.APIMusicNextHandler),
 
+    (r"/api/user/", user.view.APIUserSetHandler),
+    (r"/api/user/(\w{24})/", user.view.APIUserHandler),
+    (r"/api/user/current/", user.view.APIUserCurrentHandler),
+    (r"/api/user/current/favour/", user.view.APIUserFavourSetHandler),
+    (r"/api/user/current/favour/(\w{24})/", user.view.APIUserFavourHandler),
+    (r"/api/user/current/dislike/", user.view.APIUserDislikeSetHandler),
+    (r"/api/user/current/dislike/(\w{24})/", user.view.APIUserDislikeHandler),
+
+    (r"/api/report/", report.view.APIReportSetHandler),
+    (r"/api/report/(\w{24})/", report.view.APIReportHandler),
+
     # admin page
     (r"/admin/", AdminHandler),
-
-    (r"/admin/music/", music.view.MusicHandler),
-    (r"/admin/music/add_music/", music.view.AddMusicHandler),
-    (r"/admin/music/edit_music/", music.view.EditMusicHandler),
-    (r"/admin/music/find_music/", music.view.FindMusicHandler),
-    (r"/admin/music/del_music/", music.view.DelMusicHandler),
-
-    (r"/admin/cdn/", cdn.view.CdnHandler),
-    (r"/admin/cdn/add_cdn/", cdn.view.AddCdnHandler),
-    (r"/admin/cdn/del_cdn/", cdn.view.DelCdnHandler),
-    
     (r"/login/", user.view.LoginHandler),
     (r"/regist/", user.view.RegistHandler),
-    (r"/logout/", user.view.LogoutHandler),
+    (r"/admin/music/", music.view.MusicHandler),
+    (r"/admin/report/", report.view.ReportHandler),
+    (r"/admin/user/", user.view.UserHandler),
+    
+    # local music server
+    (r"/music_file/(\w{24})/", FileHandler),
 ],**settings)
 
 if __name__ == "__main__":
-    application.listen(8000)
+    tornado.options.parse_command_line()
+    http_server = tornado.httpserver.HTTPServer(application)
+    http_server.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()

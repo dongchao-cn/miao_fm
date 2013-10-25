@@ -2,30 +2,150 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>西电 FM</title>
+        <title>Miao FM</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        {% block extern_head %}{% end %}
+        <link rel="shortcut icon" href="/static/favicon.ico" >
+        <link rel="icon" type="image/gif" href="/static/animated_favicon1.gif">
+        <script src="/static/js/jquery-1.10.2.js"></script>
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/css/base.css" rel="stylesheet">
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script type='text/javascript'>
+        $(document).ready(function(){
+            $.ajax({
+                type: 'get',
+                url: "/api/user/current/",
+                async : false,
+                dataType: "json",
+                success:function(data){
+                    if (data == null){
+                        $("#user_info").append('<li><a href="#login" data-toggle="modal">登录</a></li>');
+                        $("#user_info").append('<li><a href="#register" data-toggle="modal">注册</a></li>');
+                    }
+                    else{
+                        if (data.user_level == 'normal'){
+                            ;
+                        }
+                        else if (data.user_level == 'uploader'){
+                            $("#link_info").append('<li><a href="/admin/music/">Music</a></li>');
+                            $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
+                        }
+                        else if (data.user_level == 'admin'){
+                            $("#link_info").append('<li><a href="/admin/music/">Music</a></li>');
+                            $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
+                            $("#link_info").append('<li><a href="/admin/user/">User</a></li>');
+                        }
+                        $("#user_info").append('<li><a><i class="icon-user"></i>&nbsp' + data.user_name+ '</a></li>');
+                        $("#user_info").append('<li><a id="user_listened">听过' + data.user_listened+ '首</a></li>');
+                        $("#user_info").append('<li><a id="logoutButton" href="/#">注销</a></li>');
+                        $("#logoutButton").click(function(){
+                            event.preventDefault();
+                            $.ajax({
+                                type: 'delete',
+                                url: "/api/user/current/",
+                                async : false,
+                                success:function(data){
+                                    location.href = '/'
+                                }
+                            });
+                        });
+                    }
+                }
+            });
+        });
+        </script>
+        {% block extern_lib %}{% end %}
     </head>
-
     <body>
-        <div class="container" align=middle>
-         {% block content %}{% end %}
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="/">Miao FM</a>
+                <ul id="link_info" class="nav">
+                </ul>
+                <ul id='user_info' class="nav pull-right">
+                </ul>
+            </div>
         </div>
 
-        <!-- Le styles -->
-        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-        <!--[if lt IE 9]>
-        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
+        <!--  login window -->
+        <div id="login" align="middle" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3>用户登录</h3>
+            </div>
+            <div class="modal-body">
+                    {% module xsrf_form_html() %} 
+                  
+                    <p id='nowStatus'></p>
 
-        <!-- Le javascript
-        ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <!-- // <script src="//lib.sinaapp.com/js/jquery/1.9.1/jquery-1.9.1.min.js"></script> -->
-        <script src="/static/js/bootstrap.min.js"></script>
-        {% block extern_body %}{% end %}
+                    <div class="control-group">
+                        <label class="control-label" for="login_name">用户名</label>
+                        <div class="controls">
+                            <input type="text" id="login_name" name="user_name" maxlength="50"/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="login_password">密码</label>
+                        <div class="controls">
+                            <input type="password" id="login_password" name="user_password" maxlength="40"/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="controls">
+                            <input class="btn btn btn-success" type="button" value="返回" onclick="location.href='/';">
+                            <button class="btn btn-primary" onClick="login()">登录</button>
+                        </div>
+                    </div>
+            </div>
+
+        </div>
+        <!-- login window end -->  
+
+        <!--  register window -->
+        <div id="register" align="middle" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> 
+                <h3>用户注册</h3>              
+            </div>
+            <div class="modal-body">
+                    {% module xsrf_form_html() %}                    
+                    <div class="control-group">
+                        <label class="control-label" for="reg_name">用户名</label>
+                        <div class="controls">
+                            <input type="text" id="reg_name" name="user_name" maxlength="50"/>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="reg_password">密码</label>
+                        <div class="controls">
+                            <input type="password" id="reg_password" name="reg_password" maxlength="40"/>
+                        </div>
+                    </div>
+                     <div class="control-group">
+                        <label class="control-label" for="repeat_password">再次输入密码</label>
+                        <div class="controls">
+                            <input type="password" id="repeat_password" name="repeat_password" maxlength="40"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <input class="btn btn btn-success" type="button" value="返回" onclick="location.href='/';">
+                            <button class="btn btn-primary" onClick="register()">注册</button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <!-- register window end --> 
+
+        <div class="container-fluid">
+            {% block content %}{% end %}
+        </div>
+        {% block extern_js %}{% end %}
+        <script src="/static/js/base.js"></script>
     </body>
 </html>

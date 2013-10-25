@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block extern_lib %}
+<link href="/static/css/management.css" rel="stylesheet">
+<script src="/static/js/bootstrap-paginator.js"></script>
+<script src="/static/js/user.js"></script>
+{% end %}
+
+{% block content %}
+    <div class="control-group">
+        <div id="controls" class="controls">
+            <div id="menu" align="left">
+        <!--<a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal">Del All User</a> -->
+            </div>  
+        </div>
+    </div>
+    <hr/>
+
+    <!--delete all user-->
+    <!-- <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Do you really wanna delete all the user?</h3>
+        </div>
+        <div class="modal-body"> 
+            <div class="modal-footer">
+                <button id="deleteListAll" class="btn btn btn-primary" data-dismiss="modal" aria-hidden="true">I'm sure!</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel </button>
+            </div>
+        </div>
+    </div> -->
+    <!--delete all user end-->
+
+    <!--edit user-->
+    <div id="myModal3" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">The file information is as follows</h3>
+        </div>
+        <div class="modal-body"> 
+            <div id="editUser">
+            </div>
+
+            <div class="modal-footer">
+                <button id="updateUserInfo" class="btn btn btn-primary" data-dismiss="modal" aria-hidden="true">I'm done!</button>
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel it </button>
+            </div>
+        </div>
+    </div>
+    <!--edit user end-->
+
+    <!--userlist-->
+    <div class="tab-content">
+        <div class="tab-pane active" id="home">
+            <table class="table table-hover" id="addUser">
+                <thead>  
+                    <td><strong>user_id</strong></td>
+                    <td><strong>user_name</strong></td>
+                    <td><strong>user_password</strong></td>
+                    <td><strong>user_level</strong></td>
+                </thead>
+                <tbody ></tbody>
+            </table>
+            <div align='middle' id="paginator"></div>
+        </div>
+    </div>
+{% end %}
+
+{% block extern_js %}
+
+<script type='text/javascript'>
+
+//clear uploaded user list
+$('#shutdown').bind('click',function(event){
+    $('#clearlist').nextAll().remove();
+});
+
+//delete all the user list 
+$('#deleteListAll').bind('click',function(event){
+    $.ajax({
+        type: 'delete',
+        url: "/api/user/",
+        async : false,
+        success:function(){
+            $("#addUser > tbody").empty(); 
+         }
+    });
+});
+
+//delete user 
+function delUser(event){
+    //console.info("del user");
+    var userId = $(event).prev().attr("id");
+    url = '/api/user/' + userId + '/';
+    $.ajax({
+        type:'delete',
+        url:url,
+        async : false,
+        success:function(data){
+            $('.' + userId).remove();
+        },
+    });
+}
+
+//edit user 
+function editUser(event){
+    // console.info($(event).next().attr('id'))
+    // console.info($(event).attr('id'))
+    // console.info($('.'+$(event).next().attr('id'))[0].cells[1].innerText);
+    var user_id = $(event).attr('id');
+    console.info(event);
+    $.ajax({
+        type:'get',
+        url: "/api/user/" + user_id + '/',
+        async : false,
+        dataType:'json',
+        success:edit_user_success_modal,
+        error:edit_user_error_modal
+    });
+}
+
+//update user info
+$('#updateUserInfo').bind('click',function(event){
+    //$('#clearlist').nextAll().remove();
+    var info = $('#editUser table').children();
+    // console.info(info);
+
+    var user_id = $(info[0].children[0].children[1].children).val();
+    var user_name = $(info[0].children[1].children[1].children).val();
+    var user_password = $(info[0].children[2].children[1].children).val();
+    var user_listened = $(info[0].children[3].children[1].children).val();
+    var user_level = $(info[0].children[4].children[1].children).val();
+    console.info(user_id);
+    $.ajax({
+        type:'put',
+        url: '/api/user/' + user_id + '/',
+        data:{
+            user_level : user_level
+        },
+        async : false,
+        success:function(){
+           // console.info($(this));
+           var tdstr = '<tr class="' + user_id + '"><td>'+ user_id +'</td> \
+                            <td>'+ user_name +'</td> \
+                            <td>' + user_password +'</td> \
+                            <td>'+ user_level +'</td> \
+                            <td><a id="' + user_id + '"" href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editUser(this)">Edit</a>&nbsp&nbsp\
+                                <button class="btn btn-danger btn-xs" onClick ="delUser(this)">del</button></td>  \
+                            </tr>';
+           $('.' + user_id).replaceWith(tdstr);
+         }
+    });
+});
+
+
+$('#myModal3').on('hidden', function () {
+    $("#editUser").empty();
+})
+
+$('#myModal').on('hidden', function () {
+    location.reload();
+})
+
+items_pre_page = 10
+
+$(document).ready(function(){
+    $.ajax({
+        url:'/api/user/',// 跳转到 action
+        type:'get',
+        dataType:'json',
+        data: {
+            by:'status'
+        },
+        success:function(data) {
+            var options = {
+                currentPage: 1,
+                totalPages: Math.floor(data.total_count / items_pre_page) + 1,
+                onPageClicked: function(e,originalEvent,type,page){
+                    $.ajax({
+                        type: 'get',
+                        url: "/api/user/",
+                        dataType:'json',
+                        data: {
+                            by:'range',
+                            start:(page-1)*items_pre_page,
+                            count:items_pre_page
+                        },
+                        async : false,
+                        success:render_user_list
+                    });
+                },
+            }
+            $('#paginator').bootstrapPaginator(options);
+         },
+         error : function() {
+              alert("异常！");
+         }
+    });
+});
+
+// add fist page of user list
+$(document).ready(function(){
+    console.info("user");
+    $.ajax({
+        type: 'get',
+        url: "/api/user/",
+        dataType:'json',
+        data: {
+            by:'range',
+            start:0,
+            count:items_pre_page
+        },
+        async:false,
+        success:render_user_list
+    });
+});
+
+</script>
+{% end %}

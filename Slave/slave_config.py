@@ -47,7 +47,8 @@ oplogSize = 64
 slavedelay = 10
 only = miao_fm_cdn
 autoresync = true
-nojournal = true''' % (slave_mongodb_dir, MASTER_CDN, MASTER_MONGODB_PORT, SLAVE_MONGODB_PORT)
+nojournal = true
+rest = true''' % (slave_mongodb_dir, MASTER_CDN, MASTER_MONGODB_PORT, SLAVE_MONGODB_PORT)
     try:
         if not os.path.exists(slave_mongodb_dir):
             os.makedirs(slave_mongodb_dir)

@@ -1,30 +1,94 @@
 {% extends "base.html" %}
 
-{% block extern_head %}
-    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/demo.css">
-    <script type="text/javascript" src="/static/js/jquery-1.6.1.min.js"></script>
-    <script type="text/javascript" src="/static/jquery-jplayer/jquery.jplayer.js"></script>
-    <script type="text/javascript" src="/static/ttw-music-player-min.js"></script>
+{% block extern_lib %}
+    <link rel="stylesheet" type="text/css" href="/static/css/home.css">
+    <link rel="stylesheet" type="text/css" href="/static/jPlayer/skin/blue.monday/jplayer.blue.monday.css">
+    <script type="text/javascript" src="/static/js/home.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="/static/jPlayer/js/jquery.jplayer.min.js"></script>
+    <script type="text/javascript" src="/static/jPlayer/js/jplayer.playlist.min.js"></script>
 {% end %}
 
-
 {% block content %}
-    <script type="text/javascript">
-        $(document).ready(function(){
-            var description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce id tortor nisi. Aenean sodales diam ac lacus elementum scelerisque. Suspendisse a dui vitae lacus faucibus venenatis vel id nisl. Proin orci ante, ultricies nec interdum at, iaculis venenatis nulla. ';
-            var myPlaylist = []
-            $.getJSON('/api/next_music/', function(data) {
-                myPlaylist.push(data);
-            })
-            $('body').ttwMusicPlayer(myPlaylist, {
-                autoPlay:false, 
-                description:description,
-                jPlayer:{
-                    swfPath:'/static/jquery-jplayer' //You need to override the default swf path any time the directory structure changes
-                }
-            });
-        });
-    </script>
+<div class="clear"></div>
+<div id="container">
+    <div class="row-fluid">
+        <div class="span5">
+             <!--Sidebar content--> 
+            <div id="wrapper">
+                <h1>Miao FM</h1>
+                <p>Also see https://github.com/dccrazyboy/miao_fm</p>
+            </div>
+        </div>
+
+        <div class="span1"></div>
+
+        <div class="span6">
+            <div id="jquery_jplayer_1" class="jp-jplayer"></div>           
+            <div id="jp_container_1" class="jp-audio"> 
+
+                <!-- interaction button -->
+                <div id="jp-report"></div>
+                <div id="jp-trash"></div>
+                <div id="jp-favorite"></div>
+                <!-- interaction button end-->
+
+                <!--  report window -->
+                <div id="myModal" align="middle"class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h3 id="myModalLabel">报告信息</h3>
+                    </div>
+                    <div class="modal-body">
+                         <div id="reportInfo"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" data-dismiss="modal" onClick="submitReport()" aria-hidden="true">报告错误</button>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                    </div>
+                </div>
+                <!-- report window end -->
+
+                <div id="jp-singer"></div>   
+                <div id="jp-nameAlbum"><span id="jp-name"></span><span id="jp-album"></span></div>       
+                <div class="jp-type-playlist">
+                    <div class="jp-gui jp-interface">
+                        <ul class="jp-controls">
+                            <li><a href="javascript:;" class="jp-previous" tabindex="1" style="visibility:hidden">previous</a></li>
+                            <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
+                            <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+                            <li><a href="javascript:;" class="jp-next" tabindex="1" id="jp-next">next</a></li>
+                            <li><a href="javascript:;" class="jp-stop" tabindex="1" style="visibility:hidden">stop</a></li>
+                            <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+                            <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+                            <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+                        </ul>
+                        <div class="jp-progress">
+                            <div class="jp-seek-bar">
+                                 <div class="jp-play-bar"></div>
+                            </div>
+                        </div>
+                        <div class="jp-volume-bar">
+                            <div class="jp-volume-bar-value"></div>
+                        </div>
+                        <div class="jp-time-holder">
+                            <div class="jp-current-time"></div>
+                            <div class="jp-duration"></div>
+                        </div>
+                        <ul class="jp-toggles" style="visibility:hidden">
+                            <li><a href="javascript:;" class="jp-shuffle" tabindex="1" title="shuffle">shuffle</a></li>
+                            <li><a href="javascript:;" class="jp-shuffle-off" tabindex="1" title="shuffle off">shuffle off</a></li>
+                            <li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>
+                            <li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>               
+        </div>
+    </div> 
+</div>       
+<div id="footer">
+    <p></p>
+</div>
 {% end %}
 

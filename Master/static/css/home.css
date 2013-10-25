@@ -1,0 +1,141 @@
+body {
+	
+	margin:0 auto;
+	background-image: url(/static/img/bg.png);
+	
+}
+#container {
+	border:0px solid red;
+}
+
+#nav {
+	/*width: 180px;*/
+	text-align: center;
+	float:right;
+	margin-top: 20px;
+	margin-right: 100px;
+	border:0px solid red;
+	clear:both;
+}
+
+
+#navBar {
+	height: 20px;
+}
+#wrapper {
+	margin:100px 0px 0px 110px;
+	border: 0px solid red;
+}
+
+#header {
+	margin:5px;
+	padding:5px;
+
+}
+
+#introduction {
+	margin:5px;
+	padding:5px;
+}
+
+#headBar {
+	height: 20px;
+}
+
+#jp_container_1 {
+	margin-top:150px;
+	float:right;
+	margin-right: 100px;
+	border: 0px solid red;
+	-moz-box-shadow: 5px 5px 6px #000;
+    -webkit-box-shadow: 5px 5px 6px #000;
+    box-shadow: 5px 5px 6px #000;
+    /* For IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000')";
+    /* For IE 5.5 - 7 */
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000');
+}
+
+#jp-singer {
+	font-size:18px; 
+	font-family:sans-serif,Verdana, Arial;
+	color: #666;
+	padding: 0px;
+	margin-left:10px;
+	margin-right:50px;
+	border:0px solid red;
+}
+
+
+#jp-name {
+	font-size:15px; 
+	font-family:Verdana, Arial, sans-serif;
+	color: #009be3;
+	padding: 0px;
+	margin-left:1px;
+
+}
+
+#jp-album {
+	font-size:10px; 
+	font-family:Verdana, Arial, sans-serif;
+	color: #666;
+	padding: 0px;
+	margin-left:5px;
+	margin-right:50px;
+	border:0px solid red;
+}
+
+#jp-nameAlbum {
+	margin-left:10px;
+	margin-right:10px;
+	border-bottom:1px solid #009be3;
+}
+
+#jp-report {
+	width: 25px;
+	height: 25px;
+	float:right;
+	margin-right:10px;
+	border:0px solid red;
+}
+
+#jp-report img {
+	size:25px 25px;
+}
+
+#jp-trash {
+	width: 25px;
+	height: 25px;
+	float:right;
+	margin-right:10px;
+	border:0px solid red;
+}
+
+#jp-trash img {
+	size:25px 25px;
+}
+
+#jp-favorite {
+	width: 25px;
+	height: 25px;
+	float:right;
+	margin-right:10px;
+	border:0px solid red;
+}
+#jp-favorite img {
+	size:25px 25px;
+}
+
+#footer {
+	height:15px;
+	width:1100px;
+	font-size: 15px;
+	text-align: center;
+	border: 0px solid red;
+	padding:3px;
+}
+
+.clear {
+	clear:both;
+}

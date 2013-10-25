@@ -15,25 +15,17 @@ Depends
 ### Python Packages
 1. tornado
 2. mongoengine
+3. mutagen
+4. requests
+5. beautifulsoup4
 
 Settings
 --------
 
 ### Master
 
-- master_config.py
-
-1. edit the info and then run `python master_config.py` to config.
+1. edit the info in `master_config.py` and then run `python master_config.py`.
 
 2. run `python main.py` to start service.
 
-### Slave
-
-Optional, it is using as cdn.
-
-- slave_config.py
-
-1. edit the info and then run `python slave_config.py` to config.
-
-2. run `python main.py` to start service.
-
+3. run `python get_music_tag.py` to get music tag from xiami.

@@ -1,124 +1,51 @@
 #!/usr/bin/env python
 #coding:utf8
 
-# set SERVER and MASTER_CDN to one machine
-SERVER = 'xdfm.com'
-MASTER_CDN = 'cdn.xdfm.com'
+# mongo config
+MONGODB_URL = '127.0.0.1'
+MONGODB_PORT = 27017
 
-# how many items in one page (for admin pages)
-ITEM_PER_PAGE = 10
+# admin user
+ADMIN_NAME = 'admin'
+ADMIN_PASSWORD = 'admin'
 
-MASTER_MONGODB_PATH = '/data/mongo_db'
-MASTER_MONGODB_PORT = 6867
+# music tag
+update_tag_time = 24*60*60    # seconds
+update_tag_thresh_day = 30  # days
 
-# DON'T EDIT BELOW
 import os
 ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
 
-def master_nginx_config():
-    server_config = '''
-upstream master_stream {
-    server 127.0.0.1:8000;
-}
-
-server {
-    listen 80;
-    server_name %s;
-
-    # Allow file uploads
-    client_max_body_size 50M;
-
-    location /static/ {
-        alias %s;
-        if ($query_string) {
-            expires max;
-        }
-    }
-    
-    location / {
-        proxy_pass_header Server;
-        proxy_set_header Host $http_host;
-        proxy_redirect off;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Scheme $scheme;
-        proxy_pass http://master_stream;
-    }
-}
-''' % (SERVER, ABS_PATH+'/static/')
-
-    master_cdn_config = '''
-
-server {
-    listen 80;
-    server_name %s;
-
-    location /music_file/ {
-        proxy_pass_header Server;
-        proxy_set_header Host $http_host;
-        proxy_redirect off;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Scheme $scheme;
-        proxy_pass http://master_stream;
-    }
-}
-''' % (MASTER_CDN)
-
-    config = server_config + master_cdn_config
-    with open('master_nginx.conf','w') as f:
-        f.write(config)
-
-def master_mongodb_config():
-    master_mongodb_dir = '%s/master' % (MASTER_MONGODB_PATH)
-    config = '''
-master = true
-dbpath = %s
-oplogSize = 64
-port = %d
-nojournal = true''' % (master_mongodb_dir, MASTER_MONGODB_PORT)
-    try:
-        if not os.path.exists(master_mongodb_dir):
-            os.makedirs(master_mongodb_dir)
-    except OSError:
-        print 'Can\'t mkdir "%s", check permission!' % (master_mongodb_dir)
-        os._exit(-1)
-    with open('master_mongodb.conf','w') as f:
-        f.write(config)
-
-def add_master_cdn():
-    from cdn.model import CdnControl
-    cdn = CdnControl.get_cdn("master")
-    if cdn:
-        CdnControl.del_cdn("master")
-    CdnControl.add_cdn("master",MASTER_CDN)
+def add_user_admin():
+    from user.model import UserSet
+    user = UserSet.get_user_by_name(ADMIN_NAME)
+    if user:
+        user.update_info(ADMIN_PASSWORD)
+        user.update_level('admin')
+    else:
+        user = UserSet.add_user(ADMIN_NAME, ADMIN_PASSWORD, 'admin')
 
 def add_demo_music():
-    from music.model import MusicControl
-    music = MusicControl.get_music_by_name('To Be With You')
-    if music:
-        MusicControl.del_music(music.music_id)
-    MusicControl.add_music(ABS_PATH+'/demo.mp3')
+    from music.model import MusicSet
+    music = MusicSet.get_music_by_name('To Be With You')
+    if not music:
+        MusicSet.add_music(ABS_PATH+'/demo.mp3', ADMIN_NAME)
 
 def config():
     import mongoengine
-    print 'generate nginx config...'
-    master_nginx_config()
-    print 'generate mongodb config...'
-    master_mongodb_config()
+    print 'Configing MongoDB...'
     try:
-        print 'add master cdn...'
-        add_master_cdn()
+        mongoengine.connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
+        mongoengine.register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
+        print 'add admin user...'
+        add_user_admin()
         print 'add demo music...'
         add_demo_music()
     except mongoengine.connection.ConnectionError:
-        print 'MongoDB NOT started!!!'
-        print 'Please use "mongod -f %s/master_mongodb.conf" to start MongoDB.' % (ABS_PATH)
-        print 'And check %s, %s DNS settings.' % (SERVER,MASTER_CDN)
-        print 'Then re execute this file.'
+        print 'Error!'
+        print 'Can\'t connect to MongoDB!'
         os._exit(-1)
     print 'Finish!'
-    # print 'Please set %s, %s DNS settings.' % (SERVER,MASTER_CDN)
-    print 'Please include "%s/master_nginx.conf" in nginx.conf.' % (ABS_PATH)
-    print 'Then visit http://%s/admin/ for admin page.' % (SERVER)
 
 if __name__ == '__main__':
     config()
