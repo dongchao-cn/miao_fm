@@ -16,7 +16,7 @@ def get_prefs():
             ret[user.user_id][music_id] = 1
         for music_id in user.user_dislike:
             ret[user.user_id][music_id] = -1
-    print prefs
+    # print prefs
     return ret
 
 def sim_distance(prefs, user1_id, user2_id):
