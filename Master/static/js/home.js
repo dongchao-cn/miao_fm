@@ -46,7 +46,7 @@ function playNextSong(){
         cache:false,
         async:false,
         success:function(data){
-            //console.info(data);
+            console.info(data);
             var singer = data.music_artist;
             var name = data.music_name;
             var album = data.music_album;
@@ -55,6 +55,13 @@ function playNextSong(){
             $("#jp-singer").text(singer); 
             $("#jp-name").text(name);  
             $("#jp-album").text(album); 
+
+            if(data.music_img == '') {
+                $('#jp-cover').empty();
+            }else {
+                $('#jp-cover').html('<img src=' + data.music_img + '>');
+            }
+
             $("#jquery_jplayer_1").jPlayer("setMedia", {
                 mp3:data.music_url
             });
