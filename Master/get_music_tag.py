@@ -34,13 +34,26 @@ def getmusicnum(musicname, singername):
     for each in retr[1:]:
         # tdartist = each.findAll(class_='song_artist')[0].a['title'].encode('utf-8')
         tdartist = each.findAll(class_='song_artist')[0].a['title']
-        if ''.join(tdartist.split()).upper() == ''.join(singername.split()).upper() or singername == '':
+        if ''.join(tdartist.split()).upper() == ''.join(singername.split()).upper():
             tdname = each.findAll(class_='song_name')[0].a#.findNextSibling('a')['href']
             while tdname['href'] == "javascript:;":
                 tdname = tdname.findNextSibling('a')
             # print tdname['href']
             song_num = tdname['href'][len(u'/song/'):]
-            break
+            return song_num
+    for each in retr[1:]:
+        tdname = each.findAll(class_ = 'song_name')[0].a
+        if tdname['href'] == "javascript:;":
+            while tdname['href'] == "javascript:;":
+                tdname = tdname.findNextSibling('a')
+        # tdartist = each.findAll(class_='song_artist')[0].a['title'].encode('utf-8')
+        if ''.join(tdname['title'].split()).upper() == ''.join(musicname.split()).upper():
+            # tdname = each.findAll(class_='song_name')[0].a#.findNextSibling('a')['href']
+            # while tdname['href'] == "javascript:;":
+            #     tdname = tdname.findNextSibling('a')
+            # print tdname['href']
+            song_num = tdname['href'][len(u'/song/'):]
+            return song_num
     return song_num
 
 def getmusictags(song_num):
@@ -82,23 +95,26 @@ def perform_command( inc):
     Musics = Music.objects()
     for music in Musics:
         nowday = datetime.datetime.now()
-        if music['music_tag'].has_key('update_datetime') and (nowday - music['music_tag']['update_datetime']).days < update_tag_thresh_day:
-            # print 'continue'
-            continue
+        # if music['music_tag'].has_key('update_datetime') and (nowday - music['music_tag']['update_datetime']).days < update_tag_thresh_day:
+        #     # print 'continue'
+        #     continue
         music_name = music['music_name']
         music_artist = music['music_artist']
         music_num = getmusicnum(music_name,music_artist)
         music['music_tag']['update_datetime'] = nowday
         if not music_num:
             music.save()
-            return
+            continue
         music_tags = getmusictags(music_num)
         music_img = getmusicimg(music_num)
         print music_tags
         print music_img
         music['music_tag'] = music_tags
         music['music_img'] = music_img
-        music.save()
+        try:
+            music.save()
+        except:
+            print 'on save error!'
         # print music['music_name']
         # print music['music_artist']
         # print music['music_tag']
@@ -107,10 +123,10 @@ def perform_command( inc):
        
 def timming_exe(inc = 60): 
     # enter用来安排某事件的发生时间，从现在起第n秒开始启动 
-    schedule.enter(inc, 0, perform_command, ( inc,)) 
+    schedule.enter(0, 0, perform_command, ( inc,)) 
     # 持续运行，直到计划时间队列变成空为止 
-    schedule.run() 
-       
+    schedule.run()
+    
 if __name__ == '__main__':
     connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
     # print("show time after 10 seconds:") 

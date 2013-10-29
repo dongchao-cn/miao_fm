@@ -27,3 +27,5 @@ Settings
 1. edit the info in `master_config.py` and then run `python master_config.py`.
 
 2. run `python main.py` to start service.
+
+3. run `python get_music_tag.py` to get music tag from xiami.
