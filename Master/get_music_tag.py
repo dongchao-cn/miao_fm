@@ -85,19 +85,13 @@ def getmusicimg(song_num):
     imgtag = soup.findAll(class_ = 'cdCDcover185')
     return imgtag[0]['src']
 
-
-
-def perform_command( inc): 
-    # 安排inc秒后再次运行自己，即周期运行 
-    schedule.enter(inc, 0, perform_command, ( inc,)) 
-    # os.system(cmd)
-    print 'start at %s' % (datetime.datetime.now())
+def update_the_tag():
     Musics = Music.objects()
     for music in Musics:
         nowday = datetime.datetime.now()
-        # if music['music_tag'].has_key('update_datetime') and (nowday - music['music_tag']['update_datetime']).days < update_tag_thresh_day:
-        #     # print 'continue'
-        #     continue
+        if music['music_tag'].has_key('update_datetime') and (nowday - music['music_tag']['update_datetime']).days < update_tag_thresh_day:
+            # print 'continue'
+            continue
         music_name = music['music_name']
         music_artist = music['music_artist']
         music_num = getmusicnum(music_name,music_artist)
@@ -120,7 +114,15 @@ def perform_command( inc):
         # print music['music_tag']
         # print music['music_img']
     print 'end at %s' % (datetime.datetime.now())
-       
+
+
+def perform_command( inc): 
+    # 安排inc秒后再次运行自己，即周期运行 
+    schedule.enter(inc, 0, perform_command, ( inc,)) 
+    # os.system(cmd)
+    print 'start at %s' % (datetime.datetime.now())
+    update_the_tag()
+    
 def timming_exe(inc = 60): 
     # enter用来安排某事件的发生时间，从现在起第n秒开始启动 
     schedule.enter(0, 0, perform_command, ( inc,)) 
