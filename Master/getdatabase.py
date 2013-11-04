@@ -15,5 +15,7 @@ if __name__ == '__main__':
     connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
     Musics = Music.objects()
     for music in Musics:
-    	if music.has_key('music_img') == False:
-    		print music['music_name']
+    	# if music.has_key('music_img') == False:
+    	# 	print music['music_name']
+    	print music['music_name']
+    	print music['music_img']
