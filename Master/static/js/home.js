@@ -34,9 +34,10 @@ $(document).ready(function(){
         dataType: "json",
         success:function(data){
             if (data !== null){
-                $("#jp-report").html('<a href="#myModal" data-toggle="modal tooltip" data-placement="top" title="举报" alt="report" onClick="reportError(this)"><img src="../static/img/report.png"></img></a>');
-                $("#jp-favorite").html('<a href="#myModal1"  data-toggle="modal tooltip" data-placement="top" title="喜欢" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite2.png"></img></a>');
-                $("#jp-trash").html('<a href="#myModal2"  data-toggle="modal tooltip" data-placement="top" title="不喜欢" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash2.png"></img></a>');
+                // $("#jp-report").html('<a href="#myModal" data-toggle="modal tooltip" data-placement="top" title="举报" alt="report" onClick="reportError(this)"><img src="../static/img/report.png"></img></a>');
+                $("#jp-report").html('<a href="#myModal" data-toggle="modal" data-toggle="tooltip" data-placement="top" title="举报" alt="report" onClick="reportError(this)"><img src="../static/img/report.png"></img></a>');
+                $("#jp-favorite").html('<a href="#"  data-toggle="tooltip" data-placement="top" title="喜欢" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite2.png"></img></a>');
+                $("#jp-trash").html('<a href="#"  data-toggle="tooltip" data-placement="top" title="不喜欢" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash2.png"></img></a>');
             }
         }   
     });   
@@ -92,7 +93,7 @@ function playNextSong(){
 }
 
 function reportError(){
-    //console.info(currentSongInfo[1]);
+    console.info(currentSongInfo[1]);
     $("#reportInfo").empty();
      var strInputText = 
         '<table> \
