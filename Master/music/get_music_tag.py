@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 #coding=utf-8
-import time, os, sched 
-from music.model import Music
-import socket
+if __name__ == '__main__':
+    import sys
+    sys.path.insert(0, '../')
+import time, os
 import requests
-import re
 import datetime
 from bs4 import BeautifulSoup
 from mongoengine import *
-from master_config import MONGODB_URL, MONGODB_PORT, update_tag_time, update_tag_thresh_day
 
-schedule = sched.scheduler(time.time, time.sleep) 
+from music.model import Music
+from master_config import MONGODB_URL, MONGODB_PORT, update_tag_thresh_day
 
 def getmusicnum(musicname, singername):
     print musicname,singername
@@ -86,6 +86,8 @@ def getmusicimg(song_num):
     return imgtag[0]['src']
 
 def update_the_tag():
+    print 'update_the_tag', datetime.datetime.now()
+    connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
     Musics = Music.objects()
     for music in Musics:
         nowday = datetime.datetime.now()
@@ -113,23 +115,7 @@ def update_the_tag():
         # print music['music_artist']
         # print music['music_tag']
         # print music['music_img']
-    print 'end at %s' % (datetime.datetime.now())
-
-
-def perform_command( inc): 
-    # 安排inc秒后再次运行自己，即周期运行 
-    schedule.enter(inc, 0, perform_command, ( inc,)) 
-    # os.system(cmd)
-    print 'start at %s' % (datetime.datetime.now())
-    update_the_tag()
-    
-def timming_exe(inc = 60): 
-    # enter用来安排某事件的发生时间，从现在起第n秒开始启动 
-    schedule.enter(0, 0, perform_command, ( inc,)) 
-    # 持续运行，直到计划时间队列变成空为止 
-    schedule.run()
     
 if __name__ == '__main__':
-    connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
-    # print("show time after 10 seconds:") 
-    timming_exe(update_tag_time)
+    print 'test main'
+    update_the_tag()

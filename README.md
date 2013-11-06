@@ -18,6 +18,7 @@ Depends
 3. mutagen
 4. requests
 5. beautifulsoup4
+6. APScheduler
 
 Settings
 --------
@@ -28,4 +29,4 @@ Settings
 
 2. run `python main.py` to start service.
 
-3. run `python get_music_tag.py` to get music tag from xiami.
+3. run `python scheduler.py` to start background sched.
