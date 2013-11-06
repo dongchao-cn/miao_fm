@@ -108,6 +108,10 @@ class MusicSet(object):
             return None
 
     @classmethod
+    def get_all_music(cls, music_id):
+        return Music.objects()
+
+    @classmethod
     def remove_all_music(cls):
         for music in Music.objects():
             music.remove()
