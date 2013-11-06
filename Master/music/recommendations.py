@@ -85,7 +85,8 @@ def get_recommendations_with_item_based(prefs, user_id):
             scores[other_item] += similarity * rating
             total_sim.setdefault(other_item, 0)
             total_sim[other_item] += similarity
-    rankings = [(score / total_sim[item], item) for item, score in scores.items()]
+    rankings = [(score / total_sim[item], item) for item, score in scores.items() if total_sim[item]
+            != 0]
     rankings.sort()
     rankings.reverse()
     return rankings
@@ -107,6 +108,7 @@ def get_musics(user_id, recommend_algo = get_recommendations_with_item_based):
     return ret
 
 def get_next_music(user_id):
-    print user_id
+    if user_id is None:
+        return MusicSet.get_music_by_idx(random.randint(0, MusicSet.get_music_count() - 1))
     music_id_list = get_musics(user_id)
     return MusicSet.get_music(music_id_list[random.randint(0, len(music_id_list) - 1)])
