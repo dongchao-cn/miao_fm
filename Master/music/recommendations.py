@@ -3,20 +3,17 @@
 import random
 from math import sqrt
 from user.model import UserSet
+from model import MusicSet
 
 def get_prefs():
     ret = {}
     all_user = UserSet.get_all_user()
     for user in all_user:
-        # for music_id in user.user_listened:
-        #     ret.setdefault(user.user_id, {})
-        #     ret[user.user_id][music_id] = 0
+        ret.setdefault(user.user_id, {})
         for music_id in user.user_favour:
-            ret.setdefault(user.user_id, {})
             ret[user.user_id][music_id] = 1
         for music_id in user.user_dislike:
             ret[user.user_id][music_id] = -1
-    # print prefs
     return ret
 
 def sim_distance(prefs, user1_id, user2_id):
@@ -44,8 +41,6 @@ def get_recommendations_with_user_based(prefs, user_id, similarity = sim_distanc
             continue
         sim = similarity(prefs, user_id, other)
 
-        # if sim <= 0:
-        #     continue
         for item in prefs[other]:
             if item not in prefs[user_id] or prefs[user_id] == 0:
                 totals.setdefault(item, 0)
@@ -76,12 +71,11 @@ def calc_item_similarity_items(prefs, k = 10):
     return ret
 
 def get_recommendations_with_item_based(prefs, user_id):
+    print user_id
     user_rating = prefs[user_id]
     scores = {}
     total_sim = {}
     item_mat = calc_item_similarity_items(prefs)
-    print "11111111111111111111111111111111111111111"
-    print item_mat
     for (item, rating) in user_rating.items():
         for (similarity, other_item) in item_mat[item]:
             print other_item
@@ -91,22 +85,28 @@ def get_recommendations_with_item_based(prefs, user_id):
             scores[other_item] += similarity * rating
             total_sim.setdefault(other_item, 0)
             total_sim += similarity
-    print scores
     rankings = [(score / total_sim[item], item) for item, score in scores.items()]
-    print rankings
     rankings.sort()
     rankings.reverse()
     return rankings
 
-def get_next_musics(user_id, recommend_algo = get_recommendations_with_item_based):
-    prefs = get_prefs()
-    print prefs
-    ret = [music_id for (score, music_id) in recommend_algo(prefs, user_id)]
+def generator(M, N):
+    ret = []
+    for idx in range(0, M):
+        if random.random() * M <= N :
+            ret.append(idx)
     return ret
 
-def get_next_music(user_id, recommend_algo = get_recommendations_with_item_based):
-    # print user_id
-    musics = get_next_musics(user_id)
-    print musics
-    num = random.randint(0,len(musics)-1)
-    return get_next_musics(user_id)[num]
+def get_musics(user_id, recommend_algo = get_recommendations_with_item_based):
+    prefs = get_prefs()
+    ret = [music_id for (score, music_id) in recommend_algo(prefs, user_id)]
+    ret.extend([music_id for music_id in UserSet.get_user(user_id).user_favour])
+    ret.extend([MusicSet.get_music_by_idx(idx).music_id for idx in generator(MusicSet.get_music_count(), 50
+        - len(ret))])
+    ret = list(set(ret))
+    return ret
+
+def get_next_music(user_id):
+    print user_id
+    music_id_list = get_musics(user_id)
+    return MusicSet.get_music(music_id_list[random.randint(0, len(music_id_list) - 1)])

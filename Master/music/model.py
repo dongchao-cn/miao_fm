@@ -129,6 +129,10 @@ class MusicSet(object):
     def get_music_count(cls):
         return Music.objects().count()
 
+    @classmethod
+    def get_music_by_idx(cls, idx):
+        return Music.objects[idx]
+
 def _lame_mp3(infile, music, remove=False):
     '''
     lame the mp3 to smaller

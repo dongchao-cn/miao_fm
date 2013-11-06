@@ -101,13 +101,7 @@ class APIMusicNextHandler(APIBaseHandler):
         if user:
             user.user_listened += 1
             user.save()
-        
-        #     music_id = get_next_music(user.user_id)
-        #     music = MusicSet.get_music(music_id)
-        # else:
-        #     music = MusicSet.get_next_music()
-        
-        music = MusicSet.get_next_music()
+        music = get_next_music(user.user_id)
         self.write(music)
 
 class MusicHandler(tornado.web.RequestHandler):
