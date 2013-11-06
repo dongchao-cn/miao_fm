@@ -5,7 +5,50 @@ from math import sqrt
 from user.model import UserSet
 from model import MusicSet
 
-def get_prefs():
+def get_music_tag_prefs():
+    ret = {}
+    for music in MusicSet.get_all_music():
+        ret[music.music_id] = music.music_tag
+    return ret
+
+def get_tags_prefs(music_prefs):
+    '''
+    pack the tags prefs in follwing data type:
+    {
+        user1 : { tag1 : value1 , tag2 : value2},
+        user1 : { tag4 : value4 , tag5 : value5}
+    }
+    '''
+
+    ret = {}
+    all_user = UserSet.get_all_user()
+    for user in all_user:
+        ret.setdefault(user.user_id, {})
+        for music_id in user.user_favour:
+            for tags, value in MusicSet.get_music(music_id).music_tag.items():
+                if tags == "update_datetime":
+                    continue
+                ret[user.user_id].setdefault(tags, 0)
+                ret[user.user_id] += music_prefs[user.user_id][music_id] * value
+
+        for music_id in user.user_dislike:
+            for tags, value in MusicSet.get_music(music_id).music_tag.items():
+                if tags == "update_datetime":
+                    continue
+                ret[user.user_id].setdefault(tags, 0)
+                ret[user.user_id] += music_prefs[user.user_id][music_id] * value
+
+    return ret
+
+def get_music_prefs():
+    '''
+    pack the music prefs in follwing data type:
+    {
+        user1 : { music_id1 : value1 , music_id2 : value2},
+        user1 : { music_id3 : value4 , music_id4 : value5}
+    }
+    '''
+
     ret = {}
     all_user = UserSet.get_all_user()
     for user in all_user:
@@ -15,6 +58,30 @@ def get_prefs():
         for music_id in user.user_dislike:
             ret[user.user_id][music_id] = -1
     return ret
+
+def sim_pearson(prefs, user1, user2):
+    si = {}
+    for tag in prefs[user1]:
+        if tag in prefs[user2]:
+            si[tag] = 1
+
+    n = len(si)
+
+    sum_tag_uesr1 = sum([prefs[user1][tag] for tag in si])
+    sum_tag_uesr2 = sum([prefs[user2][tag] for tag in si])
+
+    sumsq_tag_user1 = sum([pow(prefs[user1][tag], 2) for tag in si])
+    sumsq_tag_user2 = sum([pow(prefs[user2][tag], 2) for tag in si])
+
+    pearson_sum = sum([prefs[user1][tag] * prefs[user2][tag] for tag in si])
+
+    num = pearson_sum - float(sum_tag_uesr1) * sum_tag_uesr2 / n
+    den = sqrt((sumsq_tag_user1 - pow(sum_tag_uesr1, 2) / float(n)) * (sumsq_tag_user2 -
+        pow(sum_tag_uesr2,2) / float(n)))
+
+    if den == 0:
+        return 0
+    return num / den
 
 def sim_distance(prefs, user1_id, user2_id):
     si = {}
@@ -62,7 +129,7 @@ def transform_prefs(prefs):
 
     return ret
 
-def calc_item_similarity_items(prefs, k = 10):
+def calc_item_similarity_items(prefs, k = 50):
     ret = {}
     item_prefs = transform_prefs(prefs)
     for item in item_prefs:
@@ -71,7 +138,6 @@ def calc_item_similarity_items(prefs, k = 10):
     return ret
 
 def get_recommendations_with_item_based(prefs, user_id):
-    print user_id
     user_rating = prefs[user_id]
     scores = {}
     total_sim = {}
@@ -99,7 +165,7 @@ def generator(M, N):
     return ret
 
 def get_musics(user_id, recommend_algo = get_recommendations_with_item_based):
-    prefs = get_prefs()
+    prefs = get_music_prefs()
     ret = [music_id for (score, music_id) in recommend_algo(prefs, user_id)]
     ret.extend([music_id for music_id in UserSet.get_user(user_id).user_favour])
     ret.extend([MusicSet.get_music_by_idx(idx).music_id for idx in generator(MusicSet.get_music_count(), 50
