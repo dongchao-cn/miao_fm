@@ -84,7 +84,7 @@ def get_recommendations_with_item_based(prefs, user_id):
             scores.setdefault(other_item, 0)
             scores[other_item] += similarity * rating
             total_sim.setdefault(other_item, 0)
-            total_sim += similarity
+            total_sim[other_item] += similarity
     rankings = [(score / total_sim[item], item) for item, score in scores.items()]
     rankings.sort()
     rankings.reverse()
