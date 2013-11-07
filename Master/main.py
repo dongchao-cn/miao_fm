@@ -7,6 +7,7 @@ import tornado.web
 import music.view
 import user.view
 import report.view
+import status.view
 
 import gridfs
 from pymongo import Connection
@@ -51,6 +52,8 @@ application = tornado.web.Application([
     (r"/", MainHandler),
 
     # api
+    (r"/api/status/", status.view.APIStatusHandler),
+
     (r"/api/music/", music.view.APIMusicSetHandler),
     (r"/api/music/(\w{24})/", music.view.APIMusicHandler),
     (r"/api/music/next/", music.view.APIMusicNextHandler),

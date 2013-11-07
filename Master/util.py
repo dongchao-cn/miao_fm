@@ -8,6 +8,7 @@ from bson.dbref import DBRef
 from music.model import Music
 from report.model import Report
 from user.model import User
+from status.model import Status
 
 class APIBaseHandler(tornado.web.RequestHandler):
     # def prepare(self):
@@ -48,6 +49,8 @@ class MainJsonEncoder(json.JSONEncoder):
             return _serialize_obj(obj, Report)
         elif isinstance(obj, User):
             return _serialize_obj(obj, User)
+        elif isinstance(obj, Status):
+            return _serialize_obj(obj, Status)
         else:
             return json.JSONEncoder.default(self, obj)
 

@@ -30,6 +30,10 @@ def add_demo_music():
     if not music:
         MusicSet.add_music(ABS_PATH+'/demo.mp3', ADMIN_NAME)
 
+def gen_init_status():
+    from status.model import gen_status
+    gen_status()
+
 def config():
     import mongoengine
     print 'Configing MongoDB...'
@@ -40,6 +44,8 @@ def config():
         add_user_admin()
         print 'add demo music...'
         add_demo_music()
+        print 'gen init status...'
+        gen_init_status()
     except mongoengine.connection.ConnectionError:
         print 'Error!'
         print 'Can\'t connect to MongoDB!'

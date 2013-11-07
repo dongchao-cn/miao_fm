@@ -17,6 +17,10 @@ class Status(Document):
     status_gen_date = DateTimeField()
     status_music = DictField()
 
+    meta = {
+        'ordering': ['-status_gen_date']
+    }
+
     def _gen_music_status(self):
         # calc total_count
         self.status_music['total_count'] = MusicSet.get_music_count()
@@ -42,6 +46,9 @@ class Status(Document):
         self.status_gen_date = datetime.datetime.now()
         self._gen_music_status()
         self.save()
+
+    def get_brief_status(self):
+        self.status_music['favourite'] = self.status_music['favourite'][:10]
 
 def gen_status():
     connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
