@@ -10,7 +10,7 @@ ADMIN_NAME = 'admin'
 ADMIN_PASSWORD = 'admin'
 
 # music tag
-update_tag_thresh_day = 30  # days
+update_tag_thresh_day = -1  # days
 
 import os
 ABS_PATH = os.path.split(os.path.realpath(__file__))[0]

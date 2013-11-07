@@ -1,10 +1,29 @@
 #! /usr/bin/env python
 #coding=utf-8
+import datetime
 from apscheduler.scheduler import Scheduler
 from music.get_music_tag import update_the_tag
+from status.model import gen_status
+
+def update_all():
+    print 'update_all start', datetime.datetime.now()
+    try:
+        print 'update_the_tag start', datetime.datetime.now()
+        update_the_tag()
+        print 'update_the_tag finish', datetime.datetime.now()
+    except:
+        print 'update_the_tag error!', datetime.datetime.now()
+
+    try:
+        print 'gen_status start', datetime.datetime.now()
+        gen_status()
+        print 'gen_status finish', datetime.datetime.now()
+    except:
+        print 'gen_status error!', datetime.datetime.now()
+    print 'update_all finish', datetime.datetime.now()
 
 sched = Scheduler(standalone=True)
-sched.add_cron_job(update_the_tag, hour=2)
+sched.add_cron_job(update_all, hour=2)
 # sched.add_interval_job(update_the_tag, seconds=5)
 
 sched.start()
