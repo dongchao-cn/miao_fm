@@ -43,7 +43,7 @@ class User(Document):
     user_dislike = ListField(StringField(max_length = 24), default=[])
 
     def __str__(self):
-        return ('user_name = %s\n') % (self.user_name).encode('utf-8')
+        return ('user_name = %s') % (self.user_name).encode('utf-8')
 
     @property
     def user_id(self):
