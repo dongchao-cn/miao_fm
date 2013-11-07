@@ -18,7 +18,15 @@ class Status(Document):
     status_music = DictField()
 
     def _gen_music_status(self):
+        # calc total_count
         self.status_music['total_count'] = MusicSet.get_music_count()
+
+        # calc played_count
+        self.status_music['played_count'] = 0
+        for music in MusicSet.get_all_music():
+            self.status_music['played_count'] += music.music_played
+
+        # calc favourite list
         favourite = {}
         users = UserSet.get_all_user()
         for user in users:
@@ -27,7 +35,7 @@ class Status(Document):
                     favourite[music] += 1
                 except:
                     favourite[music] = 1
-        favourite = sorted(favourite.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)[:10]
+        favourite = sorted(favourite.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
         self.status_music['favourite'] = favourite
 
     def gen_all_status(self):

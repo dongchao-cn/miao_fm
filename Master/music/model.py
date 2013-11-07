@@ -113,7 +113,7 @@ class MusicSet(object):
             return None
 
     @classmethod
-    def get_all_music(cls, music_id):
+    def get_all_music(cls):
         return Music.objects()
 
     @classmethod
