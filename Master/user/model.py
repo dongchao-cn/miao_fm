@@ -41,6 +41,7 @@ class User(Document):
     user_listened = IntField(default=0)
     user_favour = ListField(StringField(max_length = 24), default=[])
     user_dislike = ListField(StringField(max_length = 24), default=[])
+    user_recommend = ListField(StringField(max_length = 24), default=[])
 
     def __str__(self):
         return ('user_name = %s') % (self.user_name).encode('utf-8')
@@ -73,6 +74,18 @@ class User(Document):
     def remove_all_favour(self):
         self.user_favour = []
         self.save()
+
+    def add_recommend(self, music_id):
+        self.update(add_to_set__user_recommend=music_id)
+
+    def remove_recommend(self, music_id):
+        self.user_recommend.remove(music_id)
+        self.save()
+
+    def remove_all_recommend(self):
+        self.user_recommend = []
+        self.save()
+
 
     def add_dislike(self, music_id):
         self.update(add_to_set__user_dislike=music_id)
