@@ -30,6 +30,7 @@ class Music(Document):
     music_album = StringField(max_length=100, default='')
     music_tag = DictField()
     music_img = StringField(max_length=200,default ='')
+    music_played = IntField(default=0)
     
     # file info
     music_file = FileField('miao_fm_cdn')
@@ -80,6 +81,10 @@ class Music(Document):
     def remove(self):
         self.music_file.delete()
         self.delete()
+
+    def played(self):
+        self.music_played += 1
+        self.save()
 
 class MusicSet(object):
     '''
