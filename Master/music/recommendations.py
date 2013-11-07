@@ -8,10 +8,14 @@ from model import MusicSet
 def get_music_tag_prefs():
     ret = {}
     for music in MusicSet.get_all_music():
-        ret[music.music_id] = music.music_tag
+        ret.setdefault(music.music_id, {})
+        for tag, value in music.music_tag.items():
+            if tag == "update_datetime":
+                continue
+            ret[music.music_id][tag] = music.music_tag[tag]
     return ret
 
-def get_tags_prefs(music_prefs):
+def get_user_tags_prefs(music_prefs):
     '''
     pack the tags prefs in follwing data type:
     {
@@ -66,6 +70,9 @@ def sim_pearson(prefs, user1, user2):
             si[tag] = 1
 
     n = len(si)
+
+    if n == 0:
+        return 0
 
     sum_tag_uesr1 = sum([prefs[user1][tag] for tag in si])
     sum_tag_uesr2 = sum([prefs[user2][tag] for tag in si])
@@ -131,10 +138,10 @@ def transform_prefs(prefs):
 
 def calc_item_similarity_items(prefs, k = 50):
     ret = {}
-    item_prefs = transform_prefs(prefs)
-    for item in item_prefs:
-        scores = top_k_matches(item_prefs, item, k = k, similarity = sim_distance)
-        ret[item] = scores
+    music_tag_prefs = get_music_tag_prefs()
+    for music_id in music_tag_prefs:
+        scores = top_k_matches(music_tag_prefs, music_id, k = k, similarity = sim_pearson)
+        ret[music_id] = scores
     return ret
 
 def get_recommendations_with_item_based(prefs, user_id):
@@ -144,7 +151,6 @@ def get_recommendations_with_item_based(prefs, user_id):
     item_mat = calc_item_similarity_items(prefs)
     for (item, rating) in user_rating.items():
         for (similarity, other_item) in item_mat[item]:
-            print other_item
             if other_item in user_rating:
                 continue
             scores.setdefault(other_item, 0)
