@@ -9,8 +9,7 @@ Depends
 ### Softwares
 1. Python 2.X
 2. mongodb
-3. nginx
-4. lame
+3. lame
 
 ### Python Packages
 1. tornado
