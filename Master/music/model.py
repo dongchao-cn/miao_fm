@@ -59,8 +59,8 @@ class Music(Document):
     }
 
     def __str__(self):
-        return ('music_name = %s\nmusic_file = %s\n' % \
-            (self.music_name, self.music_file)).encode('utf-8')
+        return ('music_name = %s' % \
+            (self.music_name)).encode('utf-8')
     
     def update_info(self, music_name, music_artist, music_album):
         self.music_name = music_name
@@ -110,6 +110,7 @@ class MusicSet(object):
         try:
             return Music.objects(pk=music_id).first()
         except ValidationError:
+            print 'ValidationError', music_id
             return None
 
     @classmethod

@@ -30,6 +30,10 @@ class Status(Document):
         for music in MusicSet.get_all_music():
             self.status_music['played_count'] += music.music_played
 
+        # calc played list
+        sorted_music = sorted(MusicSet.get_all_music(), key=lambda x: x.music_played, reverse=True)
+        self.status_music['played'] = [(music, music.music_played) for music in sorted_music]
+
         # calc favourite list
         favourite = {}
         users = UserSet.get_all_user()
@@ -40,7 +44,7 @@ class Status(Document):
                 except:
                     favourite[music] = 1
         favourite = sorted(favourite.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
-        self.status_music['favourite'] = favourite
+        self.status_music['favourite'] = [(MusicSet.get_music(each[0]), each[1]) for each in favourite]
 
     def gen_all_status(self):
         self.status_gen_date = datetime.datetime.now()
