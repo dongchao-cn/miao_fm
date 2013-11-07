@@ -4,13 +4,14 @@ if __name__ == '__main__':
     import sys
     sys.path.insert(0, '../')
 import time, os
+import random
 import requests
 import datetime
 from bs4 import BeautifulSoup
 from mongoengine import *
 
 from music.model import Music
-from master_config import MONGODB_URL, MONGODB_PORT, update_tag_thresh_day
+from master_config import MONGODB_URL, MONGODB_PORT, update_tag_thresh_day, update_tag_thresh_random
 
 def getmusicnum(musicname, singername):
     print musicname,singername
@@ -91,7 +92,7 @@ def update_the_tag():
     Musics = Music.objects()
     for music in Musics:
         nowday = datetime.datetime.now()
-        if music['music_tag'].has_key('update_datetime') and (nowday - music['music_tag']['update_datetime']).days < update_tag_thresh_day:
+        if music['music_tag'].has_key('update_datetime') and (nowday - music['music_tag']['update_datetime']).days < update_tag_thresh_day + random.randint(-update_tag_thresh_random, update_tag_thresh_random):
             # print 'continue'
             continue
         music_name = music['music_name']

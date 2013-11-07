@@ -11,6 +11,10 @@ ADMIN_PASSWORD = 'admin'
 
 # music tag
 update_tag_thresh_day = 30  # days
+update_tag_thresh_random = 10 # days 
+# random the update day if the music upload in one day 
+# range it to `update_tag_thresh_day + 
+#   random.randint(-update_tag_thresh_random, update_tag_thresh_random)`
 
 import os
 ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
