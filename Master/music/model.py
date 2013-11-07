@@ -86,6 +86,14 @@ class Music(Document):
         self.music_played += 1
         self.save()
 
+    def gc(self):
+        if self.music_upload_user != None:
+            try:
+                self.music_upload_user.user_id
+            except AttributeError:
+                self.music_upload_user = None
+                self.save()
+
 class MusicSet(object):
     '''
     Music control functions
@@ -110,7 +118,6 @@ class MusicSet(object):
         try:
             return Music.objects(pk=music_id).first()
         except ValidationError:
-            print 'ValidationError', music_id
             return None
 
     @classmethod
@@ -201,8 +208,8 @@ def _get_random_music():
 
 if __name__ == '__main__':
     from master_config import MONGODB_URL, MONGODB_PORT
-    # connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
-    # register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
+    connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
+    register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
 
     # try:
     #     MusicSet()
@@ -229,10 +236,11 @@ if __name__ == '__main__':
     
     # for each in _get_info_from_id3('/media/823E59BF3E59AD43/Music/mariah carey - without you - 玛丽亚凯莉 失去你.mp3'):
     #     print each
-    for each in _get_info_from_id3('/media/823E59BF3E59AD43/test_music/Joanna Wang - Dirty Work.mp3'):
-        print each
+    # for each in _get_info_from_id3('/media/823E59BF3E59AD43/test_music/Joanna Wang - Dirty Work.mp3'):
+    #     print each
 
-
+    for music in MusicSet.get_all_music():
+        print music.music_upload_user.user_id
 
     # print MusicSet.add_music('/media/823E59BF3E59AD43/Music/buckle up n chuggeluck heaven.mp3')
     pass

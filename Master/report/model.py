@@ -36,6 +36,13 @@ class Report(Document):
     def remove(self):
         self.delete()
 
+    def gc(self):
+        if self.report_music != None:
+            try:
+                self.report_music.music_id
+            except AttributeError:
+                self.remove()
+
 class ReportSet(object):
     '''
     Report control functions
@@ -73,6 +80,10 @@ class ReportSet(object):
     @classmethod
     def get_report_count(cls):
         return Report.objects().count()
+
+    @classmethod
+    def get_all_report(cls):
+        return Report.objects()
 
 if __name__ == '__main__':
     from master_config import MONGODB_URL, MONGODB_PORT

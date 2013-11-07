@@ -88,6 +88,12 @@ class User(Document):
     def remove(self):
         self.delete()
 
+    def gc(self):
+        from music.model import MusicSet
+        self.user_favour = [music for music in self.user_favour if MusicSet.get_music(music)]
+        self.user_dislike = [music for music in self.user_dislike if MusicSet.get_music(music)]
+        self.save()
+
 class UserSet(object):
     '''
     User control functions

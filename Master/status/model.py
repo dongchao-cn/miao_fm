@@ -9,6 +9,7 @@ from master_config import MONGODB_URL, MONGODB_PORT
 
 from music.model import MusicSet
 from user.model import UserSet
+from report.model import ReportSet
 
 class Status(Document):
     '''
@@ -32,7 +33,7 @@ class Status(Document):
 
         # calc played list
         sorted_music = sorted(MusicSet.get_all_music(), key=lambda x: x.music_played, reverse=True)
-        self.status_music['played'] = [(music, music.music_played) for music in sorted_music]
+        self.status_music['played'] = [(music, music.music_played) for music in sorted_music][:100]
 
         # calc favourite list
         favourite = {}
@@ -44,7 +45,7 @@ class Status(Document):
                 except:
                     favourite[music] = 1
         favourite = sorted(favourite.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
-        self.status_music['favourite'] = [(MusicSet.get_music(each[0]), each[1]) for each in favourite]
+        self.status_music['favourite'] = [(MusicSet.get_music(each[0]), each[1]) for each in favourite][:100]
 
     def gen_all_status(self):
         self.status_gen_date = datetime.datetime.now()
@@ -53,6 +54,7 @@ class Status(Document):
 
     def get_brief_status(self):
         self.status_music['favourite'] = self.status_music['favourite'][:10]
+        self.status_music['played'] = self.status_music['played'][:10]
 
 def gen_status():
     connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
@@ -60,7 +62,18 @@ def gen_status():
     status.gen_all_status()
     return status
 
+def gc():
+    connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
+    '''Garbage Collection, exec it before gen_status and others'''
+    for music in MusicSet.get_all_music():
+        music.gc()
+    for user in UserSet.get_all_user():
+        user.gc()
+    for report in ReportSet.get_all_report():
+        report.gc()
+
 if __name__ == '__main__':
-    status = gen_status()
-    print status.status_gen_date
-    print status.status_music
+    gc()
+    # status = gen_status()
+    # print status.status_gen_date
+    # print status.status_music
