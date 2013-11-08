@@ -207,6 +207,9 @@ class Recommend():
         return ret
 
 def user_get_music():
+    '''
+    run this method every 24 hours
+    '''
     recom = Recommend()
 
     for user in UserSet.get_all_user():
@@ -215,6 +218,9 @@ def user_get_music():
         user.save()
 
 def get_next_music(user_id):
+    '''
+    use this method to get next recommend music
+    '''
     if user_id is None:
         return MusicSet.get_next_music()
     recom_list = UserSet.get_user(user_id).user_recommend
