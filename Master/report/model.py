@@ -7,9 +7,9 @@ import json
 import datetime
 
 from mongoengine import *
-from bson.objectid import ObjectId
 
 from music.model import Music, MusicSet
+
 
 class Report(Document):
     '''
@@ -30,18 +30,18 @@ class Report(Document):
     }
 
     def __str__(self):
-        return ('report_music = %s report_info = %s\n' % \
-            (self.report_music.music_id, self.report_info)).encode('utf-8')
+        return ('report_music = %s report_info = %s\n' % (self.report_music.music_id, self.report_info)).encode('utf-8')
 
     def remove(self):
         self.delete()
 
     def gc(self):
-        if self.report_music != None:
+        if self.report_music is not None:
             try:
                 self.report_music.music_id
             except AttributeError:
                 self.remove()
+
 
 class ReportSet(object):
     '''
@@ -49,13 +49,14 @@ class ReportSet(object):
     '''
 
     def __init__(self):
-        raise Exception,'ReportSet can\'t be __init__'
+        raise Exception('ReportSet can\'t be __init__')
 
     @classmethod
     def add_report(cls, report_music_id, report_info):
         music = MusicSet.get_music(report_music_id)
         if music:
-            report = Report(report_music=music, report_info=report_info,
+            report = Report(
+                report_music=music, report_info=report_info,
                 report_date=datetime.datetime.now()).save()
             return report
         else:
@@ -75,7 +76,7 @@ class ReportSet(object):
 
     @classmethod
     def get_report_by_range(cls, start, end):
-        return [each for each in Report.objects[start : end]]
+        return [each for each in Report.objects[start: end]]
 
     @classmethod
     def get_report_count(cls):
@@ -87,8 +88,8 @@ class ReportSet(object):
 
 if __name__ == '__main__':
     from master_config import MONGODB_URL, MONGODB_PORT
-    connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
+    connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
     # report = ReportSet.add_report('524ffdf056a9e50cbb93a443','dasd')
     # print report
-    report = ReportSet.get_report_by_range(0,10)[0]
+    report = ReportSet.get_report_by_range(0, 10)[0]
     print json.dumps(report, cls=ReportJsonEncoder)

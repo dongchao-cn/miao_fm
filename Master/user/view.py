@@ -1,11 +1,10 @@
 #coding:utf8
-import time
-import json
 import tornado
+from tornado.httpclient import HTTPError
 
-from util import APIBaseHandler, MainJsonEncoder
-from music.model import MusicSet
+from util import APIBaseHandler
 from .model import UserSet, authenticated
+
 
 class APIUserSetHandler(APIBaseHandler):
     '''
@@ -23,7 +22,7 @@ class APIUserSetHandler(APIBaseHandler):
     def get(self):
         by = self.get_argument('by')
         if by == 'status':
-            base_info = {'total_count':UserSet.get_user_count()}
+            base_info = {'total_count': UserSet.get_user_count()}
             self.write(base_info)
         elif by == 'range':
             start = int(self.get_argument("start"))
@@ -45,6 +44,7 @@ class APIUserSetHandler(APIBaseHandler):
     def delete(self):
         UserSet.remove_all_user()
         self.write(None)
+
 
 class APIUserHandler(APIBaseHandler):
     '''
@@ -81,6 +81,7 @@ class APIUserHandler(APIBaseHandler):
         user.remove()
         self.write(None)
 
+
 class APIUserCurrentHandler(APIBaseHandler):
     '''
     get:
@@ -99,7 +100,7 @@ class APIUserCurrentHandler(APIBaseHandler):
     def get(self):
         user = UserSet.get_user_by_name(self.current_user)
         self.write(user)
-        
+
     def post(self):
         user_name = self.get_argument('user_name')
         user_password = self.get_argument('user_password')
@@ -120,6 +121,7 @@ class APIUserCurrentHandler(APIBaseHandler):
     def delete(self):
         self.clear_cookie('user')
         self.write(None)
+
 
 class APIUserFavourSetHandler(APIBaseHandler):
     '''
@@ -149,6 +151,7 @@ class APIUserFavourSetHandler(APIBaseHandler):
         user.remove_all_favour()
         self.write(None)
 
+
 class APIUserFavourHandler(APIBaseHandler):
     '''
     del:
@@ -158,6 +161,7 @@ class APIUserFavourHandler(APIBaseHandler):
         user = UserSet.get_user_by_name(self.current_user)
         user.remove_favour(music_id)
         self.write(user)
+
 
 class APIUserDislikeSetHandler(APIBaseHandler):
     '''
@@ -187,6 +191,7 @@ class APIUserDislikeSetHandler(APIBaseHandler):
         user.remove_all_dislike()
         self.write(None)
 
+
 class APIUserDislikeHandler(APIBaseHandler):
     '''
     del:
@@ -197,13 +202,16 @@ class APIUserDislikeHandler(APIBaseHandler):
         user.remove_dislike(music_id)
         self.write(user)
 
+
 class LoginHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("login.html")
 
+
 class RegistHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("regist.html")
+
 
 class UserHandler(tornado.web.RequestHandler):
     def get(self):

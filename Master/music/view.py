@@ -1,14 +1,14 @@
 #coding:utf8
-import os
 import tornado
-import json
+from tornado.httpclient import HTTPError
 
-from util import APIBaseHandler, MainJsonEncoder
+from util import APIBaseHandler
 from user.model import authenticated
 from user.model import UserSet
 from .model import MusicSet
 from .recommendations import get_next_music
 from master_config import ABS_PATH
+
 
 class APIMusicSetHandler(APIBaseHandler):
     '''
@@ -25,7 +25,7 @@ class APIMusicSetHandler(APIBaseHandler):
     def get(self):
         by = self.get_argument('by')
         if by == 'status':
-            base_info = {'total_count':MusicSet.get_music_count()}
+            base_info = {'total_count': MusicSet.get_music_count()}
             self.write(base_info)
         elif by == 'range':
             start = int(self.get_argument("start"))
@@ -51,6 +51,7 @@ class APIMusicSetHandler(APIBaseHandler):
     def delete(self):
         MusicSet.remove_all_music()
         self.write(None)
+
 
 class APIMusicHandler(APIBaseHandler):
     '''
@@ -89,6 +90,7 @@ class APIMusicHandler(APIBaseHandler):
         music.remove()
         self.write(None)
 
+
 class APIMusicNextHandler(APIBaseHandler):
     '''
     get:
@@ -106,6 +108,7 @@ class APIMusicNextHandler(APIBaseHandler):
             music = get_next_music(None)
         music.played()
         self.write(music)
+
 
 class MusicHandler(tornado.web.RequestHandler):
     def get(self):

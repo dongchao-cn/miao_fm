@@ -4,11 +4,11 @@ import json
 import tornado
 from mongoengine import *
 from bson.objectid import ObjectId
-from bson.dbref import DBRef
 from music.model import Music
 from report.model import Report
 from user.model import User
 from status.model import Status
+
 
 class APIBaseHandler(tornado.web.RequestHandler):
     # def prepare(self):
@@ -25,12 +25,13 @@ class APIBaseHandler(tornado.web.RequestHandler):
         self.set_secure_cookie('user', user_name)
 
     def set_default_headers(self):
-        self.set_header ('Content-Type', 'application/json')
+        self.set_header('Content-Type', 'application/json')
 
     def write(self, chunk):
         '''rewrite it to serialize obj to json'''
         chunk = json.dumps(chunk, cls=MainJsonEncoder)
         super(APIBaseHandler, self).write(chunk)
+
 
 class MainJsonEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -53,6 +54,7 @@ class MainJsonEncoder(json.JSONEncoder):
             return _serialize_obj(obj, Status)
         else:
             return json.JSONEncoder.default(self, obj)
+
 
 def _serialize_obj(obj, cls):
     prefix = cls.__name__.lower() + '_'

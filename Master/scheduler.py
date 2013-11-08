@@ -5,6 +5,7 @@ from apscheduler.scheduler import Scheduler
 from music.get_music_tag import update_the_tag
 from status.model import gen_status, gc
 
+
 def update_all():
     print '[update_all] start', datetime.datetime.now()
     try:
