@@ -29,8 +29,9 @@ def update_all():
         print '[gen_status] error!', datetime.datetime.now()
     print '[update_all] finish', datetime.datetime.now()
 
-sched = Scheduler(standalone=True)
-sched.add_cron_job(update_all, hour=2)
-# sched.add_interval_job(update_all, seconds=5)
+if __name__ == '__main__':
+    sched = Scheduler(standalone=True)
+    sched.add_cron_job(update_all, hour=2)
+    # sched.add_interval_job(update_all, seconds=5)
 
-sched.start()
+    sched.start()

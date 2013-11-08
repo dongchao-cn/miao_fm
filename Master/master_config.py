@@ -35,8 +35,8 @@ def add_demo_music():
         MusicSet.add_music(ABS_PATH+'/demo.mp3', ADMIN_NAME)
 
 def gen_init_status():
-    from status.model import gen_status
-    gen_status()
+    from scheduler import update_all
+    update_all()
 
 def config():
     import mongoengine
