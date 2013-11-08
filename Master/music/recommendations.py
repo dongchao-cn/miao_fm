@@ -201,7 +201,8 @@ class Recommend():
         recommend_algo = self.get_recommendations_with_item_based
         ret = [music_id for (score, music_id) in recommend_algo(user_id)]
         ret.extend([music_id for music_id in UserSet.get_user(user_id).user_favour])
-        ret.extend([MusicSet.get_music_by_idx(idx).music_id for idx in generator(MusicSet.get_music_count(), 50
+        ret.extend([str(MusicSet.get_music_by_idx(idx).music_id) for idx in
+            generator(MusicSet.get_music_count(), 100
             - len(ret))])
         ret = list(set(ret))
         return ret
@@ -210,9 +211,9 @@ def user_get_music():
     recom = Recommend()
 
     for user in UserSet.get_all_user():
-        #user.remove_all_recommend()
-        #user.user_recommend.extend(recom.get_musics(user.user_id))
-        #user.save()
+        user.remove_all_recommend()
+        user.user_recommend.extend(recom.get_musics(user.user_id))
+        user.save()
         print recom.get_musics(str(user.user_id))
 
 def get_next_music(user_id):
