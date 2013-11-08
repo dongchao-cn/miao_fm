@@ -6,18 +6,16 @@ if __name__ == '__main__':
 import datetime
 import random
 import os
-import json
 import multiprocessing
 import subprocess
 import traceback
-from os.path import getsize
 
 import mutagen
 import mongoengine.errors
 from mongoengine import *
-from bson.objectid import ObjectId
 
 from user.model import UserSet
+
 
 class Music(Document):
     '''
@@ -29,9 +27,9 @@ class Music(Document):
     music_artist = StringField(max_length=50, default='')
     music_album = StringField(max_length=100, default='')
     music_tag = DictField()
-    music_img = StringField(max_length=200,default ='')
+    music_img = StringField(max_length=200, default='')
     music_played = IntField(default=0)
-    
+
     # file info
     music_file = FileField('miao_fm_cdn')
 
@@ -59,9 +57,8 @@ class Music(Document):
     }
 
     def __str__(self):
-        return ('music_name = %s' % \
-            (self.music_name)).encode('utf-8')
-    
+        return ('music_name = %s' % (self.music_name)).encode('utf-8')
+
     def update_info(self, music_name, music_artist, music_album):
         self.music_name = music_name
         self.music_artist = music_artist
@@ -87,12 +84,13 @@ class Music(Document):
         self.save()
 
     def gc(self):
-        if self.music_upload_user != None:
+        if self.music_upload_user is not None:
             try:
                 self.music_upload_user.user_id
             except AttributeError:
                 self.music_upload_user = None
                 self.save()
+
 
 class MusicSet(object):
     '''
@@ -100,15 +98,16 @@ class MusicSet(object):
     '''
 
     def __init__(self):
-        raise Exception,'MusicSet can\'t be __init__'
+        raise NotImplementedError('MusicSet can\'t be __init__')
 
     @classmethod
     def add_music(cls, file_name, user_name, remove=False):
         music_name, music_artist, music_album = _get_info_from_id3(file_name)
         user = UserSet.get_user_by_name(user_name)
-        music = Music(music_name=music_name, music_artist=music_artist, 
-            music_album=music_album,
-            music_upload_user=user, music_upload_date=datetime.datetime.now(),
+        music = Music(
+            music_name=music_name, music_artist=music_artist,
+            music_album=music_album, music_upload_user=user,
+            music_upload_date=datetime.datetime.now(),
             music_file=open(file_name, 'r').read()).save()
         multiprocessing.Process(target=_lame_mp3, args=(file_name, music, remove)).start()
         return music
@@ -131,7 +130,7 @@ class MusicSet(object):
 
     @classmethod
     def get_next_music(cls):
-        assert Music.objects().count() != 0,'Empty Music List!!'
+        assert Music.objects().count() != 0, 'Empty Music List!!'
         return _get_random_music()
 
     @classmethod
@@ -140,7 +139,7 @@ class MusicSet(object):
 
     @classmethod
     def get_music_by_range(cls, start, end):
-        return [each for each in Music.objects[start : end]]
+        return [each for each in Music.objects[start: end]]
 
     @classmethod
     def get_music_count(cls):
@@ -150,29 +149,25 @@ class MusicSet(object):
     def get_music_by_idx(cls, idx):
         return Music.objects[idx]
 
-    @classmethod
-    def get_all_music(cls):
-        return Music.objects()
-
 def _lame_mp3(infile, music, remove=False):
     '''
     lame the mp3 to smaller
     '''
     outfile = infile+'.tmp'
-    subprocess.call([ 
-        "lame", 
-        "--quiet", 
-        "--mp3input", 
-        "--abr", 
-        "64", 
-        infile, 
-        outfile
-        ])
+    subprocess.call([
+        "lame",
+        "--quiet",
+        "--mp3input",
+        "--abr",
+        "64",
+        infile,
+        outfile])
     music.update_file(outfile)
     os.remove(outfile)
 
     if remove:
         os.remove(infile)
+
 
 def _get_info_from_id3(file_name):
     # print file_name
@@ -206,14 +201,15 @@ def _get_info_from_id3(file_name):
 
     return music_name, music_artist, music_album
 
+
 def _get_random_music():
-    num = random.randint(0,Music.objects().count()-1)
+    num = random.randint(0, Music.objects().count()-1)
     return Music.objects[num]
 
 if __name__ == '__main__':
     from master_config import MONGODB_URL, MONGODB_PORT
-    connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
-    register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
+    connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
+    register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL, port=MONGODB_PORT)
 
     # try:
     #     MusicSet()
@@ -229,15 +225,15 @@ if __name__ == '__main__':
     #         print each
 
     # list_dirs = os.walk('/media/823E59BF3E59AD43/Music/')
-    # for root, dirs, files in list_dirs: 
-    #     for f in files: 
+    # for root, dirs, files in list_dirs:
+    #     for f in files:
     #         if os.path.join(root, f).endswith('.mp3'):
     #             print os.path.join(root, f)
     #             for each in _get_info_from_id3(os.path.join(root, f)):
     #                 print each.encode('utf8')
     #                 pass
     #             print
-    
+
     # for each in _get_info_from_id3('/media/823E59BF3E59AD43/Music/mariah carey - without you - 玛丽亚凯莉 失去你.mp3'):
     #     print each
     # for each in _get_info_from_id3('/media/823E59BF3E59AD43/test_music/Joanna Wang - Dirty Work.mp3'):

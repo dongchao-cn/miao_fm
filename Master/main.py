@@ -22,18 +22,20 @@ con = Connection("%s:%s" % (MONGODB_URL, MONGODB_PORT))
 db = con['miao_fm_cdn']
 fs = gridfs.GridFS(db)
 
-connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
-register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
+connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
+register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL, port=MONGODB_PORT)
 
 
 class FileHandler(tornado.web.RequestHandler):
     def get(self, file_id):
-        self.set_header ('Content-Type', 'audio/mpeg')
+        self.set_header('Content-Type', 'audio/mpeg')
         self.write(fs.get(ObjectId(file_id)).read())
+
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("home.html")
+
 
 class AdminHandler(tornado.web.RequestHandler):
     def get(self):
@@ -41,8 +43,8 @@ class AdminHandler(tornado.web.RequestHandler):
 
 settings = {
     "static_path": os.path.join(os.path.dirname(__file__), "static"),
-    "template_path" : os.path.join(os.path.dirname(__file__), "templates"),
-    "debug" : True,
+    "template_path": os.path.join(os.path.dirname(__file__), "templates"),
+    "debug": True,
     "cookie_secret": "63oETzKXQkGaYdkLqw421fdasqw12335uYh7EQnp2XdTP1o/Vo=",
     # "xsrf_cookies": True,
 }
@@ -76,10 +78,10 @@ application = tornado.web.Application([
     (r"/admin/music/", music.view.MusicHandler),
     (r"/admin/report/", report.view.ReportHandler),
     (r"/admin/user/", user.view.UserHandler),
-    
+
     # local music server
     (r"/music_file/(\w{24})/", FileHandler),
-],**settings)
+], **settings)
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()

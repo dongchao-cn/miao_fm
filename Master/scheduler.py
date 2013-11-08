@@ -5,6 +5,7 @@ from apscheduler.scheduler import Scheduler
 from music.get_music_tag import update_the_tag
 from status.model import gen_status, gc
 
+
 def update_all():
     print '[update_all] start', datetime.datetime.now()
     try:
@@ -29,8 +30,9 @@ def update_all():
         print '[gen_status] error!', datetime.datetime.now()
     print '[update_all] finish', datetime.datetime.now()
 
-sched = Scheduler(standalone=True)
-sched.add_cron_job(update_all, hour=2)
-# sched.add_interval_job(update_all, seconds=5)
+if __name__ == '__main__':
+    sched = Scheduler(standalone=True)
+    sched.add_cron_job(update_all, hour=2)
+    # sched.add_interval_job(update_all, seconds=5)
 
-sched.start()
+    sched.start()

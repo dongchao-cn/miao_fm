@@ -1,9 +1,9 @@
 #coding:utf8
-import os
-import tornado
+from tornado.httpclient import HTTPError
 
 from util import APIBaseHandler
 from .model import Status
+
 
 class APIStatusHandler(APIBaseHandler):
     '''

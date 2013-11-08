@@ -11,6 +11,7 @@ from music.model import MusicSet
 from user.model import UserSet
 from report.model import ReportSet
 
+
 class Status(Document):
     '''
     store status info
@@ -72,14 +73,16 @@ class Status(Document):
         self.status_user['listened'] = self.status_user['listened'][:10]
         self.status_user['favour'] = self.status_user['favour'][:10]
 
+
 def gen_status():
-    connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
+    connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
     status = Status()
     status.gen_all_status()
     return status
 
+
 def gc():
-    connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
+    connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
     '''Garbage Collection, exec it before gen_status and others'''
     for music in MusicSet.get_all_music():
         music.gc()

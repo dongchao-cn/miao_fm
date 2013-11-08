@@ -24,7 +24,7 @@ Settings
 
 ### Master
 
-1. edit the info in `master_config.py` and then run `python master_config.py`.
+1. run `python config.py` to generate a `master_config.py` and config the db.
 
 2. run `python main.py` to start service.
 

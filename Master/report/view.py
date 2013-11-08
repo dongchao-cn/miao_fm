@@ -1,10 +1,11 @@
 #coding:utf8
 import tornado
-import json
+from tornado.httpclient import HTTPError
 
-from util import APIBaseHandler, MainJsonEncoder
+from util import APIBaseHandler
 from user.model import authenticated
 from .model import ReportSet
+
 
 class APIReportSetHandler(APIBaseHandler):
     '''
@@ -21,7 +22,7 @@ class APIReportSetHandler(APIBaseHandler):
     def get(self):
         by = self.get_argument('by')
         if by == 'status':
-            base_info = {'total_count':ReportSet.get_report_count()}
+            base_info = {'total_count': ReportSet.get_report_count()}
             self.write(base_info)
         elif by == 'range':
             start = int(self.get_argument("start"))
@@ -42,6 +43,7 @@ class APIReportSetHandler(APIBaseHandler):
         ReportSet.remove_all_report()
         self.write(None)
 
+
 class APIReportHandler(APIBaseHandler):
     '''
     get:
@@ -61,6 +63,7 @@ class APIReportHandler(APIBaseHandler):
         report = ReportSet.get_report(report_id)
         report.remove()
         self.write(None)
+
 
 class ReportHandler(tornado.web.RequestHandler):
     def get(self):
