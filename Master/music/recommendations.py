@@ -1,9 +1,18 @@
 #!/usr/bin/env python
 #coding=utf-8
+if __name__ == "__main__":
+    import sys
+    sys.path.insert(0, "../")
 import random
 from math import sqrt
 from user.model import UserSet
 from model import MusicSet
+
+import mutagen
+import mongoengine.errors
+from mongoengine import *
+from bson.objectid import ObjectId
+
 
 def generator(M, N):
     ret = []
@@ -66,7 +75,7 @@ def transform_prefs(prefs):
 
     return ret
 
-def calc_similarity_matrix(prefs, k = 50):
+def calc_similarity_matrix(prefs, k = 100):
     ret = {}
     for item_id in prefs:
         scores = top_k_matches(prefs, item_id, k = k, similarity = sim_pearson)
@@ -75,21 +84,29 @@ def calc_similarity_matrix(prefs, k = 50):
 
 class Recommend():
 
+    music_tag_prefs = {}
+    user_tags_prefs = {}
+    user_music_prefs = {}
+    music_mat = {}
+
     def __init__(self):
+        print "init start"
         self.music_tag_prefs = self.get_music_tag_prefs()
-        self.user_music_prefs = self.get_user_tags_prefs()
+        self.user_music_prefs = self.get_user_music_prefs()
         self.user_tags_prefs = self.get_user_tags_prefs()
         self.music_mat = calc_similarity_matrix(self.music_tag_prefs, 100)
+        print "init finished"
 
 
     def get_music_tag_prefs(self):
+
         ret = {}
         for music in MusicSet.get_all_music():
-            ret.setdefault(music.music_id, {})
+            ret.setdefault(str(music.music_id), {})
             for tag, value in music.music_tag.items():
                 if tag == "update_datetime":
                     continue
-                ret[music.music_id][tag] = music.music_tag[tag]
+                ret[str(music.music_id)][tag] = music.music_tag[tag]
         return ret
 
     def get_user_tags_prefs(self):
@@ -103,20 +120,20 @@ class Recommend():
         ret = {}
         all_user = UserSet.get_all_user()
         for user in all_user:
-            ret.setdefault(user.user_id, {})
+            ret.setdefault(str(user.user_id), {})
             for music_id in user.user_favour:
                 for tags, value in MusicSet.get_music(music_id).music_tag.items():
                     if tags == "update_datetime":
                         continue
-                    ret[user.user_id].setdefault(tags, 0)
-                    ret[user.user_id] += self.user_music_prefs[user.user_id][music_id] * value
+                    ret[str(user.user_id)].setdefault(tags, 0)
+                    ret[str(user.user_id)][tags] += self.user_music_prefs[str(user.user_id)][music_id] * value
 
             for music_id in user.user_dislike:
                 for tags, value in MusicSet.get_music(music_id).music_tag.items():
                     if tags == "update_datetime":
                         continue
-                    ret[user.user_id].setdefault(tags, 0)
-                    ret[user.user_id] += self.user_music_prefs[user.user_id][music_id] * value
+                    ret[str(user.user_id)].setdefault(tags, 0)
+                    ret[str(user.user_id)][tags] += self.user_music_prefs[str(user.user_id)][music_id] * value
 
         return ret
 
@@ -132,11 +149,11 @@ class Recommend():
         ret = {}
         all_user = UserSet.get_all_user()
         for user in all_user:
-            ret.setdefault(user.user_id, {})
+            ret.setdefault(str(user.user_id), {})
             for music_id in user.user_favour:
-                ret[user.user_id][music_id] = 1
+                ret[str(user.user_id)][music_id] = 1
             for music_id in user.user_dislike:
-                ret[user.user_id][music_id] = -1
+                ret[str(user.user_id)][music_id] = -1
         return ret
 
     def get_recommendations_with_user_based(self, user_id, similarity = sim_distance):
@@ -180,7 +197,8 @@ class Recommend():
         rankings.reverse()
         return rankings
 
-    def get_musics(self, user_id, recommend_algo = get_recommendations_with_item_based):
+    def get_musics(self, user_id):
+        recommend_algo = self.get_recommendations_with_item_based
         ret = [music_id for (score, music_id) in recommend_algo(user_id)]
         ret.extend([music_id for music_id in UserSet.get_user(user_id).user_favour])
         ret.extend([MusicSet.get_music_by_idx(idx).music_id for idx in generator(MusicSet.get_music_count(), 50
@@ -190,10 +208,23 @@ class Recommend():
 
 def user_get_music():
     recom = Recommend()
+
     for user in UserSet.get_all_user():
-        user.remove_all_recommend()
-        user.user_recommend.extend(recom.get_musics(user.user_id))
-        user.save()
+        #user.remove_all_recommend()
+        #user.user_recommend.extend(recom.get_musics(user.user_id))
+        #user.save()
+        print recom.get_musics(str(user.user_id))
 
 def get_next_music(user_id):
     pass
+
+
+if __name__ == '__main__':
+    from master_config import MONGODB_URL, MONGODB_PORT
+    connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
+    register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
+
+
+    user_get_music()
+
+
