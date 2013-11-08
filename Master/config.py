@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 #coding:utf8
+import datetime
+import os
+ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
+MASTER_CONFIG = ABS_PATH+'/master_config.py'
 
+demo_config = '''
 # mongo config
 MONGODB_URL = '127.0.0.1'
 MONGODB_PORT = 27017
@@ -19,6 +24,12 @@ update_tag_thresh_random = 10 # days
 import os
 ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
 
+'''
+
+def gen_config():
+    with open(MASTER_CONFIG, 'w') as f:
+        f.write(demo_config)
+
 def add_user_admin():
     from user.model import UserSet
     user = UserSet.get_user_by_name(ADMIN_NAME)
@@ -34,27 +45,36 @@ def add_demo_music():
     if not music:
         MusicSet.add_music(ABS_PATH+'/demo.mp3', ADMIN_NAME)
 
-def gen_init_status():
+def update_init_status():
     from scheduler import update_all
     update_all()
 
 def config():
     import mongoengine
-    print 'Configing MongoDB...'
+    print '[config] start', datetime.datetime.now()
     try:
         mongoengine.connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
         mongoengine.register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
-        print 'add admin user...'
-        add_user_admin()
-        print 'add demo music...'
-        add_demo_music()
-        print 'gen init status...'
-        gen_init_status()
     except mongoengine.connection.ConnectionError:
-        print 'Error!'
-        print 'Can\'t connect to MongoDB!'
+        print '[Error] Can\'t connect to MongoDB!'
         os._exit(-1)
-    print 'Finish!'
+    print '[user] add admin...'
+    add_user_admin()
+    print '[music] add demo music...'
+    add_demo_music()
+    print '[status] gen init status...'
+    update_init_status()
+    print '[config] finish', datetime.datetime.now()
 
 if __name__ == '__main__':
+    try:
+        from master_config import *
+    except ImportError:
+        gen = raw_input('Can\'t find `master_config.py`.Do you want to generate it?(y/n) ')
+        gen = gen.lower()
+        if gen in ['y','yes']:
+            gen_config()
+            print '`master_config.py` generated, Please edit it & retry this config!'
+        exit(0)
     config()
+    print 'Config success! Please run `main.py` & visit http://localhost:8000/'
