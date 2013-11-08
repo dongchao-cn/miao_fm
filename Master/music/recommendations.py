@@ -97,7 +97,6 @@ class Recommend():
         self.music_mat = calc_similarity_matrix(self.music_tag_prefs, 100)
         print "init finished"
 
-
     def get_music_tag_prefs(self):
 
         ret = {}
@@ -212,20 +211,23 @@ def user_get_music():
 
     for user in UserSet.get_all_user():
         user.remove_all_recommend()
-        user.user_recommend.extend(recom.get_musics(user.user_id))
+        user.user_recommend.extend(recom.get_musics(str(user.user_id)))
         user.save()
-        print recom.get_musics(str(user.user_id))
 
 def get_next_music(user_id):
-    pass
-
+    if user_id is None:
+        return MusicSet.get_next_music()
+    recom_list = UserSet.get_user(user_id).user_recommend
+    return MusicSet.get_music(recom_list[random.randint(0, len(recom_list) - 1)])
 
 if __name__ == '__main__':
     from master_config import MONGODB_URL, MONGODB_PORT
     connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
     register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
-
-
-    user_get_music()
+    #import profile
+    #profile.run("user_get_music()")
+    for user in UserSet.get_all_user():
+        print user
+        print get_next_music(user.user_id)
 
 
