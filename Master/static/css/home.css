@@ -59,14 +59,16 @@ body {
 
 #jp-cover img {
 	width: 105px;
-	height: 137px;
+	height: 142px;
 	margin-top:0px;
+	padding-top: 0px;
 }
 
 #jp_container_1 {
 	margin-top:150px;
 	float:left;
 	margin-left:0px;
+	padding-top:5px;
 	/*margin-right: 50px;*/
 	border: 0px solid red;
 	-moz-box-shadow: 5px 5px 6px #000;
@@ -161,3 +163,6 @@ body {
 .clear {
 	clear:both;
 }
+
+
+/*side bar*/

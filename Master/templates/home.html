@@ -2,11 +2,15 @@
 
 {% block extern_lib %}
     <link rel="stylesheet" type="text/css" href="/static/css/home.css">
+    
     <link rel="stylesheet" type="text/css" href="/static/jPlayer/skin/blue.monday/jplayer.blue.monday.css">
+    <link rel="stylesheet" type="text/css" href="/static/jquery.mb.extruder-2.5.0/css/mbExtruder.css">
     <script type="text/javascript" src="/static/js/home.js"></script>
-    <script type="text/javascript" src="/static/js/jquery-1.10.2.js"></script>
     <script type="text/javascript" src="/static/jPlayer/js/jquery.jplayer.min.js"></script>
     <script type="text/javascript" src="/static/jPlayer/js/jplayer.playlist.min.js"></script>
+    <script type="text/javascript" src="/static/jquery.mb.extruder-2.5.0/inc/jquery.hoverIntent.min.js"></script>
+    <script type="text/javascript" src="/static/jquery.mb.extruder-2.5.0/inc/jquery.mb.flipText.js"></script>
+    <script type="text/javascript" src="/static/jquery.mb.extruder-2.5.0/inc/mbExtruder.js"></script>
 {% end %}
 
 {% block content %}
@@ -88,6 +92,7 @@
         </div>
     </div> 
 </div>       
+<div id="extruderRight" class="{title:'Trends', url:'/static/jquery.mb.extruder-2.5.0/parts/extruderRight.html'}"></div>
 <div id="footer">
     <p></p>
 </div>
