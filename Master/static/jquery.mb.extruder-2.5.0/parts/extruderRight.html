@@ -31,7 +31,7 @@
         dataType: 'json',
         success:function(data) {
             console.info(data);
-            var time = data.status_gen_date;
+            var time = unix_to_datetime(data.status_gen_date['$date']);
             var favSongCount = data.status_music.total_count;
             var playedCount = data.status_music.played_count;
             var activeUser = data.status_user.total_count;
