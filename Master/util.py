@@ -2,7 +2,6 @@
 import json
 import tornado
 from mongoengine import *
-from bson.objectid import ObjectId
 from music.model import Music
 from report.model import Report
 from user.model import User
