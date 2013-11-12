@@ -4,9 +4,9 @@ function render_report_list(data){
     //console.info(data);
     for(var i = 0;i < data.length;++i){
         var tdstr = '<tr class="' + data[i].report_id + '"><td>'+data[i].report_id+'</td> \
-            <td>'+data[i].report_music.music_id+'</td> \
+            <td>'+data[i].report_music['$oid']+'</td> \
             <td>' + data[i].report_info+'</td> \
-            <td>'+ data[i].report_date +'</td> \
+            <td>'+ unix_to_datetime(data[i].report_date['$date']) +'</td> \
             <td><a href="#myModal3" class="btn  btn-success btn-xs" data-toggle="modal" onClick ="editReport(this)">Edit</a>&nbsp\
             <button id="' + data[i].report_id + '"class="btn btn-danger btn-xs" onClick ="delReport(this)">Ignore</button></td> \
             </tr>';

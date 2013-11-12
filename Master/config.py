@@ -16,19 +16,20 @@ ADMIN_PASSWORD = 'admin'
 
 # music tag
 update_tag_thresh_day = 30  # days
-update_tag_thresh_random = 10 # days 
-# random the update day if the music upload in one day 
-# range it to `update_tag_thresh_day + 
+update_tag_thresh_random = 10  # days
+# random the update day if the music upload in one day
+# range it to `update_tag_thresh_day +
 #   random.randint(-update_tag_thresh_random, update_tag_thresh_random)`
 
 import os
 ABS_PATH = os.path.split(os.path.realpath(__file__))[0]
-
 '''
+
 
 def gen_config():
     with open(MASTER_CONFIG, 'w') as f:
         f.write(demo_config)
+
 
 def add_user_admin():
     from user.model import UserSet
@@ -39,22 +40,25 @@ def add_user_admin():
     else:
         user = UserSet.add_user(ADMIN_NAME, ADMIN_PASSWORD, 'admin')
 
+
 def add_demo_music():
     from music.model import MusicSet
     music = MusicSet.get_music_by_name('To Be With You')
     if not music:
         MusicSet.add_music(ABS_PATH+'/demo.mp3', ADMIN_NAME)
 
+
 def update_init_status():
     from scheduler import update_all
     update_all()
+
 
 def config():
     import mongoengine
     print '[config] start', datetime.datetime.now()
     try:
-        mongoengine.connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
-        mongoengine.register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
+        mongoengine.connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
+        mongoengine.register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL, port=MONGODB_PORT)
     except mongoengine.connection.ConnectionError:
         print '[Error] Can\'t connect to MongoDB!'
         os._exit(-1)
@@ -72,7 +76,7 @@ if __name__ == '__main__':
     except ImportError:
         gen = raw_input('Can\'t find `master_config.py`.Do you want to generate it?(y/n) ')
         gen = gen.lower()
-        if gen in ['y','yes']:
+        if gen in ['y', 'yes']:
             gen_config()
             print '`master_config.py` generated, Please edit it & retry this config!'
         exit(0)

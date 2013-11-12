@@ -3,7 +3,6 @@
 if __name__ == '__main__':
     import sys
     sys.path.insert(0, '../')
-import time, os
 import random
 import requests
 import datetime
@@ -13,22 +12,23 @@ from mongoengine import *
 from music.model import Music
 from master_config import MONGODB_URL, MONGODB_PORT, update_tag_thresh_day, update_tag_thresh_random
 
+
 def getmusicnum(musicname, singername):
-    print musicname,singername
+    print musicname, singername
     if musicname == '':
         print 'no name'
         return None
     url = 'http://www.xiami.com/search?key='+musicname
-    header = {'Referer':'http://www.xiami.com','User-Agent':'Mozilla/5.0'}
+    header = {'Referer': 'http://www.xiami.com', 'User-Agent': 'Mozilla/5.0'}
     try:
-        r = requests.get(url,headers = header)
+        r = requests.get(url, headers=header)
     except:
         print 'except'
         return None
     soup = BeautifulSoup(r.text)
     body = soup.find('body')
     # print body
-    result_main = body.findAll(class_ = 'result_main')
+    result_main = body.findAll(class_='result_main')
     # print result_main
     retr = result_main[0].findAll('tr')
     song_num = None
@@ -36,14 +36,14 @@ def getmusicnum(musicname, singername):
         # tdartist = each.findAll(class_='song_artist')[0].a['title'].encode('utf-8')
         tdartist = each.findAll(class_='song_artist')[0].a['title']
         if ''.join(tdartist.split()).upper() == ''.join(singername.split()).upper():
-            tdname = each.findAll(class_='song_name')[0].a#.findNextSibling('a')['href']
+            tdname = each.findAll(class_='song_name')[0].a  # .findNextSibling('a')['href']
             while tdname['href'] == "javascript:;":
                 tdname = tdname.findNextSibling('a')
             # print tdname['href']
             song_num = tdname['href'][len(u'/song/'):]
             return song_num
     for each in retr[1:]:
-        tdname = each.findAll(class_ = 'song_name')[0].a
+        tdname = each.findAll(class_='song_name')[0].a
         if tdname['href'] == "javascript:;":
             while tdname['href'] == "javascript:;":
                 tdname = tdname.findNextSibling('a')
@@ -57,16 +57,17 @@ def getmusicnum(musicname, singername):
             return song_num
     return song_num
 
+
 def getmusictags(song_num):
     tagurl = 'http://www.xiami.com/song/moretags/id/'+str(song_num)
-    header = {'Referer':'http://www.xiami.com','User-Agent':'Mozilla/5.0'}
+    header = {'Referer': 'http://www.xiami.com', 'User-Agent': 'Mozilla/5.0'}
     try:
-        r = requests.get(tagurl,headers = header)
+        r = requests.get(tagurl, headers=header)
     except:
         return None
     soup = BeautifulSoup(r.text)
     # print soup
-    tag_cloud = soup.findAll(class_ = 'tag_cloud')
+    tag_cloud = soup.findAll(class_='tag_cloud')
     tag_dic = {}
     span = tag_cloud[0].findAll('span')
     for i in span:
@@ -74,30 +75,34 @@ def getmusictags(song_num):
     tag_dic['update_datetime'] = datetime.datetime.now()
     return tag_dic
 
+
 def getmusicimg(song_num):
     imgurl = 'http://www.xiami.com/song/'+str(song_num)
     print imgurl
-    header = {'Referer':'http://www.xiami.com','User-Agent':'Mozilla/5.0'}
+    header = {'Referer': 'http://www.xiami.com', 'User-Agent': 'Mozilla/5.0'}
     try:
-        r = requests.get(imgurl,headers = header)
+        r = requests.get(imgurl, headers=header)
     except:
         return None
     soup = BeautifulSoup(r.text)
-    imgtag = soup.findAll(class_ = 'cdCDcover185')
+    imgtag = soup.findAll(class_='cdCDcover185')
     return imgtag[0]['src']
+
 
 def update_the_tag():
     # print 'update_the_tag', datetime.datetime.now()
-    connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
+    connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
     Musics = Music.objects()
     for music in Musics:
         nowday = datetime.datetime.now()
-        if music['music_tag'].has_key('update_datetime') and (nowday - music['music_tag']['update_datetime']).days < update_tag_thresh_day + random.randint(-update_tag_thresh_random, update_tag_thresh_random):
+        if 'update_datetime' in music['music_tag'] and \
+            (nowday - music['music_tag']['update_datetime']).days < \
+            update_tag_thresh_day + random.randint(-update_tag_thresh_random, update_tag_thresh_random):
             # print 'continue'
             continue
         music_name = music['music_name']
         music_artist = music['music_artist']
-        music_num = getmusicnum(music_name,music_artist)
+        music_num = getmusicnum(music_name, music_artist)
         music['music_tag']['update_datetime'] = nowday
         if not music_num:
             music.save()
@@ -116,7 +121,7 @@ def update_the_tag():
         # print music['music_artist']
         # print music['music_tag']
         # print music['music_img']
-    
+
 if __name__ == '__main__':
     print 'test main'
     update_the_tag()

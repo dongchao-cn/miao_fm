@@ -4,14 +4,13 @@
 if __name__ == '__main__':
     import sys
     sys.path.insert(0, '../')
-import json
 import hashlib
-import datetime
+import json
 
 from mongoengine import *
-from bson.objectid import ObjectId
 import functools
 from tornado.web import HTTPError
+
 
 def authenticated(req):
     def actualDecorator(method):
@@ -28,35 +27,43 @@ def authenticated(req):
         return wrapper
     return actualDecorator
 
+
 class User(Document):
     '''
     store user info
     all item and functions start with *user_* will be auto serialized
     '''
-    user_name = StringField(max_length = 50, unique = True)
-    user_password = StringField(max_length = 40, required = True)
-    
-    # 4 user level : disable, normal, uploader, admin
-    user_level = StringField(max_length = 20, default='normal')
-    user_listened = IntField(default=0)
-    user_favour = ListField(StringField(max_length = 24), default=[])
-    user_dislike = ListField(StringField(max_length = 24), default=[])
+    user_name = StringField(max_length=50, unique=True)
+    user_password = StringField(max_length=40, required=True)
 
-    def __str__(self):
-        return ('user_name = %s') % (self.user_name).encode('utf-8')
+    # 4 user level : disable, normal, uploader, admin
+    user_level = StringField(max_length=20, default='normal')
+    user_listened = IntField(default=0)
+
+    user_favour = ListField(StringField(max_length=24), default=[])
+    user_dislike = ListField(StringField(max_length=24), default=[])
+    user_recommend = ListField(StringField(max_length=24), default=[])
 
     @property
     def user_id(self):
         return self.pk
 
+    def __str__(self):
+        return ('user_name = %s') % (self.user_name).encode('utf-8')
+
+    def to_dict(self):
+        user_str = super(User, self).to_json()
+        user = json.loads(user_str)
+        user['user_id'] = str(self.user_id)
+        return user
+
     def update_info(self, user_password):
-        self.user_password = hashlib.md5(user_password.encode('utf8') +
-            self.user_name.encode('utf8')).hexdigest().upper()
+        self.user_password = hashlib.md5(
+            user_password.encode('utf8') + self.user_name.encode('utf8')).hexdigest().upper()
         self.save()
 
     def check_pw(self, user_password):
-        check_password = hashlib.md5(user_password.encode('utf8') +
-            self.user_name.encode('utf8')).hexdigest().upper()
+        check_password = hashlib.md5(user_password.encode('utf8') + self.user_name.encode('utf8')).hexdigest().upper()
         return check_password == self.user_password
 
     def update_level(self, user_level):
@@ -72,6 +79,17 @@ class User(Document):
 
     def remove_all_favour(self):
         self.user_favour = []
+        self.save()
+
+    def add_recommend(self, music_id):
+        self.update(add_to_set__user_recommend=music_id)
+
+    def remove_recommend(self, music_id):
+        self.user_recommend.remove(music_id)
+        self.save()
+
+    def remove_all_recommend(self):
+        self.user_recommend = []
         self.save()
 
     def add_dislike(self, music_id):
@@ -94,17 +112,17 @@ class User(Document):
         self.user_dislike = [music for music in self.user_dislike if MusicSet.get_music(music)]
         self.save()
 
+
 class UserSet(object):
     '''
     User control functions
     '''
     def __init__(self):
-        raise Exception,'UserSet can\'t be __init__'
+        raise Exception('UserSet can\'t be __init__')
 
     @classmethod
     def add_user(cls, user_name, user_password, user_level):
-        save_password = hashlib.md5(user_password.encode('utf8') + 
-            user_name.encode('utf8')).hexdigest().upper()
+        save_password = hashlib.md5(user_password.encode('utf8') + user_name.encode('utf8')).hexdigest().upper()
         try:
             return User(user_name, save_password, user_level).save()
         # except NotUniqueError:
@@ -129,7 +147,7 @@ class UserSet(object):
 
     @classmethod
     def get_user_by_range(cls, start, end):
-        return [each for each in User.objects[start : end]]
+        return [each for each in User.objects[start: end]]
 
     @classmethod
     def get_user_count(cls):
@@ -137,4 +155,4 @@ class UserSet(object):
 
     @classmethod
     def get_user_by_name(cls, user_name):
-        return User.objects(user_name = user_name).first()
+        return User.objects(user_name=user_name).first()
