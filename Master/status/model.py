@@ -3,6 +3,7 @@
 if __name__ == '__main__':
     import sys
     sys.path.insert(0, '../')
+import json
 import datetime
 from mongoengine import *
 from master_config import MONGODB_URL, MONGODB_PORT
@@ -24,6 +25,26 @@ class Status(Document):
         'ordering': ['-status_gen_date']
     }
 
+    def to_dict(self):
+        ret = super(Status, self).to_json()
+        ret = json.loads(ret)
+        # replace status_music.played list
+        for i in range(len(self.status_music['played'])):
+            ret['status_music']['played'][i][0] = self.status_music['played'][i][0].to_dict()
+
+        # replace status_music.favourite list
+        for i in range(len(self.status_music['favourite'])):
+            ret['status_music']['favourite'][i][0] = self.status_music['favourite'][i][0].to_dict()
+
+        # replace status_user.listened list
+        for i in range(len(self.status_user['listened'])):
+            ret['status_user']['listened'][i][0] = self.status_user['listened'][i][0].to_dict()
+
+        # replace status_user.favour list
+        for i in range(len(self.status_user['favour'])):
+            ret['status_user']['favour'][i][0] = self.status_user['favour'][i][0].to_dict()
+        return ret
+
     def _gen_music_status(self):
         # calc total_count
         self.status_music['total_count'] = MusicSet.get_music_count()
@@ -35,7 +56,7 @@ class Status(Document):
 
         # calc played list
         sorted_music = sorted(MusicSet.get_all_music(), key=lambda x: x.music_played, reverse=True)
-        self.status_music['played'] = [(music, music.music_played) for music in sorted_music][:100]
+        self.status_music['played'] = [[music, music.music_played] for music in sorted_music][:100]
 
         # calc favourite list
         favourite = {}
@@ -47,7 +68,7 @@ class Status(Document):
                 except:
                     favourite[music] = 1
         favourite = sorted(favourite.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
-        self.status_music['favourite'] = [(MusicSet.get_music(each[0]), each[1]) for each in favourite][:100]
+        self.status_music['favourite'] = [[MusicSet.get_music(each[0]), each[1]] for each in favourite][:100]
 
     def _gen_user_status(self):
         # calc total_count
@@ -55,11 +76,11 @@ class Status(Document):
 
         # calc listened list
         sorted_user = sorted(UserSet.get_all_user(), key=lambda x: x.user_listened, reverse=True)
-        self.status_user['listened'] = [(user, user.user_listened) for user in sorted_user][:100]
+        self.status_user['listened'] = [[user, user.user_listened] for user in sorted_user][:100]
 
         # calc favour list
         sorted_user = sorted(UserSet.get_all_user(), key=lambda x: len(x.user_favour), reverse=True)
-        self.status_user['favour'] = [(user, len(user.user_favour)) for user in sorted_user][:100]
+        self.status_user['favour'] = [[user, len(user.user_favour)] for user in sorted_user][:100]
 
     def gen_all_status(self):
         self.status_gen_date = datetime.datetime.now()

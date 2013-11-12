@@ -32,6 +32,12 @@ class Report(Document):
     def __str__(self):
         return ('report_music = %s report_info = %s\n' % (self.report_music.music_id, self.report_info)).encode('utf-8')
 
+    def to_dict(self):
+        report_str = super(Report, self).to_json()
+        report = json.loads(report_str)
+        report['report_id'] = str(self.report_id)
+        return report
+
     def remove(self):
         self.delete()
 

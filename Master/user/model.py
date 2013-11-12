@@ -5,6 +5,7 @@ if __name__ == '__main__':
     import sys
     sys.path.insert(0, '../')
 import hashlib
+import json
 
 from mongoengine import *
 import functools
@@ -41,12 +42,18 @@ class User(Document):
     user_favour = ListField(StringField(max_length=24), default=[])
     user_dislike = ListField(StringField(max_length=24), default=[])
 
-    def __str__(self):
-        return ('user_name = %s') % (self.user_name).encode('utf-8')
-
     @property
     def user_id(self):
         return self.pk
+
+    def __str__(self):
+        return ('user_name = %s') % (self.user_name).encode('utf-8')
+
+    def to_dict(self):
+        user_str = super(User, self).to_json()
+        user = json.loads(user_str)
+        user['user_id'] = str(self.user_id)
+        return user
 
     def update_info(self, user_password):
         self.user_password = hashlib.md5(

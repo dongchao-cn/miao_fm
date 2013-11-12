@@ -6,6 +6,7 @@ if __name__ == '__main__':
 import datetime
 import random
 import os
+import json
 import multiprocessing
 import subprocess
 import traceback
@@ -58,6 +59,13 @@ class Music(Document):
 
     def __str__(self):
         return ('music_name = %s' % (self.music_name)).encode('utf-8')
+
+    def to_dict(self):
+        music_str = super(Music, self).to_json()
+        music = json.loads(music_str)
+        music['music_id'] = str(self.music_id)
+        music['music_url'] = self.music_url
+        return music
 
     def update_info(self, music_name, music_artist, music_album):
         self.music_name = music_name
