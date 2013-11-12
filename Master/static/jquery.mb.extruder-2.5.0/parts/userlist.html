@@ -1,0 +1,27 @@
+<div id="side-userinfo"></div>
+
+<script type="text/javascript">
+    $.ajax({
+        type: 'get',
+        url: '/api/status/?by=last',
+        dataType: 'json',
+        success:function(data) {
+            //console.info(data);
+            var activeUser = data.status_user.listened;
+            var i = 1;
+            //console.info(activeUser);
+            for(index in activeUser) {                
+                var userName = activeUser[index][0].user_name;
+                var userlistened = activeUser[index][1];
+
+                var songInfoList = 
+                '<div><a href="#">' + i + '&nbsp&nbsp' + userName + '&nbsp&nbsp<small class="text-info">收听过' + userlistened + '首歌</small></a></div>';
+                i += 1;
+                $('#side-userinfo').append(songInfoList);
+            }
+         },
+         error:function() {
+            console.info('error');
+         }
+    });
+</script>

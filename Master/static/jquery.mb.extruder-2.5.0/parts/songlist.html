@@ -1,0 +1,26 @@
+<div id="side-songinfo"></div>
+
+<script type="text/javascript">
+    $.ajax({
+        type: 'get',
+        url: '/api/status/?by=last',
+        dataType: 'json',
+        success:function(data) {
+            //console.info(data);
+            var favorSong = data.status_music.favourite;
+            var i = 1;
+            for(index in favorSong) {
+                //console.info(favorSong[index]);
+                var songName = favorSong[index][0].music_name;
+                var singer = favorSong[index][0].music_artist;
+                var songInfoStr = 
+                '<div><a href="#">' + i + '&nbsp&nbsp' + songName + '&nbsp&nbsp<small class="text-info">' + singer + '</small></a></div>';
+                $('#side-songinfo').append(songInfoStr);
+                i += 1;
+            }
+         },
+         error:function() {
+            console.info('error');
+         }
+    });
+</script>

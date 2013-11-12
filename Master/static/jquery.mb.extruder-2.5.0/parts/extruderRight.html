@@ -1,0 +1,54 @@
+<!--
+  ~ /*******************************************************************************
+  ~  jquery.mb.components
+  ~  file: extruderRight.html
+  ~
+  ~  Copyright (c) 2001-2013. Matteo Bicocchi (Pupunzi);
+  ~  Open lab srl, Firenze - Italy
+  ~  email: matteo@open-lab.com
+  ~  site: 	http://pupunzi.com
+  ~  blog:	http://pupunzi.open-lab.com
+  ~ 	http://open-lab.com
+  ~
+  ~  Licences: MIT, GPL
+  ~  http://www.opensource.org/licenses/mit-license.php
+  ~  http://www.gnu.org/licenses/gpl.html
+  ~
+  ~  last modified: 04/01/13 17.13
+  ~  ******************************************************************************/
+  -->
+<div id="serverTime" class="voice {}"></div>
+<div id="favSong" class="voice {}"></div>
+<div class="voice {panel:'/static/jquery.mb.extruder-2.5.0/parts/songlist.html'}" >歌曲最爱 TOP 10</div>
+
+<div id="activeUser" class="voice {}"></div>
+<div class="voice {panel:'/static/jquery.mb.extruder-2.5.0/parts/userlist.html'}">活跃用户 TOP 10 </div>
+
+<script type="text/javascript">
+  $.ajax({
+        type: 'get',
+        url: '/api/status/?by=last',
+        dataType: 'json',
+        success:function(data) {
+            console.info(data);
+            var time = data.status_gen_date;
+            var favSongCount = data.status_music.total_count;
+            var playedCount = data.status_music.played_count;
+            var activeUser = data.status_user.total_count;
+            var serverTimeStr = '<span><small class="text-info">统计时间: ' + time + '</small></span>';
+            var favSongStr = 
+            '<span><small class="text-info">总歌曲数: ' + favSongCount + '  总播放数: ' + playedCount + '</small></span>';
+            // var playedSongStr = 
+            // '<span><small class="text-info">总播放数: ' + playedCount + '</small></span>';
+            var activeUserStr = 
+            '<span><small class="text-info">总用户数: ' + activeUser + '</small></span>';
+            $('#serverTime').append(serverTimeStr);
+            $('#favSong').append(favSongStr);
+            // $('#playedSong').append(playedSongStr);
+            $('#activeUser').append(activeUserStr);
+         },
+         error:function() {
+            console.info('error');
+         }
+    });
+</script>
