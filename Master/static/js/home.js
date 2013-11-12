@@ -32,7 +32,7 @@ $(document).ready(function(){
     //side bar init
     $("#extruderRight").buildMbExtruder({
         position:"right",
-        width:400,
+        width:350,
         extruderOpacity:.8,
         textOrientation:"tb",
         onExtOpen:function(){},
@@ -57,12 +57,13 @@ function playNextSong(){
         cache:false,
         async:true,
         success:function(data){
-            console.info(data);
+            //console.info(data);
             var singer = data.music_artist;
             var name = data.music_name;
             var album = data.music_album;
             currentSongInfo = [data.music_id,data.music_name,data.music_artist,data.music_album];
             //console.info(currentSongInfo);
+            $("title").text("miaoFM" + " - " + name);
             $("#jp-singer").text(singer); 
             $("#jp-name").text(name);  
             $("#jp-album").text(album); 
