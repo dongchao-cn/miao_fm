@@ -2,9 +2,10 @@
 var currentSongInfo = [];
 var favoLabel = 1;
 var trashLabel = 1;
+var title;
 
 $(document).ready(function(){
-
+    title = $("title").text();
     //jplayer init
     new jPlayerPlaylist({
         jPlayer: "#jquery_jplayer_1",
@@ -63,7 +64,7 @@ function playNextSong(){
             var album = data.music_album;
             currentSongInfo = [data.music_id,data.music_name,data.music_artist,data.music_album];
             //console.info(currentSongInfo);
-            $("title").text("miaoFM" + " - " + name);
+            $("title").text(title + " - " + name);
             $("#jp-singer").text(singer); 
             $("#jp-name").text(name);  
             $("#jp-album").text(album); 
