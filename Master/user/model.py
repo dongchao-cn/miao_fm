@@ -40,9 +40,9 @@ class User(Document):
     user_level = StringField(max_length=20, default='normal')
     user_listened = IntField(default=0)
 
-    user_favour = ListField(StringField(max_length = 24), default=[])
-    user_dislike = ListField(StringField(max_length = 24), default=[])
-    user_recommend = ListField(StringField(max_length = 24), default=[])
+    user_favour = ListField(StringField(max_length=24), default=[])
+    user_dislike = ListField(StringField(max_length=24), default=[])
+    user_recommend = ListField(StringField(max_length=24), default=[])
 
     @property
     def user_id(self):
@@ -91,7 +91,6 @@ class User(Document):
     def remove_all_recommend(self):
         self.user_recommend = []
         self.save()
-
 
     def add_dislike(self, music_id):
         self.update(add_to_set__user_dislike=music_id)

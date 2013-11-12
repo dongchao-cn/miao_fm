@@ -8,18 +8,16 @@ from math import sqrt
 from user.model import UserSet
 from model import MusicSet
 
-import mutagen
-import mongoengine.errors
 from mongoengine import *
-from bson.objectid import ObjectId
 
 
 def generator(M, N):
     ret = []
     for idx in range(0, M):
-        if random.random() * M <= N :
+        if random.random() * M <= N:
             ret.append(idx)
     return ret
+
 
 def sim_pearson(prefs, user1, user2):
     si = {}
@@ -42,11 +40,11 @@ def sim_pearson(prefs, user1, user2):
 
     num = pearson_sum - float(sum_tag_uesr1) * sum_tag_uesr2 / n
     den = sqrt((sumsq_tag_user1 - pow(sum_tag_uesr1, 2) / float(n)) * (sumsq_tag_user2 -
-        pow(sum_tag_uesr2,2) / float(n)))
-
+        pow(sum_tag_uesr2, 2) / float(n)))
     if den == 0:
         return 0
     return num / den
+
 
 def sim_distance(prefs, user1_id, user2_id):
     si = {}
@@ -55,32 +53,34 @@ def sim_distance(prefs, user1_id, user2_id):
             si[item] = 1
     if len(si) == 0:
         return 0
-    sum_of_squares = sum([ pow(prefs[user1_id][item] - prefs[user2_id][item], 2) for item in
+    sum_of_squares = sum([pow(prefs[user1_id][item] - prefs[user2_id][item], 2) for item in
         prefs[user1_id] if item in prefs[user2_id]])
     return 1 / (1 + sqrt(sum_of_squares))
 
-def top_k_matches(prefs, user_id, k = 10, similarity = sim_distance):
+
+def top_k_matches(prefs, user_id, k=10, similarity=sim_distance):
     scores = [(similarity(prefs, user_id, other), other) for other in prefs if other != user_id]
     scores.sort()
     scores.reverse()
     return scores[0:k]
+
 
 def transform_prefs(prefs):
     ret = {}
     for user_id in prefs:
         for item in prefs[user_id]:
             ret.setdefault(item, {})
-
             ret[item][user_id] = prefs[user_id][item]
-
     return ret
 
-def calc_similarity_matrix(prefs, k = 100):
+
+def calc_similarity_matrix(prefs, k=100):
     ret = {}
     for item_id in prefs:
-        scores = top_k_matches(prefs, item_id, k = k, similarity = sim_pearson)
+        scores = top_k_matches(prefs, item_id, k=k, similarity=sim_pearson)
         ret[item_id] = scores
     return ret
+
 
 class Recommend():
 
@@ -90,12 +90,12 @@ class Recommend():
     music_mat = {}
 
     def __init__(self):
-        print "init start"
+        # print "init start"
         self.music_tag_prefs = self.get_music_tag_prefs()
         self.user_music_prefs = self.get_user_music_prefs()
         self.user_tags_prefs = self.get_user_tags_prefs()
         self.music_mat = calc_similarity_matrix(self.music_tag_prefs, 100)
-        print "init finished"
+        # print "init finished"
 
     def get_music_tag_prefs(self):
 
@@ -155,7 +155,7 @@ class Recommend():
                 ret[str(user.user_id)][music_id] = -1
         return ret
 
-    def get_recommendations_with_user_based(self, user_id, similarity = sim_distance):
+    def get_recommendations_with_user_based(self, user_id, similarity=sim_distance):
         totals = {}
         simSums = {}
         for other in self.user_tags_prefs:
@@ -206,6 +206,7 @@ class Recommend():
         ret = list(set(ret))
         return ret
 
+
 def user_get_music():
     '''
     run this method every 24 hours
@@ -216,6 +217,7 @@ def user_get_music():
         user.remove_all_recommend()
         user.user_recommend.extend(recom.get_musics(str(user.user_id)))
         user.save()
+
 
 def get_next_music(user_id):
     '''
@@ -228,12 +230,10 @@ def get_next_music(user_id):
 
 if __name__ == '__main__':
     from master_config import MONGODB_URL, MONGODB_PORT
-    connect('miao_fm', host=MONGODB_URL ,port=MONGODB_PORT)
-    register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL ,port=MONGODB_PORT)
+    connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
+    register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL, port=MONGODB_PORT)
     #import profile
     #profile.run("user_get_music()")
     for user in UserSet.get_all_user():
         print user
         print get_next_music(user.user_id)
-
-

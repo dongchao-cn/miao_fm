@@ -5,6 +5,7 @@ import traceback
 from apscheduler.scheduler import Scheduler
 from music.get_music_tag import update_the_tag
 from status.model import gen_status, gc
+from music.recommendations import user_get_music
 
 
 def update_all():
@@ -23,6 +24,14 @@ def update_all():
         print '[update_the_tag] finish', datetime.datetime.now()
     except:
         print '[update_the_tag] error!', datetime.datetime.now()
+        traceback.print_exc()
+
+    try:
+        print '[user_get_music] start', datetime.datetime.now()
+        user_get_music()
+        print '[user_get_music] finish', datetime.datetime.now()
+    except:
+        print '[user_get_music] error!', datetime.datetime.now()
         traceback.print_exc()
 
     try:
