@@ -44,9 +44,18 @@ def update_all():
 
     print '[update_all] finish', datetime.datetime.now()
 
+
+def update_5_min():
+    try:
+        print '[gen_status] start', datetime.datetime.now()
+        gen_status()
+        print '[gen_status] finish', datetime.datetime.now()
+    except:
+        print '[gen_status] error!', datetime.datetime.now()
+        traceback.print_exc()
+
 if __name__ == '__main__':
     sched = Scheduler(standalone=True)
     sched.add_cron_job(update_all, hour=2)
-    # sched.add_interval_job(update_all, seconds=5)
-
+    sched.add_interval_job(update_5_min, minutes=5)
     sched.start()
