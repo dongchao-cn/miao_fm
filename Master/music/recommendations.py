@@ -199,11 +199,12 @@ class Recommend():
     def get_musics(self, user_id):
         recommend_algo = self.get_recommendations_with_item_based
         ret = [music_id for (score, music_id) in recommend_algo(user_id)]
-        ret.extend([music_id for music_id in UserSet.get_user(user_id).user_favour])
-        ret.extend([str(MusicSet.get_music_by_idx(idx).music_id) for idx in
-            generator(MusicSet.get_music_count(), 100
-            - len(ret))])
-        ret = list(set(ret))
+        # ret.extend([music_id for music_id in UserSet.get_user(user_id).user_favour])
+        # ret.extend([str(MusicSet.get_music_by_idx(idx).music_id) for idx in
+        #     generator(MusicSet.get_music_count(), 100
+        #     - len(ret)) if str(MusicSet.get_music_by_idx(idx).music_id) not in
+        #     UserSet.get_user(user_id).user_dislike])
+        # ret = list(set(ret))
         return ret
 
 def user_get_music():
@@ -217,11 +218,25 @@ def user_get_music():
         user.user_recommend.extend(recom.get_musics(str(user.user_id)))
         user.save()
 
+def get_mixed_next_music(recom_list, dislike_list, favour_list):
+    dice = random.randint(0,100)
+    if dice < 20:
+        return MusicSet.get_music(favour_list[random.randint(0, len(favour_list) - 1)])
+    if dice < 60:
+        new_recom_list = list(set(recom_list) - set(recom_list) & set(dislike_list))
+        if new_recom_list is not None or len(new_recom_list) != 0:
+            return MusicSet.get_music(new_recom_list[random.randint(0, len(new_recom_list) - 1)])
+    while True:
+        music_id = str(MusicSet.get_next_music().music_id)
+        if music_id in dislike_list:
+            continue
+        return MusicSet.get_music(music_id)
 
 def get_next_music(user_id):
     '''
     use this method to get next recommend music
     '''
+    current_user = UserSet.get_user(user_id)
     if user_id is None:
         return MusicSet.get_next_music()
     recom_list = UserSet.get_user(user_id).user_recommend
@@ -229,7 +244,7 @@ def get_next_music(user_id):
     if recom_list is None or len(recom_list) == 0:
         return MusicSet.get_next_music()
     else:
-        return MusicSet.get_music(recom_list[random.randint(0, len(recom_list) - 1)])
+        get_mixed_next_music(recom_list, current_user.user_dislike, current_user.user_favour)
 
 if __name__ == '__main__':
     from master_config import MONGODB_URL, MONGODB_PORT
@@ -237,7 +252,7 @@ if __name__ == '__main__':
     register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL, port=MONGODB_PORT)
     #import profile
     #profile.run("user_get_music()")
-    #user_get_music()
+    user_get_music()
     for user in UserSet.get_all_user():
         print user
         print get_next_music(user.user_id)
