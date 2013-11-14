@@ -241,7 +241,7 @@ def get_next_music(user_id):
         return MusicSet.get_next_music()
     recom_list = UserSet.get_user(user_id).user_recommend
 
-    if recom_list is None and len(recom_list) == 0:
+    if recom_list is None or len(recom_list) == 0:
         return MusicSet.get_next_music()
     else:
         get_mixed_next_music(recom_list, current_user.user_dislike, current_user.user_favour)
