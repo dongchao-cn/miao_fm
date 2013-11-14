@@ -7,6 +7,7 @@ import random
 import requests
 import datetime
 from bs4 import BeautifulSoup
+from jft import *
 from mongoengine import *
 
 from music.model import Music
@@ -40,7 +41,8 @@ def getmusicnum(musicname, singername):
             while tdname['href'] == "javascript:;":
                 tdname = tdname.findNextSibling('a')
             # print tdname['href']
-            song_num = tdname['href'][len(u'/song/'):]
+            # song_num = tdname['href'][len(u'/song/'):]
+            song_num = each.findAll(class_ = 'chkbox')[0].input['value']
             return song_num
     for each in retr[1:]:
         tdname = each.findAll(class_='song_name')[0].a
@@ -53,7 +55,8 @@ def getmusicnum(musicname, singername):
             # while tdname['href'] == "javascript:;":
             #     tdname = tdname.findNextSibling('a')
             # print tdname['href']
-            song_num = tdname['href'][len(u'/song/'):]
+            # song_num = tdname['href'][len(u'/song/'):]
+            song_num = each.findAll(class_ = 'chkbox')[0].input['value']
             return song_num
     return song_num
 
@@ -103,6 +106,10 @@ def update_the_tag():
         music_name = music['music_name']
         music_artist = music['music_artist']
         music_num = getmusicnum(music_name, music_artist)
+        if not music_num:
+            new_music_name = f2j('utf-8','utf-8',music_name.encode('utf-8')).decode('utf-8')
+            new_music_artist = f2j('utf-8','utf-8',music_artist.encode('utf-8')).decode('utf-8')
+            music_num = getmusicnum(new_music_name,new_music_artist)
         music['music_tag']['update_datetime'] = nowday
         if not music_num:
             music.save()
