@@ -220,11 +220,11 @@ def user_get_music():
 
 def get_mixed_next_music(recom_list, dislike_list, favour_list):
     dice = random.randint(0,100)
-    if dice < 20:
+    if dice < 20 and favour_list is not None and len(favour_list) > 0:
         return MusicSet.get_music(favour_list[random.randint(0, len(favour_list) - 1)])
     if dice < 60:
         new_recom_list = list(set(recom_list) - set(recom_list) & set(dislike_list))
-        if new_recom_list is not None or len(new_recom_list) != 0:
+        if new_recom_list is not None and len(new_recom_list) != 0:
             return MusicSet.get_music(new_recom_list[random.randint(0, len(new_recom_list) - 1)])
     while True:
         music_id = str(MusicSet.get_next_music().music_id)
@@ -241,7 +241,7 @@ def get_next_music(user_id):
         return MusicSet.get_next_music()
     recom_list = UserSet.get_user(user_id).user_recommend
 
-    if recom_list is None or len(recom_list) == 0:
+    if recom_list is None and len(recom_list) == 0:
         return MusicSet.get_next_music()
     else:
         get_mixed_next_music(recom_list, current_user.user_dislike, current_user.user_favour)
