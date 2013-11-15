@@ -157,6 +157,7 @@ $('#updateUserInfo').bind('click',function(event){
         type:'put',
         url: '/api/user/' + user_id + '/',
         data:{
+            by:'user_level',
             user_level : user_level
         },
         async : false,

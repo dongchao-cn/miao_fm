@@ -66,6 +66,11 @@ class User(Document):
         check_password = hashlib.md5(user_password.encode('utf8') + self.user_name.encode('utf8')).hexdigest().upper()
         return check_password == self.user_password
 
+    def reset_pw(self, user_password):
+        password = hashlib.md5(user_password.encode('utf8') + self.user_name.encode('utf8')).hexdigest().upper()
+        self.user_password = password
+        self.save()
+
     def update_level(self, user_level):
         self.user_level = user_level
         self.save()

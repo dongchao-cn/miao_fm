@@ -73,9 +73,16 @@ class APIUserHandler(APIBaseHandler):
         only update info for admin
         only update user level
         '''
-        user_level = self.get_argument("user_level")
+        by = self.get_argument('by')
         user = UserSet.get_user(user_id)
-        user.update_level(user_level)
+        if by == 'user_level':
+            user_level = self.get_argument("user_level")
+            user.update_level(user_level)
+        elif by == 'user_password':
+            user_password = self.get_argument("user_password")
+            user.reset_pw(user_password)
+        else:
+            raise HTTPError(400)
         user = UserSet.get_user(user_id)
         self.write(user)
 
