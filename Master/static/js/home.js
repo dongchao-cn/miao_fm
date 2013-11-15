@@ -13,8 +13,8 @@ $(document).ready(function(){
     }, 
     [],
     { 
-        ready: playNextSong,
-        ended: playNextSong,
+        ready: playNextSong("next"),
+        ended: playNextSong("next"),
         swfPath: "/static/jPlayer/js",
         supplied: "mp3",
         wmode: "window",
@@ -23,7 +23,7 @@ $(document).ready(function(){
     });
 
     $("#jp-next").click(function(){
-        playNextSong();
+        playNextSong("next");
     });
 
     $("#jp-report").html('<a href="#" data-toggle="tooltip" data-placement="top" title="请注册后使用!" alt="report" ><img src="../static/img/report.png"></img></a>');
@@ -50,10 +50,10 @@ $(document).ready(function(){
 /*
 *   Jplayer funcitons
 */
-function playNextSong(){
+function playNextSong(music){
     $.ajax({
         type:"get",
-        url:"/api/music/next/",
+        url:"/api/music/" + music + '/',
         dataType:"json",
         cache:false,
         async:true,

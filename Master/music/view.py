@@ -65,7 +65,7 @@ class APIMusicHandler(APIBaseHandler):
         delete music
     '''
 
-    @authenticated(['uploader', 'admin'])
+    # @authenticated(['uploader', 'admin'])
     def get(self, music_id):
         music = MusicSet.get_music(music_id)
         self.write(music)
