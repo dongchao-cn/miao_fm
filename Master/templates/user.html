@@ -12,6 +12,10 @@
             <div id="menu" align="left">
         <!--<a href="#myModal" role="button" class="btn btn-danger" data-toggle="modal">Del All User</a> -->
             </div>  
+            <div align="right">
+                <input id="searchUserName"class="input-medium search-query" type="text"  placeholder="user name"/> 
+                <a href="#myModal3" role="button" class="btn btn-primary" data-toggle="modal" onClick="searchByName()">Search</a>
+            </div>
         </div>
     </div>
     <hr/>
@@ -86,6 +90,24 @@ $('#deleteListAll').bind('click',function(event){
          }
     });
 });
+
+//search user info
+function searchByName(){
+    var name = $('#searchUserName').val();
+    // console.info(name);
+    $.ajax({
+        type:'get',
+        url: "/api/user/",
+        async : false,
+        dataType: 'json',
+        data:{
+            by:'user_name',
+            user_name:name
+        },
+        success:edit_user_success_modal,
+        error:edit_user_error_modal
+    });
+}
 
 //delete user 
 function delUser(event){
