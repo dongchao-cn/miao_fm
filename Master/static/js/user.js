@@ -12,12 +12,22 @@ function edit_user_success_modal(data)
         <tr><td><span class="input-group-addon">user_password</span></td><td><input disabled="disabled" type="text" class="form-control"  value="' + data.user_password +'"></td></tr>\
         <tr><td><span class="input-group-addon">user_listened</span></td><td><input disabled="disabled" type="text" class="form-control"  value="' + data.user_listened +'"></td></tr>\
         <tr><td><span class="input-group-addon">user_level</span></td><td>\
-        <select class="form-control">\
-        <option value="normal">normal</option>\
-        <option value="uploader">uploader</option>\
-        <option value="admin">admin</option>\
-        <option value="disable">disable</option>\
-        </select></td></tr>\
+        <select class="form-control">';
+    user_level = new Array("normal","uploader","admin","disable");
+    for (var i = 0; i < user_level.length; i++) {
+        var opt = '';
+        // console.info(user_level[i]);
+        if (user_level[i] == data.user_level)
+        {
+            opt = '<option value="' + user_level[i] + '" selected="selected">' + user_level[i] + '</option>';
+        }
+        else
+        {
+            opt = '<option value="' + user_level[i] + '">' + user_level[i] + '</option>';
+        }
+        strInputText += opt;
+    };
+    strInputText += '</select></td></tr>\
         </table>';
     $("#editUser").append(strInputText);
 }
