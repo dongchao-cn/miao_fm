@@ -29,6 +29,10 @@ class APIUserSetHandler(APIBaseHandler):
             count = int(self.get_argument("count"))
             user_list = UserSet.get_user_by_range(start, start+count)
             self.write(user_list)
+        elif by == 'user_name':
+            user_name = self.get_argument("user_name")
+            user = UserSet.get_user_by_name(user_name)
+            self.write(user)
         else:
             raise HTTPError(400)
 
