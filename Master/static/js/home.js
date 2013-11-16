@@ -62,7 +62,7 @@ function playReady() {
         url: "/api/music/next/",
         dataType: "json",
         cache: false,
-        async: true,
+        async: false,
         success:function(data) {
             //console.info(data);
             var singer = data.music_artist;
@@ -105,7 +105,7 @@ function playReady() {
     $.ajax({
         type: 'get',
         url: "/api/user/current/",
-        async : true,
+        async : false,
         dataType: "json",
         success:function(data){
             //console.info(data);
@@ -114,16 +114,12 @@ function playReady() {
                 $("#jp-favorite").html('<a href="#" data-toggle="tooltip" data-placement="top" title="喜欢" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite2.png"></img></a>');
                 $("#jp-trash").html('<a href="#" data-toggle="tooltip" data-placement="top" title="不喜欢" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash2.png"></img></a>');
                 songTag(data);
-                //console.info("playReady after songTag" + favoLabel);
-                //console.info("playReady after songTag" + trashLabel);
-                //console.info('music_#####ist 4     ' + currentSongInfo);
             }
         }   
     });
 }
 
 function playEnded() {
-    //console.info('ended!!!!!!!!!!!');
     favoLabel = 1;
     trashLabel = 1;
     $.ajax({
@@ -131,7 +127,7 @@ function playEnded() {
         url: "/api/music/next/",
         dataType: "json",
         cache: false,
-        async: true,
+        async: false,
         success:function(data) {
             //console.info(data);
             //console.info('load ended music ok');
@@ -139,7 +135,6 @@ function playEnded() {
             var name = data.music_name;
             var album = data.music_album;
             currentSongInfo = [data.music_id, data.music_name, data.music_artist, data.music_album];
-            //console.info('music_#####ist 5    ' + currentSongInfo);
             $("title").text(title + " - " + name);
             $("#jp-singer").text(singer); 
             $("#jp-name").text(name);  
@@ -173,7 +168,7 @@ function playEnded() {
     $.ajax({
         type: 'get',
         url: "/api/user/current/",
-        async : true,
+        async : false,
         dataType: "json",
         success:function(data){
             //console.info(data);
@@ -183,9 +178,6 @@ function playEnded() {
                 $("#jp-favorite").html('<a href="#" data-toggle="tooltip" data-placement="top" title="喜欢" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite2.png"></img></a>');
                 $("#jp-trash").html('<a href="#" data-toggle="tooltip" data-placement="top" title="不喜欢" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash2.png"></img></a>');
                 songTag(data);
-                //console.info("playNextSong after songTag" + favoLabel);
-                //console.info("playNextSong after songTag" + trashLabel);
-                //console.info('music_#####ist 7     ' + currentSongInfo);
             }
         }   
     });
@@ -193,12 +185,14 @@ function playEnded() {
 function playNextSong(musicStr) {
     // console.info("playNextSong" + favoLabel);
     // console.info("playNextSong" + trashLabel);
+    favoLabel = 1;
+    trashLabel = 1;
     $.ajax({
         type: "get",
         url: "/api/music/" + musicStr + "/",
         dataType: "json",
         cache: false,
-        async: true,
+        async: false,
         success:function(data) {
             //console.info(data);
             //console.info('load music ok');
@@ -206,6 +200,7 @@ function playNextSong(musicStr) {
             var name = data.music_name;
             var album = data.music_album;
             currentSongInfo = [data.music_id, data.music_name, data.music_artist, data.music_album];
+            //console.info('music_#####ist next      ' + currentSongInfo);
             $("title").text(title + " - " + name);
             $("#jp-singer").text(singer); 
             $("#jp-name").text(name);  
@@ -236,7 +231,7 @@ function playNextSong(musicStr) {
     $.ajax({
         type: 'get',
         url: "/api/user/current/",
-        async : true,
+        async : false,
         dataType: "json",
         success:function(data) {
             //console.info(data);
@@ -254,7 +249,7 @@ function playNextSong(musicStr) {
     });
 }
 
-function reportError(){
+function reportError() {
     console.info(currentSongInfo[1]);
     $("#reportInfo").empty();
      var strInputText = 
@@ -328,9 +323,8 @@ function trashSong() {
 //song taged favour or dislike
 function songTag(data) {
     //console.info(data);
-    //console.info('favour list');
-    //console.info("currentSongInfo" + currentSongInfo[0]);
-    //console.info("data.user_favour" + data.user_favour);
+    // console.info("currentSongInfo" + currentSongInfo[0]);
+    // console.info("data.user_favour" + data.user_favour);
 
     for(var i = 0; i < data.user_favour.length; i += 1) {
         if(currentSongInfo[0] === data.user_favour[i]) {
