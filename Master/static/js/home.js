@@ -1,12 +1,12 @@
 /* storage the current song info */
 var currentSongInfo = [];
-var favoLabel = 1;
-var trashLabel = 1;
+var favoLabel;
+var trashLabel;
 var title;
 
 $(document).ready(function(){
     title = $("title").text();
-    console.info('music_#####ist 1' + currentSongInfo);
+    //console.info('music_#####ist 1' + currentSongInfo);
 
     //jplayer init
     new jPlayerPlaylist({
@@ -24,10 +24,10 @@ $(document).ready(function(){
         keyEnabled: true,
     });
 
+
     $("#jp-next").click(function() {
         playNextSong("next");
     });
-
 
     $("#jp-report").html('<a href="#" data-toggle="tooltip" data-placement="top" title="请注册后使用!" alt="report" ><img src="../static/img/report.png"></img></a>');
     $("#jp-favorite").html('<a href="#" data-toggle="tooltip" data-placement="top" title="请注册后使用!" alt="favorite" o><img src="../static/img/favorite2.png"></img></a>');
@@ -55,6 +55,8 @@ $(document).ready(function(){
 */
 
 function playReady() {
+    favoLabel = 1;
+    trashLabel = 1;
     $.ajax({
         type: "get",
         url: "/api/music/next/",
@@ -67,20 +69,20 @@ function playReady() {
             var name = data.music_name;
             var album = data.music_album;
             currentSongInfo = [data.music_id, data.music_name, data.music_artist, data.music_album];
-            console.info('music_#####ist 2    ' + currentSongInfo);
+            //console.info('music_#####ist 2    ' + currentSongInfo);
             $("title").text(title + " - " + name);
             $("#jp-singer").text(singer); 
             $("#jp-name").text(name);  
             $("#jp-album").text(album); 
 
             if(data.music_img == '') {
-                $('#jp-cover').empty();
+                $('#jp-cover').html('<img src="/static/img/default.jpg">');
             }else {
                 $('#jp-cover').html('<img src=' + data.music_img + '>');
             }
 
             //send two get http request?
-            console.info('music_#####ist 3    ' + currentSongInfo);
+            //console.info('music_#####ist 3    ' + currentSongInfo);
             player = $("#jquery_jplayer_1");
             player.jPlayer("setMedia", {
                 mp3: data.music_url
@@ -112,14 +114,18 @@ function playReady() {
                 $("#jp-favorite").html('<a href="#" data-toggle="tooltip" data-placement="top" title="喜欢" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite2.png"></img></a>');
                 $("#jp-trash").html('<a href="#" data-toggle="tooltip" data-placement="top" title="不喜欢" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash2.png"></img></a>');
                 songTag(data);
-                console.info('music_#####ist 4     ' + currentSongInfo);
+                //console.info("playReady after songTag" + favoLabel);
+                //console.info("playReady after songTag" + trashLabel);
+                //console.info('music_#####ist 4     ' + currentSongInfo);
             }
         }   
     });
 }
 
 function playEnded() {
-    console.info('ended!!!!!!!!!!!');
+    //console.info('ended!!!!!!!!!!!');
+    favoLabel = 1;
+    trashLabel = 1;
     $.ajax({
         type: "get",
         url: "/api/music/next/",
@@ -128,27 +134,26 @@ function playEnded() {
         async: true,
         success:function(data) {
             //console.info(data);
-            console.info('load ended music ok');
+            //console.info('load ended music ok');
             var singer = data.music_artist;
             var name = data.music_name;
             var album = data.music_album;
             currentSongInfo = [data.music_id, data.music_name, data.music_artist, data.music_album];
-            console.info('music_#####ist 5    ' + currentSongInfo);
+            //console.info('music_#####ist 5    ' + currentSongInfo);
             $("title").text(title + " - " + name);
             $("#jp-singer").text(singer); 
             $("#jp-name").text(name);  
             $("#jp-album").text(album); 
 
             if(data.music_img == '') {
-                $('#jp-cover').empty();
+                $('#jp-cover').html('<img src="/static/img/default.jpg">');
             }else {
                 $('#jp-cover').html('<img src=' + data.music_img + '>');
             }
 
             //send two get http request?
-            console.info('music_#####ist 6    ' + currentSongInfo);
             player = $("#jquery_jplayer_1");
-            player.jPlayer( "clearMedia" )
+            player.jPlayer( "clearMedia" );
             player.jPlayer("setMedia", {
                 mp3: data.music_url
             });
@@ -178,13 +183,16 @@ function playEnded() {
                 $("#jp-favorite").html('<a href="#" data-toggle="tooltip" data-placement="top" title="喜欢" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite2.png"></img></a>');
                 $("#jp-trash").html('<a href="#" data-toggle="tooltip" data-placement="top" title="不喜欢" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash2.png"></img></a>');
                 songTag(data);
-                console.info('music_#####ist 7     ' + currentSongInfo);
+                //console.info("playNextSong after songTag" + favoLabel);
+                //console.info("playNextSong after songTag" + trashLabel);
+                //console.info('music_#####ist 7     ' + currentSongInfo);
             }
         }   
     });
 }
 function playNextSong(musicStr) {
-
+    // console.info("playNextSong" + favoLabel);
+    // console.info("playNextSong" + trashLabel);
     $.ajax({
         type: "get",
         url: "/api/music/" + musicStr + "/",
@@ -204,7 +212,7 @@ function playNextSong(musicStr) {
             $("#jp-album").text(album); 
 
             if(data.music_img == '') {
-                $('#jp-cover').empty();
+                $('#jp-cover').html('<img src="/static/img/default.jpg">');
             }else {
                 $('#jp-cover').html('<img src=' + data.music_img + '>');
             }
@@ -230,7 +238,7 @@ function playNextSong(musicStr) {
         url: "/api/user/current/",
         async : true,
         dataType: "json",
-        success:function(data){
+        success:function(data) {
             //console.info(data);
             //console.info('load user ok');
             if (data !== null){
@@ -238,6 +246,9 @@ function playNextSong(musicStr) {
                 $("#jp-favorite").html('<a href="#" data-toggle="tooltip" data-placement="top" title="喜欢" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite2.png"></img></a>');
                 $("#jp-trash").html('<a href="#" data-toggle="tooltip" data-placement="top" title="不喜欢" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash2.png"></img></a>');
                 songTag(data);
+                //console.info("playNextSong after songTag" + favoLabel);
+                //console.info("playNextSong after songTag" + trashLabel);
+                //console.info('music_#####ist next      ' + currentSongInfo);
             }
         }   
     });
@@ -286,9 +297,9 @@ function favoriteSong() {
         favoLabel = 0;  
         postFavSong();   
     } else if(favoLabel == 1 && trashLabel == 0) {
-        postFavSong();
         favoLabel = 0;
         trashLabel = 1;
+        postFavSong();
         delTrashSong();       
     } else {
         favoLabel = 1;
@@ -316,30 +327,36 @@ function trashSong() {
 
 //song taged favour or dislike
 function songTag(data) {
-    console.info(data);
+    //console.info(data);
     //console.info('favour list');
-    for(var i = 0; i < data.user_favour.length;i += 1) {
+    //console.info("currentSongInfo" + currentSongInfo[0]);
+    //console.info("data.user_favour" + data.user_favour);
+
+    for(var i = 0; i < data.user_favour.length; i += 1) {
         if(currentSongInfo[0] === data.user_favour[i]) {
             // console.info("favorite");
-            $("#jp-favorite img").attr("src", "../static/img/favorite.png");
+            $("#jp-favorite img").attr("src", "/static/img/favorite.png");
             favoLabel = 0;
             break;
         } else {
+            //console.info("no fav");
             favoLabel = 1;
-            $("#jp-favorite img").attr("src", "../static/img/favorite2.png");
+            $("#jp-favorite img").attr("src", "/static/img/favorite2.png");
         }
         
     }
+
     //console.info('trash list');
-    for(var i = 0; i < data.user_dislike.length;i += 1) {
+    for(var i = 0; i < data.user_dislike.length; i += 1) {
         if(currentSongInfo[0] === data.user_dislike[i]) {
             // console.info("dislike");
-            $("#jp-trash img").attr("src", "../static/img/trash.png");
+            $("#jp-trash img").attr("src", "/static/img/trash.png");
             trashLabel = 0;
             break;
         } else {
+            //console.info("no trash");
             trashLabel = 1;
-            $("#jp-trash img").attr("src", "../static/img/trash2.png");
+            $("#jp-trash img").attr("src", "/static/img/trash2.png");
         }
         
     }
