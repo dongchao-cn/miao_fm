@@ -15,7 +15,7 @@ from master_config import MONGODB_URL, MONGODB_PORT, update_tag_thresh_day, upda
 
 
 def getmusicnum(musicname, singername):
-    print musicname, singername
+    print musicname.encode('utf8'), singername.encode('utf8')
     if musicname == '':
         print 'no name'
         return None
