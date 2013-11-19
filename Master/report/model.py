@@ -62,7 +62,7 @@ class ReportSet(object):
         music = MusicSet.get_music(report_music_id)
         if music:
             report = Report(
-                report_music=music, report_info=report_info,
+                report_music=music, report_info=strip_tags(report_info),
                 report_date=datetime.datetime.now()).save()
             return report
         else:
@@ -91,6 +91,24 @@ class ReportSet(object):
     @classmethod
     def get_all_report(cls):
         return Report.objects()
+
+
+def strip_tags(html):
+    """
+    Python中过滤HTML标签的函数
+    >>> str_text=strip_tags("<font color=red>hello</font>")
+    >>> print str_text
+    hello
+    """
+    from HTMLParser import HTMLParser
+    html = html.strip()
+    html = html.strip("\n")
+    result = []
+    parser = HTMLParser()
+    parser.handle_data = result.append
+    parser.feed(html)
+    parser.close()
+    return ''.join(result)
 
 if __name__ == '__main__':
     from master_config import MONGODB_URL, MONGODB_PORT
