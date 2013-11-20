@@ -5,7 +5,7 @@ var trashLabel;
 var title;
 
 $(document).ready(function(){
-    title = $("title").text();
+    //title = $("title").text();
     //console.info('music_#####ist 1' + currentSongInfo);
 
     //jplayer init
@@ -21,7 +21,7 @@ $(document).ready(function(){
         supplied: "mp3",
         wmode: "window",
         smoothPlayBar: true,
-        keyEnabled: true,
+        keyEnabled: true
     });
 
 
@@ -70,15 +70,17 @@ function playReady() {
             var album = data.music_album;
             currentSongInfo = [data.music_id, data.music_name, data.music_artist, data.music_album];
             //console.info('music_#####ist 2    ' + currentSongInfo);
-            $("title").text(title + " - " + name);
+            //$("title").text(title + " - " + name);
             $("#jp-singer").text(singer); 
             $("#jp-name").text(name);  
             $("#jp-album").text(album); 
 
             if(data.music_img == '') {
-                $('#jp-cover').html('<img src="/static/img/default.jpg">');
+                $('#jp-cover').empty();
+                $('#jp-cover').append('<img src="/static/img/default.jpg" />');
             }else {
-                $('#jp-cover').html('<img src=' + data.music_img + '>');
+                $('#jp-cover').empty();
+                $('#jp-cover').append('<img src="' + data.music_img + '" />');
             }
 
             //send two get http request?
@@ -135,15 +137,17 @@ function playEnded() {
             var name = data.music_name;
             var album = data.music_album;
             currentSongInfo = [data.music_id, data.music_name, data.music_artist, data.music_album];
-            $("title").text(title + " - " + name);
+            //$("title").text(title + " - " + name);
             $("#jp-singer").text(singer); 
             $("#jp-name").text(name);  
             $("#jp-album").text(album); 
 
             if(data.music_img == '') {
-                $('#jp-cover').html('<img src="/static/img/default.jpg">');
+                $('#jp-cover').empty();
+                $('#jp-cover').html('<img src="/static/img/default.jpg" />');
             }else {
-                $('#jp-cover').html('<img src=' + data.music_img + '>');
+                $('#jp-cover').empty();
+                $('#jp-cover').html('<img src="' + data.music_img + '" />');
             }
 
             //send two get http request?
@@ -201,15 +205,17 @@ function playNextSong(musicStr) {
             var album = data.music_album;
             currentSongInfo = [data.music_id, data.music_name, data.music_artist, data.music_album];
             //console.info('music_#####ist next      ' + currentSongInfo);
-            $("title").text(title + " - " + name);
+            //$("title").text(title + " - " + name);
             $("#jp-singer").text(singer); 
             $("#jp-name").text(name);  
             $("#jp-album").text(album); 
 
             if(data.music_img == '') {
-                $('#jp-cover').html('<img src="/static/img/default.jpg">');
+                $('#jp-cover').empty();
+                $('#jp-cover').html('<img src="/static/img/default.jpg" />');
             }else {
-                $('#jp-cover').html('<img src=' + data.music_img + '>');
+                $('#jp-cover').empty();
+                $('#jp-cover').html('<img src="' + data.music_img + '" />');
             }
 
             //send two get http request?
