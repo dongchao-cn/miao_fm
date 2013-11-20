@@ -28,67 +28,72 @@
             </div>
         </div>
 
-        <div class="span1 hidden-phone"></div>
+        <!-- <div class="span1 hidden-phone"></div> -->
 
-        <div class="span6">
+        <div class="span7">
             <div id="jquery_jplayer_1" class="jp-jplayer"></div>       
-            <div id="jp-cover"><img src="/static/img/default.jpg"/></div>    
-            <div id="jp_container_1" class="jp-audio"> 
+            <!-- <div id="jp-cover"><img src="/static/img/default.jpg"/></div>  -->   
+            <div id="jp_container_1"> 
+                <div id="jp-cover"><img src="/static/img/default.jpg"/></div> 
+                <div class="jp-audio">
+                    <!-- interaction button -->
+                    <div id="jp-report" ></div>
+                    <div id="jp-trash"></div>
+                    <div id="jp-favorite"></div>
+                    <!-- interaction button end-->
 
-                <!-- interaction button -->
-                <div id="jp-report" ></div>
-                <div id="jp-trash"></div>
-                <div id="jp-favorite"></div>
-                <!-- interaction button end-->
+                    <!--  report window -->
+                    <div id="myModal" align="middle"class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h3 id="myModalLabel">报告信息</h3>
+                        </div>
+                        <div class="modal-body">
+                             <div id="reportInfo"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" data-dismiss="modal" onClick="submitReport()" aria-hidden="true">报告错误</button>
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+                        </div>
+                    </div>
+                    <!-- report window end -->
 
-                <!--  report window -->
-                <div id="myModal" align="middle"class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                        <h3 id="myModalLabel">报告信息</h3>
-                    </div>
-                    <div class="modal-body">
-                         <div id="reportInfo"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" data-dismiss="modal" onClick="submitReport()" aria-hidden="true">报告错误</button>
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
-                    </div>
-                </div>
-                <!-- report window end -->
+                    <div id="jp-singer"></div>   
+                    <div id="jp-nameAlbum">
+                        <marquee scrollamount="2"  behavior="scroll" hspace="2" onMouseOut="this.start()" onMouseOver="this.stop()"><span id="jp-name"></span><span id="jp-album"></span></marquee>
+                    </div>   
 
-                <div id="jp-singer"></div>   
-                <div id="jp-nameAlbum"><span id="jp-name"></span><span id="jp-album"></span></div>       
-                <div class="jp-type-playlist">
-                    <div class="jp-gui jp-interface">
-                        <ul class="jp-controls">
-                            <li><a href="javascript:;" class="jp-previous" tabindex="1" style="visibility:hidden">previous</a></li>
-                            <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
-                            <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
-                            <li><a href="javascript:;" class="jp-next" tabindex="1" id="jp-next">next</a></li>
-                            <li><a href="javascript:;" class="jp-stop" tabindex="1" style="visibility:hidden">stop</a></li>
-                            <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
-                            <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
-                            <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
-                        </ul>
-                        <div class="jp-progress">
-                            <div class="jp-seek-bar">
-                                 <div class="jp-play-bar"></div>
+                    <div class="jp-type-playlist">
+                        <div class="jp-gui jp-interface">
+                            <ul class="jp-controls">
+                                <!-- <li><a href="javascript:;" class="jp-previous" tabindex="1" style="visibility:hidden">previous</a></li> -->
+                                <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
+                                <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+                                <li><a href="javascript:;" class="jp-next" tabindex="1" id="jp-next">next</a></li>
+                                <!-- <li><a href="javascript:;" class="jp-stop" tabindex="1" style="visibility:hidden">stop</a></li> -->
+                                <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+                                <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+                                <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+                            </ul>
+                            <div class="jp-progress">
+                                <div class="jp-seek-bar">
+                                     <div class="jp-play-bar"></div>
+                                </div>
                             </div>
+                            <div class="jp-volume-bar">
+                                <div class="jp-volume-bar-value"></div>
+                            </div>
+                            <div class="jp-time-holder">
+                                <div class="jp-current-time"></div>
+                                <div class="jp-duration"></div>
+                            </div>
+                            <ul class="jp-toggles" style="visibility:hidden">
+                                <li><a href="javascript:;" class="jp-shuffle" tabindex="1" title="shuffle">shuffle</a></li>
+                                <li><a href="javascript:;" class="jp-shuffle-off" tabindex="1" title="shuffle off">shuffle off</a></li>
+                                <li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>
+                                <li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>
+                            </ul>
                         </div>
-                        <div class="jp-volume-bar">
-                            <div class="jp-volume-bar-value"></div>
-                        </div>
-                        <div class="jp-time-holder">
-                            <div class="jp-current-time"></div>
-                            <div class="jp-duration"></div>
-                        </div>
-                        <ul class="jp-toggles" style="visibility:hidden">
-                            <li><a href="javascript:;" class="jp-shuffle" tabindex="1" title="shuffle">shuffle</a></li>
-                            <li><a href="javascript:;" class="jp-shuffle-off" tabindex="1" title="shuffle off">shuffle off</a></li>
-                            <li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>
-                            <li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>
-                        </ul>
                     </div>
                 </div>
             </div>               

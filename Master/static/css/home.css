@@ -45,9 +45,7 @@ body {
 
 #jp-cover {
 	float:left;
-	margin-top:150px;
 	padding: 0px;
-	border: 0px solid red;
 	-moz-box-shadow: 5px 5px 6px #000;
     -webkit-box-shadow: 5px 5px 6px #000;
     box-shadow: 5px 5px 6px #000;
@@ -58,8 +56,8 @@ body {
 }
 
 #jp-cover img {
-	width: 105px;
-	height: 142px;
+	width: 150px;
+	height: 150px;
 	margin-top:0px;
 	padding-top: 0px;
 }
@@ -67,8 +65,9 @@ body {
 #jp_container_1 {
 	margin-top:150px;
 	float:left;
+	width:543px;
 	margin-left:0px;
-	padding-top:5px;
+	background-color:#eee;
 	/*margin-right: 50px;*/
 	border: 0px solid red;
 	-moz-box-shadow: 5px 5px 6px #000;
@@ -81,10 +80,12 @@ body {
 }
 
 #jp-singer {
-	font-size:18px; 
+	font-size:20px; 
 	font-family:sans-serif,Verdana, Arial;
 	color: #666;
+	height: 20px;
 	padding: 0px;
+	margin-top: 10px;
 	margin-left:10px;
 	margin-right:50px;
 	border:0px solid red;
@@ -92,7 +93,7 @@ body {
 
 
 #jp-name {
-	font-size:15px; 
+	font-size:16px; 
 	font-family:Verdana, Arial, sans-serif;
 	color: #009be3;
 	padding: 0px;
@@ -101,7 +102,7 @@ body {
 }
 
 #jp-album {
-	font-size:10px; 
+	font-size:14px; 
 	font-family:Verdana, Arial, sans-serif;
 	color: #666;
 	padding: 0px;
@@ -111,14 +112,21 @@ body {
 }
 
 #jp-nameAlbum {
+	height: 40px;
+	padding-right:95px;
 	margin-left:10px;
 	margin-right:10px;
 	border-bottom:1px solid #009be3;
 }
 
+#jp-nameAlbum marquee {
+	margin-top:15px;
+}
+
 #jp-report {
 	width: 25px;
 	height: 25px;
+	margin-top: 10px;
 	float:right;
 	margin-right:10px;
 	border:0px solid red;
@@ -131,6 +139,7 @@ body {
 #jp-trash {
 	width: 25px;
 	height: 25px;
+	margin-top: 10px;
 	float:right;
 	margin-right:10px;
 	border:0px solid red;
@@ -143,6 +152,7 @@ body {
 #jp-favorite {
 	width: 25px;
 	height: 25px;
+	margin-top: 10px;
 	float:right;
 	margin-right:10px;
 	border:0px solid red;
@@ -166,3 +176,6 @@ body {
 
 
 /*side bar*/
+#playertest {
+	border: 2px solid red;
+}
