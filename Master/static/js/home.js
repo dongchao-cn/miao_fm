@@ -100,7 +100,7 @@ function playReady() {
             $("#user_listened").text("听过" + int_listened + "首");  
         },
         error: function() {
-            console.info('load music failed!!');
+            // console.info('load music failed!!');
         }
     });
 
@@ -165,7 +165,7 @@ function playEnded() {
             $("#user_listened").text("听过" + int_listened + "首");  
         },
         error: function() {
-            console.info('load music failed!!');
+            // console.info('load music failed!!');
         }
     });
 
@@ -230,7 +230,7 @@ function playNextSong(musicStr) {
             $("#user_listened").text("听过" + int_listened + "首");  
         },
         error: function() {
-            console.info('load music failed!!');
+            // console.info('load music failed!!');
         }
     });
 
@@ -256,7 +256,7 @@ function playNextSong(musicStr) {
 }
 
 function reportError() {
-    console.info(currentSongInfo[1]);
+    // console.info(currentSongInfo[1]);
     $("#reportInfo").empty();
      var strInputText = 
         '<table> \
@@ -283,10 +283,10 @@ function submitReport() {
             report_info:reportContent
         },
         success:function() {
-            console.info("success");
+            // console.info("success");
         },
         error:function() {
-            console.info("error");
+            // console.info("error");
         }
     });
 }
@@ -379,10 +379,10 @@ function postFavSong() {
             // console.info(int_listened)
             int_favour += 1
             $("#user_favour").text("喜欢过"+int_favour+"首"); 
-            console.info("post fav success");
+            // console.info("post fav success");
         },
         error:function() {
-            console.info("error");
+            // console.info("error");
         }
     });
 }
@@ -398,10 +398,10 @@ function postTrashSong() {
         },
         success:function() {
             $("#jp-trash img").attr("src","../static/img/trash.png");
-            console.info("post dislike success");
+            // console.info("post dislike success");
         },
         error:function() {
-            console.info("error");
+            // console.info("error");
         }
     });
 }
@@ -419,10 +419,10 @@ function delFavSong() {
             // console.info(int_listened)
             int_favour -= 1;
             $("#user_favour").text("喜欢过"+int_favour+"首"); 
-            console.info("delete fav success");
+            // console.info("delete fav success");
         },
         error: function() {
-            console.info("error");
+            // console.info("error");
         }
     });
 }
@@ -434,11 +434,11 @@ function delTrashSong() {
         async: true,
         dataType: "json",
         success: function() {
-            console.info("delete dislike success");
+            // console.info("delete dislike success");
             $("#jp-trash img").attr("src","../static/img/trash2.png");
         },
         error:function() {
-            console.info("error");
+            // console.info("error");
         }
     });
 }

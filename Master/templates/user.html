@@ -130,7 +130,7 @@ function editUser(event){
     // console.info($(event).attr('id'))
     // console.info($('.'+$(event).next().attr('id'))[0].cells[1].innerText);
     var user_id = $(event).attr('id');
-    console.info(event);
+    // console.info(event);
     $.ajax({
         type:'get',
         url: "/api/user/" + user_id + '/',
@@ -152,7 +152,7 @@ $('#updateUserInfo').bind('click',function(event){
     var user_password = $(info[0].children[2].children[1].children).val();
     var user_listened = $(info[0].children[3].children[1].children).val();
     var user_level = $(info[0].children[4].children[1].children).val();
-    console.info(user_id);
+    // console.info(user_id);
     $.ajax({
         type:'put',
         url: '/api/user/' + user_id + '/',
@@ -223,7 +223,7 @@ $(document).ready(function(){
 
 // add fist page of user list
 $(document).ready(function(){
-    console.info("user");
+    // console.info("user");
     $.ajax({
         type: 'get',
         url: "/api/user/",

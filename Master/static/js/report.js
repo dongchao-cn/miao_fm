@@ -17,7 +17,7 @@ function render_report_list(data){
 function delReport(event){
     var reportId = event.id;
     url = '/api/report/' + reportId + '/';
-    console.info(reportId);
+    // console.info(reportId);
     $.ajax({
         type:'delete',
         url:url,
