@@ -207,6 +207,7 @@ class Recommend():
         # ret = list(set(ret))
         return ret
 
+
 def user_get_music():
     '''
     run this method every 24 hours
@@ -218,9 +219,10 @@ def user_get_music():
         user.user_recommend.extend(recom.get_musics(str(user.user_id)))
         user.save()
 
-def get_mixed_next_music(recom_list, dislike_list, favour_list):
+
+def get_mixed_next_music(user_id, recom_list, dislike_list, favour_list):
     #print recom_list, dislike_list, favour_list
-    dice = random.randint(0,100)
+    dice = random.randint(0, 100)
     if dice < 20 and favour_list is not None and len(favour_list) > 0:
         #print "1"
         #print favour_list[random.randint(0, len(favour_list) - 1)]
@@ -242,6 +244,7 @@ def get_mixed_next_music(recom_list, dislike_list, favour_list):
         #print MusicSet.get_music(music_id)
         return MusicSet.get_music(music_id)
 
+
 def get_next_music(user_id):
     '''
     use this method to get next recommend music
@@ -251,10 +254,10 @@ def get_next_music(user_id):
         return MusicSet.get_next_music()
     recom_list = UserSet.get_user(user_id).user_recommend
 
-    if recom_list is None or len(recom_list) == 0:
-        return MusicSet.get_next_music()
-    else:
-        return get_mixed_next_music(recom_list, current_user.user_dislike, current_user.user_favour)
+    return get_mixed_next_music(user_id,
+                                recom_list,
+                                current_user.user_dislike,
+                                current_user.user_favour)
 
 if __name__ == '__main__':
     from master_config import MONGODB_URL, MONGODB_PORT
@@ -264,5 +267,8 @@ if __name__ == '__main__':
     #profile.run("user_get_music()")
     #user_get_music()
     for user in UserSet.get_all_user():
-        print user
-        print get_next_music(user.user_id)
+        #print user
+        if user.user_name == "fz1989":
+            for music_id in user.user_recommend:
+                print MusicSet.get_music(music_id)
+        #print get_next_music(user.user_id)
