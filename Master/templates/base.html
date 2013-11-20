@@ -44,7 +44,6 @@
                         $("#user_info").append('<li><a id="user_favour">喜欢过' + data.user_favour.length + '首</a></li>');
                         $("#user_info").append('<li><a id="logoutButton" href="/#">注销</a></li>');
                         $("#logoutButton").click(function(){
-                            event.preventDefault();
                             $.ajax({
                                 type: 'delete',
                                 url: "/api/user/current/",
