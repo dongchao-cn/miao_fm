@@ -11,18 +11,17 @@
         <link href="/static/css/base.css" rel="stylesheet">
         <link href="/static/css/bootstrap.min.css" rel="stylesheet">
         <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
-        <!-- <script src="/static/js/jquery-1.10.2.js"></script> -->
         <script src="/static/js/jquery.min.js"></script>
         <script src="/static/js/bootstrap.min.js"></script>
         <script type='text/javascript'>
-        $(document).ready(function(){
+        $(document).ready(function() {
             $.ajax({
                 type: 'get',
                 url: "/api/user/current/",
                 async : false,
                 dataType: "json",
-                success:function(data){
-                    if (data == null){
+                success:function(data) {
+                    if(data == null) {
                         $("#user_info").append('<li><a href="#login" data-toggle="modal">登录</a></li>');
                         $("#user_info").append('<li><a href="#register" data-toggle="modal">注册</a></li>');
                     }
