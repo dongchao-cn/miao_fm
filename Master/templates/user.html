@@ -188,6 +188,32 @@ items_pre_page = 10
 
 $(document).ready(function(){
     $.ajax({
+        type: 'get',
+        url: "/api/user/current/",
+        dataType: 'json',
+        async: false,
+        success:function(data){
+            if(data.user_level == 'uploader') {
+                $("#user_info").empty();
+                $("#link_info").empty();
+                $("#link_info").append('<li><a href="/admin/music/">Music</a></li>');
+                $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
+            }else if(data.user_level == 'admin') {
+                $("#user_info").empty();
+                $("#link_info").empty();
+                $("#link_info").append('<li><a href="/admin/music/">Music</a></li>');
+                $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
+                $("#link_info").append('<li><a href="/admin/user/">User</a></li>');
+            }
+
+            $("#user_info").append('<li><a><i class="icon-user"></i>&nbsp' + data.user_name+ '</a></li>');
+            $("#user_info").append('<li><a id="user_listened">听过' + data.user_listened+ '首</a></li>');
+            $("#user_info").append('<li><a id="user_favour">喜欢过' + data.user_favour.length + '首</a></li>');
+            $("#user_info").append('<li><a id="logoutButton" href="#" onClick="logout()">注销</a></li>');
+        }
+    });
+
+    $.ajax({
         url:'/api/user/',// 跳转到 action
         type:'get',
         dataType:'json',

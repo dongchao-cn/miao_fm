@@ -21,19 +21,22 @@
                 async : false,
                 dataType: "json",
                 success:function(data) {
+                    //console.info(data);
                     if(data == null) {
                         $("#user_info").append('<li><a href="#login" data-toggle="modal">登录</a></li>');
-                        $("#user_info").append('<li><a href="#register" data-toggle="modal">注册</a></li>');
+                        $("#user_info").append('<li><a href="#register" data-toggle="modal">注册</a></li>')
                     }
                     else{
                         if (data.user_level == 'normal'){
                             ;
                         }
                         else if (data.user_level == 'uploader'){
+                            $("#user_info").empty();
                             $("#link_info").append('<li><a href="/admin/music/">Music</a></li>');
                             $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
                         }
                         else if (data.user_level == 'admin'){
+                            $("#user_info").empty();
                             $("#link_info").append('<li><a href="/admin/music/">Music</a></li>');
                             $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
                             $("#link_info").append('<li><a href="/admin/user/">User</a></li>');
@@ -41,17 +44,7 @@
                         $("#user_info").append('<li><a><i class="icon-user"></i>&nbsp' + data.user_name+ '</a></li>');
                         $("#user_info").append('<li><a id="user_listened">听过' + data.user_listened+ '首</a></li>');
                         $("#user_info").append('<li><a id="user_favour">喜欢过' + data.user_favour.length + '首</a></li>');
-                        $("#user_info").append('<li><a id="logoutButton" href="/#">注销</a></li>');
-                        $("#logoutButton").click(function(){
-                            $.ajax({
-                                type: 'delete',
-                                url: "/api/user/current/",
-                                async : false,
-                                success:function(data){
-                                    location.href = '/'
-                                }
-                            });
-                        });
+                        $("#user_info").append('<li><a id="logoutButton" href="#" onClick="logout()">注销</a></li>');
                     }
                 }
             });
@@ -66,12 +59,14 @@
                 <ul id="link_info" class="nav">
                 </ul>
                 <ul id='user_info' class="nav pull-right">
+<!--                     <li><a href="#login" data-toggle="modal">登录</a></li>
+                    <li><a href="#register" data-toggle="modal">注册</a></li> -->
                 </ul>
             </div>
         </div>
 
         <!--  login window -->
-        <div id="login" align="middle" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div id="login" align="middle" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="text-align: center">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h3>用户登录</h3>
@@ -107,7 +102,7 @@
         <!-- login window end -->  
 
         <!--  register window -->
-        <div id="register" align="middle" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div id="register" align="middle" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="text-align: center">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> 
                 <h3>用户注册</h3>              
