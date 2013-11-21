@@ -72,8 +72,7 @@ function playReady() {
             //console.info('music_#####ist 2    ' + currentSongInfo);
             //$("title").text(title + " - " + name);
             $("#jp-singer").text(singer); 
-            $("#jp-name").text(name);  
-            $("#jp-album").text(album); 
+            marqueeShow(name, album);
 
             if(data.music_img == '') {
                 $('#jp-cover').empty();
@@ -137,10 +136,9 @@ function playEnded() {
             var name = data.music_name;
             var album = data.music_album;
             currentSongInfo = [data.music_id, data.music_name, data.music_artist, data.music_album];
-            //$("title").text(title + " - " + name);
+
             $("#jp-singer").text(singer); 
-            $("#jp-name").text(name);  
-            $("#jp-album").text(album); 
+            marqueeShow(name, album);
 
             if(data.music_img == '') {
                 $('#jp-cover').empty();
@@ -187,8 +185,6 @@ function playEnded() {
     });
 }
 function playNextSong(musicStr) {
-    // console.info("playNextSong" + favoLabel);
-    // console.info("playNextSong" + trashLabel);
     favoLabel = 1;
     trashLabel = 1;
     $.ajax({
@@ -204,11 +200,9 @@ function playNextSong(musicStr) {
             var name = data.music_name;
             var album = data.music_album;
             currentSongInfo = [data.music_id, data.music_name, data.music_artist, data.music_album];
-            //console.info('music_#####ist next      ' + currentSongInfo);
-            //$("title").text(title + " - " + name);
+
             $("#jp-singer").text(singer); 
-            $("#jp-name").text(name);  
-            $("#jp-album").text(album); 
+            marqueeShow(name, album);
 
             if(data.music_img == '') {
                 $('#jp-cover').empty();
@@ -225,12 +219,11 @@ function playNextSong(musicStr) {
 
             str_listened = $("#user_listened").text();
             int_listened = parseInt(str_listened.substring(2, str_listened.length - 1));
-            // console.info(int_listened)
             int_listened += 1;
             $("#user_listened").text("听过" + int_listened + "首");  
         },
         error: function() {
-            // console.info('load music failed!!');
+             console.info('load music failed!!');
         }
     });
 
@@ -247,16 +240,12 @@ function playNextSong(musicStr) {
                 $("#jp-favorite").html('<a href="#" data-toggle="tooltip" data-placement="top" title="喜欢" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite2.png"></img></a>');
                 $("#jp-trash").html('<a href="#" data-toggle="tooltip" data-placement="top" title="不喜欢" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash2.png"></img></a>');
                 songTag(data);
-                //console.info("playNextSong after songTag" + favoLabel);
-                //console.info("playNextSong after songTag" + trashLabel);
-                //console.info('music_#####ist next      ' + currentSongInfo);
             }
         }   
     });
 }
 
 function reportError() {
-    // console.info(currentSongInfo[1]);
     $("#reportInfo").empty();
      var strInputText = 
         '<table> \
@@ -286,7 +275,7 @@ function submitReport() {
             // console.info("success");
         },
         error:function() {
-            // console.info("error");
+             console.info("error");
         }
     });
 }
@@ -445,5 +434,36 @@ function delTrashSong() {
 
 
 /*
-*   sidebar funcitons
+*   marqueen show
 */
+function characterCount(str) {
+
+    var totalCount = 0;
+    for(var i = 0; i < str.length; i += 1) {
+        var c = str.charCodeAt(i); 
+        if((c >= 0x0001 && c <= 0x007e) || (0xff60<=c && c<=0xff9f)) {  
+           totalCount++;  
+        }else {     
+            totalCount += 2;  
+        }  
+    }
+    return totalCount;
+} 
+
+function marqueeShow(name, album) {
+    var lengthOfStr = characterCount(name + album);
+    //console.info(lengthOfStr);
+    if(lengthOfStr > 48) {
+        $("#jp-nameAlbum").empty();
+        $("#jp-nameAlbum").append('<marquee scrollamount="2"  behavior="scroll" hspace="6" onMouseOut="this.start()" \
+                    onMouseOver="this.stop()"><span id="jp-name"></span><span id="jp-album"></span></marquee> ');
+        $("#jp-name").text(name);  
+        $("#jp-album").text(album);
+    } 
+    else {
+        $("#jp-nameAlbum").empty();
+        $("#jp-nameAlbum").append('<span id="jp-name"></span><span id="jp-album"></span>');
+        $("#jp-name").text(name);  
+        $("#jp-album").text(album);
+    }
+}

@@ -113,15 +113,15 @@ body {
 }
 
 #jp-nameAlbum {
-	height: 44px;
-	padding-right:95px;
-	margin-left:10px;
+	height: 26px;
+	margin-top:15px;
+	margin-left:15px;
 	margin-right:10px;
 	border-bottom:1px solid #009be3;
 }
 
 #jp-nameAlbum marquee {
-	margin-top:15px;
+/*	margin-top:15px;*/
 }
 
 #jp-report {
