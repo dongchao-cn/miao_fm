@@ -12,6 +12,7 @@ import subprocess
 import traceback
 
 import mutagen
+import mid3iconv
 import mongoengine.errors
 from mongoengine import *
 
@@ -185,13 +186,17 @@ def _get_info_from_id3(file_name):
     music_artist = ''
     music_album = ''
 
-    os.system('mid3iconv -q -e GBK "%s"' % (file_name))
+    # os.system('mid3iconv -q -e GBK "%s"' % (file_name))
+    argv = ['mid3iconv', '-q', '-e', 'GBK', file_name]
+    mid3iconv.main(argv)
     try:
         audio = mutagen.File(file_name, easy=True)
     except:
         print 'On mutagen.File : %s' % (file_name)
         traceback.print_exc()
         return music_name, music_artist, music_album
+
+    # print audio
 
     try:
         music_name = audio['title'][0]
@@ -245,11 +250,15 @@ if __name__ == '__main__':
 
     # for each in _get_info_from_id3('/media/823E59BF3E59AD43/Music/mariah carey - without you - 玛丽亚凯莉 失去你.mp3'):
     #     print each
-    # for each in _get_info_from_id3('/media/823E59BF3E59AD43/test_music/Joanna Wang - Dirty Work.mp3'):
-    #     print each
 
-    for music in MusicSet.get_all_music():
-        print music.music_upload_user.user_id
+    MusicSet.add_music('/media/823E59BF3E59AD43/github/python/南拳妈妈 - 小时候.mp3', 'admin')
+
+    # for each in _get_info_from_id3('/media/823E59BF3E59AD43/github/python/刘德华 - 冰雨.mp3'):
+    #     print each.encode('utf8')
+    # for each in _get_info_from_id3('/media/823E59BF3E59AD43/github/python/南拳妈妈 - 小时候.mp3'):
+    #     print each.encode('utf8')
+    # for music in MusicSet.get_all_music():
+    #     print music.music_upload_user.user_id
 
     # print MusicSet.add_music('/media/823E59BF3E59AD43/Music/buckle up n chuggeluck heaven.mp3')
     pass
