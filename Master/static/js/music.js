@@ -25,13 +25,29 @@ function render_music_list(data){
     $("#addSong > tbody").empty();
     // console.info(data);
     for(var i = 0;i < data.length;++i){
-        var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
-            <td>'+data[i].music_name+'</td> \
-            <td>' + data[i].music_artist+'</td> \
-            <td>'+ data[i].music_album +'</td> \
-            <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">Edit</a>&nbsp\
-            <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">Del</button></td> \
-            </tr>';
+        try
+        {
+            var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
+                <td>'+data[i].music_name+'</td> \
+                <td>' + data[i].music_artist+'</td> \
+                <td>'+ data[i].music_album +'</td> \
+                <td>'+ data[i].music_upload_user['$oid'] +'</td> \
+                <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">Edit</a>&nbsp\
+                <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">Del</button></td> \
+                </tr>';
+        }
+        catch(err)
+        {
+            var tdstr = '<tr class="' + data[i].music_id + '"><td>'+data[i].music_id+'</td> \
+                <td>'+data[i].music_name+'</td> \
+                <td>' + data[i].music_artist+'</td> \
+                <td>'+ data[i].music_album +'</td> \
+                <td>null</td> \
+                <td><a href="#myModal3" class="btn btn btn-success btn-xs" data-toggle="modal" onClick ="editSong(this)">Edit</a>&nbsp\
+                <button id="' + data[i].music_id + '"class="btn btn btn-danger btn-xs" onClick ="delSong(this)">Del</button></td> \
+                </tr>';
+        }
+
         //console.info(tdstr);
         $("#addSong > tbody:last").append(tdstr);
     }
