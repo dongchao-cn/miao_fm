@@ -56,6 +56,6 @@ def update_5_min():
 
 if __name__ == '__main__':
     sched = Scheduler(standalone=True)
-    sched.add_cron_job(update_all, hour=2)
+    sched.add_cron_job(update_all, minute=0)
     sched.add_interval_job(update_5_min, minutes=5)
     sched.start()
