@@ -4,6 +4,7 @@ from tornado.httpclient import HTTPError
 
 from util import APIBaseHandler
 from .model import UserSet, authenticated
+from music.model import MusicSet
 
 
 class APIUserSetHandler(APIBaseHandler):
@@ -212,6 +213,36 @@ class APIUserDislikeHandler(APIBaseHandler):
         user = UserSet.get_user_by_name(self.current_user)
         user.remove_dislike(music_id)
         self.write(user)
+
+
+class APIUserVoteSetHandler(APIBaseHandler):
+    '''
+    get:
+        get votes
+
+    post:
+        add a new vote
+
+    del:
+        del all votes
+    '''
+
+    def get(self):
+        user = UserSet.get_user_by_name(self.current_user)
+        self.write(user.user_vote)
+
+    def post(self):
+        music_id = self.get_argument("music_id")
+        val = self.get_argument("val")
+        user = UserSet.get_user_by_name(self.current_user)
+        user.vote(music_id, val)
+        user = UserSet.get_user_by_name(self.current_user)
+        self.write(user)
+
+    def delete(self):
+        user = UserSet.get_user_by_name(self.current_user)
+        user.remove_all_votes()
+        self.write(None)
 
 
 class LoginHandler(tornado.web.RequestHandler):

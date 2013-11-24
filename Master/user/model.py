@@ -43,6 +43,7 @@ class User(Document):
     user_favour = ListField(StringField(max_length=24), default=[])
     user_dislike = ListField(StringField(max_length=24), default=[])
     user_recommend = ListField(StringField(max_length=24), default=[])
+    user_vote = DictField()
 
     @property
     def user_id(self):
@@ -108,6 +109,20 @@ class User(Document):
         self.user_dislike = []
         self.save()
 
+    def vote(self, music_id, val):
+        from music.model import MusicSet
+        if MusicSet.get_music(music_id) is None:
+            return
+        if val == '':
+            self.user_vote.pop(music_id, None)
+        else:
+            self.user_vote[music_id] = val
+        self.save()
+
+    def remove_all_votes(self):
+        self.user_vote = {}
+        self.save()
+
     def remove(self):
         self.delete()
 
@@ -115,6 +130,7 @@ class User(Document):
         from music.model import MusicSet
         self.user_favour = [music for music in self.user_favour if MusicSet.get_music(music)]
         self.user_dislike = [music for music in self.user_dislike if MusicSet.get_music(music)]
+        self.user_vote = {music: self.user_vote[music] for music in self.user_vote if MusicSet.get_music(music)}
         self.save()
 
 
