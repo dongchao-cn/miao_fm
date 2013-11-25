@@ -48,6 +48,15 @@ $(document).ready(function(){
         $(this).find(".flapLabel").html(text);
         $(this).find(".flapLabel").mbFlipText();
     };
+
+    //vote bar initial
+    $("#container div a").click(function() {
+        $(this).parent().animate({
+            width: '+=1px'
+        }, 500);
+        $(this).prev().html(parseInt($(this).prev().html()) + 1);
+        return false;
+    });
 });
 
 /*
