@@ -31,6 +31,7 @@ class Music(Document):
     music_tag = DictField()
     music_img = StringField(max_length=200, default='')
     music_played = IntField(default=0)
+    music_voted = DictField()
 
     # file info
     music_file = FileField('miao_fm_cdn')
@@ -90,6 +91,17 @@ class Music(Document):
 
     def played(self):
         self.music_played += 1
+        self.save()
+
+    def vote(self, val):
+        try:
+            self.music_voted[val] += 1
+        except:
+            self.music_voted[val] = 1
+        self.save()
+
+    def clean_vote(self):
+        self.music_voted = {}
         self.save()
 
     def gc(self):
