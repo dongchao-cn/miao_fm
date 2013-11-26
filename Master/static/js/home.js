@@ -91,8 +91,6 @@ function playReady() {
                 $('#jp-cover').append('<img src="' + data.music_img + '" />');
             }
 
-            //send two get http request?
-            //console.info('music_#####ist 3    ' + currentSongInfo);
             player = $("#jquery_jplayer_1");
             player.jPlayer("setMedia", {
                 mp3: data.music_url
@@ -172,7 +170,7 @@ function playEnded() {
             $("#user_listened").text("听过" + int_listened + "首");  
         },
         error: function() {
-            // console.info('load music failed!!');
+             console.info('load music failed!!');
         }
     });
 
@@ -183,7 +181,6 @@ function playEnded() {
         dataType: "json",
         success:function(data){
             //console.info(data);
-            //console.info('load user ok');
             if (data !== null){
                 $("#jp-report").html('<a href="#myModal" data-toggle="modal" data-toggle="tooltip" data-placement="top" title="举报" alt="report" onClick="reportError(this)"><img src="../static/img/report.png"></img></a>');
                 $("#jp-favorite").html('<a href="#" data-toggle="tooltip" data-placement="top" title="喜欢" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite2.png"></img></a>');
@@ -193,6 +190,7 @@ function playEnded() {
         }   
     });
 }
+
 function playNextSong(musicStr) {
     favoLabel = 1;
     trashLabel = 1;
@@ -204,7 +202,6 @@ function playNextSong(musicStr) {
         async: false,
         success:function(data) {
             //console.info(data);
-            //console.info('load music ok');
             var singer = data.music_artist;
             var name = data.music_name;
             var album = data.music_album;
@@ -420,7 +417,7 @@ function delFavSong() {
             // console.info("delete fav success");
         },
         error: function() {
-            // console.info("error");
+             console.info("error");
         }
     });
 }
@@ -436,7 +433,7 @@ function delTrashSong() {
             $("#jp-trash img").attr("src","../static/img/trash2.png");
         },
         error:function() {
-            // console.info("error");
+             console.info("error");
         }
     });
 }
@@ -450,7 +447,7 @@ function characterCount(str) {
     var totalCount = 0;
     for(var i = 0; i < str.length; i += 1) {
         var c = str.charCodeAt(i); 
-        if((c >= 0x0001 && c <= 0x007e) || (0xff60<=c && c<=0xff9f)) {  
+        if((c >= 0x0001 && c <= 0x007e) || (0xff60 <= c && c <= 0xff9f)) {  
            totalCount++;  
         }else {     
             totalCount += 2;  
