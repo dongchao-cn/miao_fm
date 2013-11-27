@@ -5,9 +5,6 @@ var trashLabel;
 var title;
 
 $(document).ready(function(){
-    //title = $("title").text();
-    //console.info('music_#####ist 1' + currentSongInfo);
-
     //jplayer init
     new jPlayerPlaylist({
         jPlayer: "#jquery_jplayer_1",
@@ -48,15 +45,6 @@ $(document).ready(function(){
         $(this).find(".flapLabel").html(text);
         $(this).find(".flapLabel").mbFlipText();
     };
-
-    //vote bar initial
-    $("#container div a").click(function() {
-        $(this).parent().animate({
-            width: '+=1px'
-        }, 500);
-        $(this).prev().html(parseInt($(this).prev().html()) + 1);
-        return false;
-    });
 });
 
 /*
@@ -78,9 +66,8 @@ function playReady() {
             var name = data.music_name;
             var album = data.music_album;
             currentSongInfo = [data.music_id, data.music_name, data.music_artist, data.music_album];
-            //console.info('music_#####ist 2    ' + currentSongInfo);
-            //$("title").text(title + " - " + name);
             $("#jp-singer").text(singer); 
+
             marqueeShow(name, album);
 
             if(data.music_img == '') {
@@ -104,6 +91,9 @@ function playReady() {
             // console.info(int_listened)
             int_listened += 1;
             $("#user_listened").text("听过" + int_listened + "首");  
+
+            //vote bar 
+            voteBar();
         },
         error: function() {
             // console.info('load music failed!!');
@@ -165,9 +155,12 @@ function playEnded() {
 
             str_listened = $("#user_listened").text();
             int_listened = parseInt(str_listened.substring(2, str_listened.length - 1));
-            // console.info(int_listened)
+            //console.info(int_listened)
             int_listened += 1;
             $("#user_listened").text("听过" + int_listened + "首");  
+
+            //vote bar 
+            voteBar();
         },
         error: function() {
              console.info('load music failed!!');
@@ -227,6 +220,9 @@ function playNextSong(musicStr) {
             int_listened = parseInt(str_listened.substring(2, str_listened.length - 1));
             int_listened += 1;
             $("#user_listened").text("听过" + int_listened + "首");  
+
+            //vote bar 
+            voteBar();
         },
         error: function() {
              console.info('load music failed!!');
@@ -365,7 +361,7 @@ function postFavSong() {
         async: true,
         dataType: "json",
         data: {
-            music_id:currentSongInfo[0]
+            music_id: currentSongInfo[0]
         },
         success:function() {
             $("#jp-favorite img").attr("src","../static/img/favorite.png");
@@ -373,7 +369,7 @@ function postFavSong() {
             int_favour = parseInt(str_favour.substring(3, str_favour.length - 1))
             // console.info(int_listened)
             int_favour += 1
-            $("#user_favour").text("喜欢过"+int_favour+"首"); 
+            $("#user_favour").text("喜欢过" + int_favour + "首"); 
             // console.info("post fav success");
         },
         error:function() {
@@ -443,7 +439,6 @@ function delTrashSong() {
 *   marqueen show
 */
 function characterCount(str) {
-
     var totalCount = 0;
     for(var i = 0; i < str.length; i += 1) {
         var c = str.charCodeAt(i); 
@@ -472,4 +467,90 @@ function marqueeShow(name, album) {
         $("#jp-name").text(name);  
         $("#jp-album").text(album);
     }
+}
+
+//vote-bar
+function voteBar() {
+    var musicId = currentSongInfo[0];
+    $.ajax({
+        type: 'get',
+        url: '/api/music/' + musicId + '/',
+        dataType: 'json',
+        success: function(data) {
+            var voteCount = data;
+            $.ajax({
+                type: 'get',
+                url: "/api/user/current/",
+                async : false,
+                dataType: "json",
+                success:function(data) {
+                    if(data === null) {
+                        for(each in voteCount.music_voted) {
+                            $("#" + each + " span").html(voteCount.music_voted[each]);
+                            showVoteCount(musicId);
+                        }
+                    } else {
+                        $.ajax({
+                            type: 'get',
+                            url: '/api/user/current/vote/',
+                            dataType: 'json',
+                            success:function(data) {
+                                //console.info(data);
+                                if(data === null) {
+                                    $("#question").html("请选择歌曲风格类型");
+                                    showVoteCount(musicId);
+                                    clickVote(musicId);
+                                    
+                                } else {
+                                    $("#question").html("您选择歌曲风格类型是: " + data[musicId]);
+                                    showVoteCount(musicId);
+                                    clickVote(musicId);
+                                }
+                            },
+                            error:function() {
+                                console.info('error');
+                            }
+                        });
+                    }
+                }
+            });
+        }
+   });           
+}
+
+function clickVote(musicId) {
+    $("#vote-container a").click(function() {
+        //console.info($(this).parent().attr('id'));
+        var style = $(this).parent().attr('id');
+        $.ajax({
+            type: 'post',
+            url: '/api/user/current/vote/',
+            dataType: 'json',
+            data: {
+                music_id: musicId,
+                val: style
+            },
+            success:function() {
+                console.info('good');
+            }
+        });       
+        showVoteCount(musicId);
+        return false;                                    
+    });
+}
+
+function showVoteCount(musicId) {
+    $.ajax({
+        type: 'get',
+        url: '/api/music/' + musicId + '/',
+        dataType: 'json',
+        success: function(data) {
+            for(each in data.music_voted) {
+                $("#" + each + " span").html(data.music_voted[each]);
+                $("#" + each).animate({
+                    width: '+='+ data.music_voted[each] * 10 + 'px'
+                }, 500);
+            }
+        }
+    });
 }

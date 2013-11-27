@@ -13,6 +13,12 @@
         <link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
         <script src="/static/js/jquery.min.js"></script>
         <script src="/static/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/static/jPlayer/js/jquery.jplayer.js"></script>
+        <script type="text/javascript" src="/static/jPlayer/js/jplayer.playlist.min.js"></script>
+        <script type="text/javascript" src="/static/jquery.mb.extruder-2.5.0/inc/jquery.hoverIntent.min.js"></script>
+        <script type="text/javascript" src="/static/jquery.mb.extruder-2.5.0/inc/jquery.mb.flipText.js"></script>
+        <script type="text/javascript" src="/static/jquery.mb.extruder-2.5.0/inc/mbExtruder.js"></script>
+        <script type="text/javascript" src="/static/js/home.js"></script>
         <script type='text/javascript'>
         $(document).ready(function() {
             $.ajax({
@@ -41,6 +47,7 @@
                             $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
                             $("#link_info").append('<li><a href="/admin/user/">User</a></li>');
                         }
+
                         $("#user_info").append('<li><a><i class="icon-user"></i>&nbsp' + data.user_name+ '</a></li>');
                         $("#user_info").append('<li><a id="user_listened">听过' + data.user_listened+ '首</a></li>');
                         $("#user_info").append('<li><a id="user_favour">喜欢过' + data.user_favour.length + '首</a></li>');

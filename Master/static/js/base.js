@@ -2,7 +2,7 @@
 function login(){
     var userName = $("#login_name").val();
     var userPassword = $("#login_password").val();
-    if (userName=='' || userPassword==''){
+    if (userName == '' || userPassword == ''){
         alert("用户名或密码不能为空，请重新输入！");
     }else{
         $.ajax({
@@ -17,7 +17,6 @@ function login(){
             success:function(data){
                 if (data === null){
                     alert('用户名或密码错误!');
-                    //location.href = '/';
                 }else if(data.user_level == 'normal') {
                     $("#user_info").empty();
                     $('#login').modal('hide');
@@ -33,16 +32,20 @@ function login(){
                     $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
                     $("#link_info").append('<li><a href="/admin/user/">User</a></li>');
                 }
-
+                //nav-bar
                 $("#user_info").append('<li><a><i class="icon-user"></i>&nbsp' + data.user_name+ '</a></li>');
                 $("#user_info").append('<li><a id="user_listened">听过' + data.user_listened+ '首</a></li>');
                 $("#user_info").append('<li><a id="user_favour">喜欢过' + data.user_favour.length + '首</a></li>');
                 $("#user_info").append('<li><a id="logoutButton" href="#" onClick="logout()">注销</a></li>');
 
+                //music player
                 $("#jp-report").html('<a href="#myModal" data-toggle="modal" data-toggle="tooltip" data-placement="top" title="举报" alt="report" onClick="reportError(this)"><img src="../static/img/report.png"></img></a>');
                 $("#jp-favorite").html('<a href="#" data-toggle="tooltip" data-placement="top" title="喜欢" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite2.png"></img></a>');
                 $("#jp-trash").html('<a href="#" data-toggle="tooltip" data-placement="top" title="不喜欢" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash2.png"></img></a>');
                 songTag(data);
+
+                //vote-bar
+                voteBar();
             }
         });
     }
