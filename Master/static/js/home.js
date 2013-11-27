@@ -472,83 +472,91 @@ function marqueeShow(name, album) {
 //vote-bar
 function voteBar() {
     var musicId = currentSongInfo[0];
+    console.info(musicId);
+    showVoteCount(musicId);
     $.ajax({
         type: 'get',
-        url: '/api/music/' + musicId + '/',
-        dataType: 'json',
-        success: function(data) {
-            var voteCount = data;
-            $.ajax({
-                type: 'get',
-                url: "/api/user/current/",
-                async : false,
-                dataType: "json",
-                success:function(data) {
-                    if(data === null) {
-                        for(each in voteCount.music_voted) {
-                            $("#" + each + " span").html(voteCount.music_voted[each]);
-                            showVoteCount(musicId);
-                        }
-                    } else {
-                        $.ajax({
-                            type: 'get',
-                            url: '/api/user/current/vote/',
-                            dataType: 'json',
-                            success:function(data) {
-                                //console.info(data);
-                                if(data === null) {
-                                    $("#question").html("请选择歌曲风格类型");
-                                    showVoteCount(musicId);
-                                    clickVote(musicId);
-                                    
-                                } else {
-                                    $("#question").html("您选择歌曲风格类型是: " + data[musicId]);
-                                    showVoteCount(musicId);
-                                    clickVote(musicId);
-                                }
-                            },
-                            error:function() {
-                                console.info('error');
-                            }
-                        });
+        url: "/api/user/current/",
+        async : false,
+        dataType: "json",
+        success:function(data) {
+            if(data !== null) {
+                $("#vote-container a").attr('onClick','clickVote(this)')
+                $.ajax({
+                    type: 'get',
+                    url: '/api/user/current/vote/',
+                    async: false,
+                    dataType: 'json',
+                    success:function(data) {
+                        console.info(data);
+                        if(!IsVoted(musicId, data)) {
+                            $("#question").html("请选择歌曲风格类型: ");
+                        } else {
+                            $("#question").html("您选择歌曲风格类型是: " + data[musicId]);
+                        }                              
+                    },
+                    error:function() {
+                        console.info('error');
                     }
-                }
-            });
+                });
+            }
         }
-   });           
+    });         
 }
 
-function clickVote(musicId) {
-    $("#vote-container a").click(function() {
-        //console.info($(this).parent().attr('id'));
-        var style = $(this).parent().attr('id');
-        $.ajax({
-            type: 'post',
-            url: '/api/user/current/vote/',
-            dataType: 'json',
-            data: {
-                music_id: musicId,
-                val: style
-            },
-            success:function() {
-                console.info('good');
-            }
-        });       
-        showVoteCount(musicId);
-        return false;                                    
-    });
+function IsVoted(musicId, objectVote) {
+    if(objectVote === null) {
+        console.info("false");
+        return false;
+    } else {
+        for(each in objectVote) {
+            if(musicId === each) {
+                console.info("true");
+                return true;
+            } 
+        }
+        console.info("false");
+        return false;
+
+    }
+}
+function clickVote(event) {
+    var musicId = currentSongInfo[0];
+    //console.info($(event).parent().attr('id'));
+    var style = $(event).parent().attr('id');
+    $("#question").html("您选择歌曲风格类型是: " + style);
+    $.ajax({
+        type: 'post',
+        url: '/api/user/current/vote/',
+        dataType: 'json',
+        async : false,
+        data: {
+            music_id: musicId,
+            val: style
+        },
+        success:function() {
+            console.info('good');
+            console.info(musicId + ' has voted as ' + style);
+            showVoteCount(musicId);
+        }
+    });       
 }
 
 function showVoteCount(musicId) {
+    $("#vote-container span").html(0);
     $.ajax({
         type: 'get',
         url: '/api/music/' + musicId + '/',
         dataType: 'json',
+        async: false,
         success: function(data) {
+            //console.info(data);
+            //$("#vote-container span").html(0);
             for(each in data.music_voted) {
+                //console.info(each);
                 $("#" + each + " span").html(data.music_voted[each]);
                 $("#" + each).animate({
-                    width: '+='+ data.music_voted[each] * 10 + 'px'
+                    width: 200 + data.music_voted[each] * 10 + 'px'
                 }, 500);
             }
         }
