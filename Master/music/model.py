@@ -5,10 +5,7 @@ if __name__ == '__main__':
     sys.path.insert(0, '../')
 import datetime
 import random
-import os
 import json
-import multiprocessing
-import subprocess
 import traceback
 
 import mutagen
@@ -135,7 +132,9 @@ class MusicSet(object):
             music_album=music_album, music_upload_user=user,
             music_upload_date=datetime.datetime.now(),
             music_file=open(file_name, 'r').read()).save()
-        multiprocessing.Process(target=_lame_mp3, args=(file_name, music, remove)).start()
+        from tasks import _lame_mp3
+        _lame_mp3.delay(file_name, str(music.music_id), remove)
+        # multiprocessing.Process(target=_lame_mp3, args=(file_name, music, remove)).start()
         return music
 
     @classmethod
@@ -176,24 +175,24 @@ class MusicSet(object):
         return Music.objects[idx]
 
 
-def _lame_mp3(infile, music, remove=False):
-    '''
-    lame the mp3 to smaller
-    '''
-    outfile = infile+'.tmp'
-    subprocess.call([
-        "lame",
-        "--quiet",
-        "--mp3input",
-        "--abr",
-        "64",
-        infile,
-        outfile])
-    music.update_file(outfile)
-    os.remove(outfile)
+# def _lame_mp3(infile, music, remove=False):
+#     '''
+#     lame the mp3 to smaller
+#     '''
+#     outfile = infile+'.tmp'
+#     subprocess.call([
+#         "lame",
+#         "--quiet",
+#         "--mp3input",
+#         "--abr",
+#         "64",
+#         infile,
+#         outfile])
+#     music.update_file(outfile)
+#     os.remove(outfile)
 
-    if remove:
-        os.remove(infile)
+#     if remove:
+#         os.remove(infile)
 
 
 def _get_info_from_id3(file_name):
