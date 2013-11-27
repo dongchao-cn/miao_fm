@@ -100,6 +100,11 @@ class Music(Document):
             self.music_voted[val] = 1
         self.save()
 
+    def de_vote(self, val):
+        if self.music_voted.get(val, None):
+            self.music_voted[val] -= 1
+        self.save()
+
     def clean_vote(self):
         self.music_voted = {}
         self.save()

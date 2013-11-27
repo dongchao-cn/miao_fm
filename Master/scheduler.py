@@ -6,7 +6,6 @@ from apscheduler.scheduler import Scheduler
 from music.get_music_tag import update_the_tag
 from status.model import gen_status, gc
 from music.recommendations import user_get_music
-from user.model import collect_user_voted
 
 
 def update_all():
@@ -36,14 +35,6 @@ def update_all():
         traceback.print_exc()
 
     try:
-        print '[collect_user_voted] start', datetime.datetime.now()
-        collect_user_voted()
-        print '[collect_user_voted] finish', datetime.datetime.now()
-    except:
-        print '[collect_user_voted] error!', datetime.datetime.now()
-        traceback.print_exc()
-
-    try:
         print '[gen_status] start', datetime.datetime.now()
         gen_status()
         print '[gen_status] finish', datetime.datetime.now()
@@ -61,14 +52,6 @@ def update_5_min():
         print '[gen_status] finish', datetime.datetime.now()
     except:
         print '[gen_status] error!', datetime.datetime.now()
-
-    try:
-        print '[collect_user_voted] start', datetime.datetime.now()
-        collect_user_voted()
-        print '[collect_user_voted] finish', datetime.datetime.now()
-    except:
-        print '[collect_user_voted] error!', datetime.datetime.now()
-        traceback.print_exc()
 
 if __name__ == '__main__':
     sched = Scheduler(standalone=True)

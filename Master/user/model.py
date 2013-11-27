@@ -111,17 +111,19 @@ class User(Document):
 
     def vote(self, music_id, val):
         from music.model import MusicSet
-        if MusicSet.get_music(music_id) is None:
+        music = MusicSet.get_music(music_id)
+        if music is None:
             return
-        if val == '':
-            self.user_vote.pop(music_id, None)
-        else:
+        old_val = self.user_vote.pop(music_id, None)
+        music.de_vote(old_val)
+        if val != '':
             self.user_vote[music_id] = val
+            music.vote(val)
         self.save()
 
     def remove_all_votes(self):
-        self.user_vote = {}
-        self.save()
+        for each in self.user_vote:
+            self.vote(each, '')
 
     def remove(self):
         self.delete()
@@ -177,15 +179,3 @@ class UserSet(object):
     @classmethod
     def get_user_by_name(cls, user_name):
         return User.objects(user_name=user_name).first()
-
-def collect_user_voted():
-    from music.model import MusicSet
-    # set all music.music_voted to 0
-    for music in MusicSet.get_all_music():
-        music.clean_vote()
-    # collect now vote
-    for user in UserSet.get_all_user():
-        for music_id, val in user.user_vote.iteritems():
-            music = MusicSet.get_music(music_id)
-            if music:
-                music.vote(val)
