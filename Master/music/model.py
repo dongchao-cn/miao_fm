@@ -236,6 +236,21 @@ def _get_random_music():
     num = random.randint(0, Music.objects().count()-1)
     return Music.objects[num]
 
+
+def deduplication():
+    music_dict = {}
+    for music in MusicSet.get_all_music():
+        if music.music_name in music_dict:
+            music_dict[music.music_name].append(music)
+        else:
+            music_dict[music.music_name] = [music]
+    for music_name in music_dict:
+        if len(music_dict[music_name]) > 1:
+            print music_name.encode('utf8'), len(music_dict[music_name])
+            for music in music_dict[music_name][1:]:
+                print 'removed', music
+                music.remove()
+
 if __name__ == '__main__':
     from master_config import MONGODB_URL, MONGODB_PORT
     connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
