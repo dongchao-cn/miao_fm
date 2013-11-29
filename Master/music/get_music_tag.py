@@ -95,7 +95,6 @@ def getmusicimg(song_num):
 
 def update_the_tag():
     # print 'update_the_tag', datetime.datetime.now()
-    connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
     Musics = Music.objects()
     for music in Musics:
         try:
@@ -140,4 +139,5 @@ def update_the_tag():
 
 if __name__ == '__main__':
     print 'test main'
+    connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
     update_the_tag()
