@@ -126,6 +126,7 @@ def update_the_tag():
             except:
                 try:
                     music['music_tag'] = {}
+                    music['music_tag']['update_datetime'] = nowday
                     music.save()
                 except:
                     print 'on save error!'
