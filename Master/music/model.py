@@ -5,10 +5,7 @@ if __name__ == '__main__':
     sys.path.insert(0, '../')
 import datetime
 import random
-import os
 import json
-import multiprocessing
-import subprocess
 import traceback
 
 import mutagen
@@ -135,7 +132,9 @@ class MusicSet(object):
             music_album=music_album, music_upload_user=user,
             music_upload_date=datetime.datetime.now(),
             music_file=open(file_name, 'r').read()).save()
-        multiprocessing.Process(target=_lame_mp3, args=(file_name, music, remove)).start()
+        from tasks import _lame_mp3
+        _lame_mp3.delay(file_name, str(music.music_id), remove)
+        # multiprocessing.Process(target=_lame_mp3, args=(file_name, music, remove)).start()
         return music
 
     @classmethod
@@ -176,24 +175,24 @@ class MusicSet(object):
         return Music.objects[idx]
 
 
-def _lame_mp3(infile, music, remove=False):
-    '''
-    lame the mp3 to smaller
-    '''
-    outfile = infile+'.tmp'
-    subprocess.call([
-        "lame",
-        "--quiet",
-        "--mp3input",
-        "--abr",
-        "64",
-        infile,
-        outfile])
-    music.update_file(outfile)
-    os.remove(outfile)
+# def _lame_mp3(infile, music, remove=False):
+#     '''
+#     lame the mp3 to smaller
+#     '''
+#     outfile = infile+'.tmp'
+#     subprocess.call([
+#         "lame",
+#         "--quiet",
+#         "--mp3input",
+#         "--abr",
+#         "64",
+#         infile,
+#         outfile])
+#     music.update_file(outfile)
+#     os.remove(outfile)
 
-    if remove:
-        os.remove(infile)
+#     if remove:
+#         os.remove(infile)
 
 
 def _get_info_from_id3(file_name):
@@ -236,6 +235,21 @@ def _get_info_from_id3(file_name):
 def _get_random_music():
     num = random.randint(0, Music.objects().count()-1)
     return Music.objects[num]
+
+
+def deduplication():
+    music_dict = {}
+    for music in MusicSet.get_all_music():
+        if music.music_name in music_dict:
+            music_dict[music.music_name].append(music)
+        else:
+            music_dict[music.music_name] = [music]
+    for music_name in music_dict:
+        if len(music_dict[music_name]) > 1:
+            print music_name.encode('utf8'), len(music_dict[music_name])
+            for music in music_dict[music_name][1:]:
+                print 'removed', music
+                music.remove()
 
 if __name__ == '__main__':
     from master_config import MONGODB_URL, MONGODB_PORT

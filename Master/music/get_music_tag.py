@@ -6,6 +6,7 @@ if __name__ == '__main__':
 import random
 import requests
 import datetime
+import traceback
 from bs4 import BeautifulSoup
 from jft import *
 from mongoengine import *
@@ -94,36 +95,44 @@ def getmusicimg(song_num):
 
 def update_the_tag():
     # print 'update_the_tag', datetime.datetime.now()
-    connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
     Musics = Music.objects()
     for music in Musics:
-        nowday = datetime.datetime.now()
-        if 'update_datetime' in music['music_tag'] and \
-            (nowday - music['music_tag']['update_datetime']).days < \
-            update_tag_thresh_day + random.randint(-update_tag_thresh_random, update_tag_thresh_random):
-            # print 'continue'
-            continue
-        music_name = music['music_name']
-        music_artist = music['music_artist']
-        music_num = getmusicnum(music_name, music_artist)
-        if not music_num:
+        try:
+            nowday = datetime.datetime.now()
+            if 'update_datetime' in music['music_tag'] and \
+                (nowday - music['music_tag']['update_datetime']).days < \
+                update_tag_thresh_day + random.randint(-update_tag_thresh_random, update_tag_thresh_random):
+                # print 'continue'
+                continue
+            music_name = music['music_name']
+            music_artist = music['music_artist']
             new_music_name = f2j('utf-8','utf-8',music_name.encode('utf-8')).decode('utf-8')
             new_music_artist = f2j('utf-8','utf-8',music_artist.encode('utf-8')).decode('utf-8')
             music_num = getmusicnum(new_music_name,new_music_artist)
-        music['music_tag']['update_datetime'] = nowday
-        if not music_num:
-            music.save()
-            continue
-        music_tags = getmusictags(music_num)
-        music_img = getmusicimg(music_num)
-        print music_tags
-        print music_img
-        music['music_tag'] = music_tags
-        music['music_img'] = music_img
-        try:
-            music.save()
+            if not music_num:
+                music_num = getmusicnum(music_name, music_artist)
+            music['music_tag']['update_datetime'] = nowday
+            if not music_num:
+                music.save()
+                continue
+            music_tags = getmusictags(music_num)
+            music_img = getmusicimg(music_num)
+            print music_tags
+            print music_img
+            music['music_tag'] = music_tags
+            music['music_img'] = music_img
+            try:
+                music.save()
+            except:
+                try:
+                    music['music_tag'] = {}
+                    music['music_tag']['update_datetime'] = nowday
+                    music.save()
+                except:
+                    print 'on save error!'
+                pass
         except:
-            print 'on save error!'
+            traceback.print_exc()
         # print music['music_name']
         # print music['music_artist']
         # print music['music_tag']
@@ -131,4 +140,5 @@ def update_the_tag():
 
 if __name__ == '__main__':
     print 'test main'
+    connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
     update_the_tag()

@@ -96,14 +96,13 @@ class Status(Document):
 
 
 def gen_status():
-    connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
+    '''gen all status'''
     status = Status()
     status.gen_all_status()
     return status
 
 
 def gc():
-    connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
     '''Garbage Collection, exec it before gen_status and others'''
     for music in MusicSet.get_all_music():
         music.gc()
@@ -113,6 +112,7 @@ def gc():
         report.gc()
 
 if __name__ == '__main__':
+    connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
     gc()
     status = gen_status()
     print status.status_gen_date
