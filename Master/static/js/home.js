@@ -552,13 +552,38 @@ function showVoteCount(musicId) {
         success: function(data) {
             //console.info(data);
             //$("#vote-container span").html(0);
-            for(each in data.music_voted) {
-                //console.info(each);
-                $("#" + each + " span").html(data.music_voted[each]);
-                $("#" + each).animate({
-                    width: 200 + data.music_voted[each] * 10 + 'px'
-                }, 500);
+            var array = [];
+            var max = 0;
+            var voteData = data;
+            for(each in voteData.music_voted) {
+                if(voteData.music_voted[each] > max) {
+                    max = voteData.music_voted[each];
+                }
             }
+            $.ajax({
+                type: 'get',
+                url: '/api/status/?by=last',
+                dataType: 'json',
+                success: function(data) {
+                    var activeUser = data.status_user.total_count;
+                    for(each in voteData.music_voted) {
+                        //console.info(each);
+                        //vertical
+                        // $("#" + each + " span").html(voteData.music_voted[each]);
+                        // $("#" + each).animate({
+                        //     height: 200 + voteData.music_voted[each] / max + 'px',
+                        //     top:   "-" + voteData.music_voted[each] / max + 'px'
+                        // }, 500);
+
+                        //horizontal 
+                        $("#" + each + " span").html(voteData.music_voted[each]);
+                        $("#" + each).animate({
+                            width: 180 + voteData.music_voted[each] * 250 / max + 'px',
+                        }, 500);
+                    }
+                }
+            });
+            
         }
     });
 }

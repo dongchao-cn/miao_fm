@@ -60,14 +60,12 @@
         {% block extern_lib %}{% end %}
     </head>
     <body>
-        <div class="navbar">
-            <div class="navbar-inner">
+        <div  class="navbar navbar-inverse">
+            <div id="navBar" class="navbar-inner">
                 <a class="brand" href="/">Miao FM</a>
                 <ul id="link_info" class="nav">
                 </ul>
                 <ul id='user_info' class="nav pull-right">
-                    <!-- <li><a href="#login" data-toggle="modal">登录</a></li>
-                    <li><a href="#register" data-toggle="modal">注册</a></li> -->
                 </ul>
             </div>
         </div>
@@ -147,6 +145,10 @@
 
         <div class="container-fluid">
             {% block content %}{% end %}
+        </div>
+        <div id="footer">   
+            <span>意见或建议，来信致</span>   
+            <a href="mailto:#" class="alert-link"href="">admin@doufm.info</a>
         </div>
         {% block extern_js %}{% end %}
         <script src="/static/js/util.js"></script>
