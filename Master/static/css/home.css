@@ -132,7 +132,7 @@ body { margin:0 auto; background-color: #CCCCCC; }
     font-size: 15px;
 }
 #vote-container div {
-    background: #99CCFF;
+    background: #99ccff;
     margin-bottom: 8px ;
     font-size: 13px;
     color: #000000;
@@ -149,7 +149,7 @@ body { margin:0 auto; background-color: #CCCCCC; }
 #vote-container div a {
     border-radius: 0.5em;
     text-decoration: none;
-    color: #99CCFF;
+    color: #99ccff;
     font-size: 13px;
     padding: 3px 3px;
     background: #000000;
