@@ -589,8 +589,8 @@ function showVoteCount(musicId) {
             });
             
         },
-        false: function() {
-            alert('error');
-        }
+        // false: function() {
+        //     alert('error');
+        // },
     });
 }
