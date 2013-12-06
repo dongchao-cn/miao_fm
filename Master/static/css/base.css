@@ -1,3 +1,4 @@
+
 #login {
 	width: 400px;
 	height: 300px;
@@ -10,22 +11,8 @@
 
 #navBar {
 	padding-left:110px;
-	padding-right: 80px;
+	padding-right: 100px;
 	border:0px solid red;
 }
 
 
-#footer {
-	height: 20px;
-	width: 100%;
-	border-top: 1px solid #666666;
-	position: absolute;
-	bottom: 0px;
-	text-align: center;
-	padding: 3px;
-	background: #CCCCCC;
-}
-
-#footer span, a {
-	font-size: 13px;
-}

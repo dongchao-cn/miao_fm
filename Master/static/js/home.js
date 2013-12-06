@@ -472,7 +472,7 @@ function marqueeShow(name, album) {
 //vote-bar
 function voteBar() {
     var musicId = currentSongInfo[0];
-    console.info(musicId);
+    //console.info(musicId);
     showVoteCount(musicId);
     $.ajax({
         type: 'get',
@@ -488,7 +488,7 @@ function voteBar() {
                     async: false,
                     dataType: 'json',
                     success:function(data) {
-                        console.info(data);
+                        //console.info(data);
                         if(!IsVoted(musicId, data)) {
                             $("#question").html("请选择歌曲风格类型: ");
                         } else {
@@ -544,6 +544,7 @@ function clickVote(event) {
 
 function showVoteCount(musicId) {
     $("#vote-container span").html(0);
+    $("#vote-container div").animate({ width: '180px' },500);
     $.ajax({
         type: 'get',
         url: '/api/music/' + musicId + '/',
@@ -552,20 +553,23 @@ function showVoteCount(musicId) {
         success: function(data) {
             //console.info(data);
             //$("#vote-container span").html(0);
+            //console.info(data.music_voted);
             var array = [];
             var max = 0;
             var voteData = data;
+
             for(each in voteData.music_voted) {
                 if(voteData.music_voted[each] > max) {
                     max = voteData.music_voted[each];
                 }
             }
+
             $.ajax({
                 type: 'get',
                 url: '/api/status/?by=last',
                 dataType: 'json',
                 success: function(data) {
-                    var activeUser = data.status_user.total_count;
+                    //var activeUser = data.status_user.total_count;
                     for(each in voteData.music_voted) {
                         //console.info(each);
                         //vertical
@@ -584,6 +588,9 @@ function showVoteCount(musicId) {
                 }
             });
             
+        },
+        false: function() {
+            alert('error');
         }
     });
 }

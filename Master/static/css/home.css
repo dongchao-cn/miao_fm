@@ -1,7 +1,20 @@
-body { margin:0 auto; background-color: #CCCCCC; }
+body { margin:0 auto; background-color: #cccccc; }
 #container {border:0px solid red;}
 
 #wrapper {margin:60px 0px 0px 110px; border: 0px solid red;}
+
+
+#footer {
+	border-top: 1px solid #e5e5e5;
+	margin-top: 70px;
+	text-align: center;
+	padding: 5px 0;
+	background: #f5f5f5;
+}
+
+#footer span, a {
+	font-size: 13px;
+}
 
 #jp-cover {
 	float:left;
@@ -11,7 +24,7 @@ body { margin:0 auto; background-color: #CCCCCC; }
 #jp-cover img {
 	width: 150px;
 	height: 150px;
-	margin-top:s0px;
+	margin-top: 0px;
 	padding-top: 0px;
 }
 
@@ -120,6 +133,7 @@ body { margin:0 auto; background-color: #CCCCCC; }
     margin-top: 240px;
     margin-left:60px;
     padding: 5px;
+    border: 0px solid red;
 }
 
 #question {
