@@ -113,7 +113,7 @@ function playReady() {
                 $("#jp-trash").html('<a href="#" data-toggle="tooltip" data-placement="top" title="不喜欢" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash2.png"></img></a>');
                 songTag(data);
             }
-        }   
+        }
     });
 }
 
