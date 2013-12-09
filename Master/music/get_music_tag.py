@@ -43,7 +43,7 @@ def getmusicnum(musicname, singername):
                 tdname = tdname.findNextSibling('a')
             # print tdname['href']
             # song_num = tdname['href'][len(u'/song/'):]
-            song_num = each.findAll(class_ = 'chkbox')[0].input['value']
+            song_num = each.findAll(class_='chkbox')[0].input['value']
             return song_num
     for each in retr[1:]:
         tdname = each.findAll(class_='song_name')[0].a
@@ -57,7 +57,7 @@ def getmusicnum(musicname, singername):
             #     tdname = tdname.findNextSibling('a')
             # print tdname['href']
             # song_num = tdname['href'][len(u'/song/'):]
-            song_num = each.findAll(class_ = 'chkbox')[0].input['value']
+            song_num = each.findAll(class_='chkbox')[0].input['value']
             return song_num
     return song_num
 
@@ -106,9 +106,15 @@ def update_the_tag():
                 continue
             music_name = music['music_name']
             music_artist = music['music_artist']
-            new_music_name = f2j('utf-8','utf-8',music_name.encode('utf-8')).decode('utf-8')
-            new_music_artist = f2j('utf-8','utf-8',music_artist.encode('utf-8')).decode('utf-8')
-            music_num = getmusicnum(new_music_name,new_music_artist)
+            try:
+                new_music_name = f2j('utf-8', 'utf-8', music_name.encode('utf-8')).decode('utf-8')
+            except:
+                new_music_name = ''
+            try:
+                new_music_artist = f2j('utf-8', 'utf-8', music_artist.encode('utf-8')).decode('utf-8')
+            except:
+                new_music_artist = ''
+            music_num = getmusicnum(new_music_name, new_music_artist)
             if not music_num:
                 music_num = getmusicnum(music_name, music_artist)
             music['music_tag']['update_datetime'] = nowday
