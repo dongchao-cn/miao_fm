@@ -252,7 +252,7 @@ def deduplication():
     for music_name in music_dict:
         if len(music_dict[music_name]) > 1:
             print music_name.encode('utf8'), len(music_dict[music_name])
-            for music in music_dict[music_name][1:]:
+            for music in music_dict[music_name][:-1]:
                 print 'removed', music
                 music.remove()
 
