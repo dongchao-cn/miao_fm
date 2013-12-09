@@ -32,6 +32,7 @@ class Music(Document):
 
     # file info
     music_file = FileField('miao_fm_cdn')
+    music_img_file = FileField('miao_fm_cdn')
 
     # upload info
     music_upload_user = ReferenceField('user.model.User', reverse_delete_rule=NULLIFY)
@@ -43,14 +44,17 @@ class Music(Document):
 
     @property
     def music_url(self):
-        return '/music_file/%s/' % (self.file_id)
+        try:
+            return '/music_file/%s/' % (self.music_file._id)
+        except:
+            return ''
 
     @property
-    def file_id(self):
+    def img_url(self):
         try:
-            return self.music_file._id
-        except AttributeError:
-            return ''
+            return '/music_img/%s/' % (self.music_img_file._id)
+        except:
+            return self.music_img
 
     meta = {
         'ordering': ['-music_upload_date']
@@ -64,6 +68,7 @@ class Music(Document):
         music = json.loads(music_str)
         music['music_id'] = str(self.music_id)
         music['music_url'] = self.music_url
+        music['img_url'] = self.img_url
         return music
 
     def update_info(self, music_name, music_artist, music_album):

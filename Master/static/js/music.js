@@ -8,7 +8,7 @@ function edit_music_success_modal(data){
         <tr><td><span class="input-group-addon">music_name</span></td><td><input type="text" class="form-control"  value="' + data.music_name +'"></td></tr>\
         <tr><td><span class="input-group-addon">music_artist</span></td><td><input type="text" class="form-control"  value="' + data.music_artist +'"></td></tr>\
         <tr><td><span class="input-group-addon">music_album</span></td><td><input type="text" class="form-control"  value="' + data.music_album +'"></td></tr>\
-        <tr><td><span class="input-group-addon">music_img</span></td><td><img src="' + data.music_img +'"></td></tr>\
+        <tr><td><span class="input-group-addon">music_img</span></td><td><img src="' + data.img_url +'"></td></tr>\
         </table>\
         <audio controls ="controls" preload="none" src="' + data.music_url +'"/></audio></br>';
         

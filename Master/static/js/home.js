@@ -70,12 +70,12 @@ function playReady() {
 
             marqueeShow(name, album);
 
-            if(data.music_img == '') {
+            if(data.img_url == '') {
                 $('#jp-cover').empty();
                 $('#jp-cover').append('<img src="/static/img/default.jpg" />');
             }else {
                 $('#jp-cover').empty();
-                $('#jp-cover').append('<img src="' + data.music_img + '" />');
+                $('#jp-cover').append('<img src="' + data.img_url + '" />');
             }
 
             player = $("#jquery_jplayer_1");
@@ -137,12 +137,12 @@ function playEnded() {
             $("#jp-singer").text(singer); 
             marqueeShow(name, album);
 
-            if(data.music_img == '') {
+            if(data.img_url == '') {
                 $('#jp-cover').empty();
                 $('#jp-cover').html('<img src="/static/img/default.jpg" />');
             }else {
                 $('#jp-cover').empty();
-                $('#jp-cover').html('<img src="' + data.music_img + '" />');
+                $('#jp-cover').html('<img src="' + data.img_url + '" />');
             }
 
             //send two get http request?
@@ -203,12 +203,12 @@ function playNextSong(musicStr) {
             $("#jp-singer").text(singer); 
             marqueeShow(name, album);
 
-            if(data.music_img == '') {
+            if(data.img_url == '') {
                 $('#jp-cover').empty();
                 $('#jp-cover').html('<img src="/static/img/default.jpg" />');
             }else {
                 $('#jp-cover').empty();
-                $('#jp-cover').html('<img src="' + data.music_img + '" />');
+                $('#jp-cover').html('<img src="' + data.img_url + '" />');
             }
 
             //send two get http request?

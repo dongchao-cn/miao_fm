@@ -90,7 +90,7 @@ def getmusicimg(song_num):
         return None
     soup = BeautifulSoup(r.text)
     imgtag = soup.findAll(class_='cdCDcover185')
-    return imgtag[0]['src']
+    return imgtag[0]['src'], requests.get(imgtag[0]['src']).content
 
 
 def update_the_tag():
@@ -121,12 +121,8 @@ def update_the_tag():
             if not music_num:
                 music.save()
                 continue
-            music_tags = getmusictags(music_num)
-            music_img = getmusicimg(music_num)
-            print music_tags
-            print music_img
-            music['music_tag'] = music_tags
-            music['music_img'] = music_img
+            music['music_tag'] = getmusictags(music_num)
+            music['music_img'], music['music_img_file'] = getmusicimg(music_num)
             try:
                 music.save()
             except:

@@ -32,6 +32,12 @@ class FileHandler(tornado.web.RequestHandler):
         self.write(fs.get(ObjectId(file_id)).read())
 
 
+class ImgHandler(tornado.web.RequestHandler):
+    def get(self, file_id):
+        self.set_header('Content-Type', 'image/jpeg')
+        self.write(fs.get(ObjectId(file_id)).read())
+
+
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("home.html")
@@ -82,6 +88,7 @@ application = tornado.web.Application([
 
     # local music server
     (r"/music_file/(\w{24})/", FileHandler),
+    (r"/music_img/(\w{24})/", ImgHandler),
 ], **settings)
 
 if __name__ == "__main__":
