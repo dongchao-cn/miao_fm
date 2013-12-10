@@ -245,14 +245,15 @@ def _get_random_music():
 def deduplication():
     music_dict = {}
     for music in MusicSet.get_all_music():
-        if music.music_name in music_dict:
-            music_dict[music.music_name].append(music)
+        music_info = music.music_name + music.music_artist + music.music_album
+        if music_info in music_dict:
+            music_dict[music_info].append(music)
         else:
-            music_dict[music.music_name] = [music]
-    for music_name in music_dict:
-        if len(music_dict[music_name]) > 1:
-            print music_name.encode('utf8'), len(music_dict[music_name])
-            for music in music_dict[music_name][:-1]:
+            music_dict[music_info] = [music]
+    for music_info in music_dict:
+        if len(music_dict[music_info]) > 1:
+            print music_info.encode('utf8'), len(music_dict[music_info])
+            for music in music_dict[music_info][:-1]:
                 print 'removed', music
                 music.remove()
 
@@ -287,7 +288,7 @@ if __name__ == '__main__':
     # for each in _get_info_from_id3('/media/823E59BF3E59AD43/Music/mariah carey - without you - 玛丽亚凯莉 失去你.mp3'):
     #     print each
 
-    MusicSet.add_music('/media/823E59BF3E59AD43/github/python/南拳妈妈 - 小时候.mp3', 'admin')
+    # MusicSet.add_music('/media/823E59BF3E59AD43/github/python/南拳妈妈 - 小时候.mp3', 'admin')
 
     # for each in _get_info_from_id3('/media/823E59BF3E59AD43/github/python/刘德华 - 冰雨.mp3'):
     #     print each.encode('utf8')
@@ -297,4 +298,6 @@ if __name__ == '__main__':
     #     print music.music_upload_user.user_id
 
     # print MusicSet.add_music('/media/823E59BF3E59AD43/Music/buckle up n chuggeluck heaven.mp3')
+
+    deduplication()
     pass
