@@ -5,6 +5,7 @@ if __name__ == '__main__':
     import sys
     sys.path.insert(0, '../')
 import hashlib
+import datetime
 import json
 
 from mongoengine import *
@@ -41,6 +42,7 @@ class User(Document):
     user_listened = IntField(default=0)
 
     user_favour = ListField(StringField(max_length=24), default=[])
+    user_favour_log = DictField()    # fuck this...
     user_dislike = ListField(StringField(max_length=24), default=[])
     user_recommend = ListField(StringField(max_length=24), default=[])
     user_vote = DictField()
@@ -78,9 +80,12 @@ class User(Document):
 
     def add_favour(self, music_id):
         self.update(add_to_set__user_favour=music_id)
+        self.user_favour_log[music_id] = datetime.datetime.now()
+        self.save()
 
     def remove_favour(self, music_id):
         self.user_favour.remove(music_id)
+        self.user_favour_log.pop(music_id)
         self.save()
 
     def remove_all_favour(self):
@@ -130,9 +135,11 @@ class User(Document):
 
     def gc(self):
         from music.model import MusicSet
+        now = datetime.datetime.now()
         self.user_favour = [music for music in self.user_favour if MusicSet.get_music(music)]
         self.user_dislike = [music for music in self.user_dislike if MusicSet.get_music(music)]
         self.user_vote = {music: self.user_vote[music] for music in self.user_vote if MusicSet.get_music(music)}
+        self.user_favour_log = {music: self.user_favour_log[music] for music in self.user_favour_log if MusicSet.get_music(music) and now - self.user_favour_log[music] < datetime.timedelta(days=7)}
         self.save()
 
 

@@ -36,6 +36,10 @@ class Status(Document):
         for i in range(len(self.status_music['favourite'])):
             ret['status_music']['favourite'][i][0] = self.status_music['favourite'][i][0].to_dict()
 
+        # replace status_music.weekly_favourite list
+        for i in range(len(self.status_music['weekly_favourite'])):
+            ret['status_music']['weekly_favourite'][i][0] = self.status_music['weekly_favourite'][i][0].to_dict()
+
         # replace status_user.listened list
         for i in range(len(self.status_user['listened'])):
             ret['status_user']['listened'][i][0] = self.status_user['listened'][i][0].to_dict()
@@ -70,6 +74,18 @@ class Status(Document):
         favourite = sorted(favourite.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
         self.status_music['favourite'] = [[MusicSet.get_music(each[0]), each[1]] for each in favourite][:100]
 
+        # calc 1 week favour list
+        weekly_favourite = {}
+        users = UserSet.get_all_user()
+        for user in users:
+            for music in user.user_favour_log:
+                try:
+                    weekly_favourite[music] += 1
+                except:
+                    weekly_favourite[music] = 1
+        weekly_favourite = sorted(weekly_favourite.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
+        self.status_music['weekly_favourite'] = [[MusicSet.get_music(each[0]), each[1]] for each in weekly_favourite][:100]
+
     def _gen_user_status(self):
         # calc total_count
         self.status_user['total_count'] = UserSet.get_user_count()
@@ -90,6 +106,7 @@ class Status(Document):
 
     def get_brief_status(self):
         self.status_music['favourite'] = self.status_music['favourite'][:10]
+        self.status_music['weekly_favourite'] = self.status_music['weekly_favourite'][:10]
         self.status_music['played'] = self.status_music['played'][:10]
         self.status_user['listened'] = self.status_user['listened'][:10]
         self.status_user['favour'] = self.status_user['favour'][:10]
