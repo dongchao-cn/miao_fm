@@ -75,7 +75,7 @@ class Music(Document):
         self.music_name = music_name
         self.music_artist = music_artist
         self.music_album = music_album
-        self.music_upload_date = datetime.datetime.now()
+        # self.music_upload_date = datetime.datetime.now()
         self.save()
 
     def update_file(self, file):
