@@ -155,7 +155,7 @@ function delCookie() {
 
 function voteCollapse() {
     //vote bar test
-    console.info(document.cookie);
+    //console.info(document.cookie);
     $.ajax({
         type: 'get',
         url: "/api/user/current/",
@@ -164,13 +164,12 @@ function voteCollapse() {
         success:function(data) {
             if(data !== null) {
                 var collapseLabel = getCookie("collapse");
-                console.info(collapseLabel);
+                //console.info(collapseLabel);
                 if((collapseLabel == "false") || (collapseLabel == null)) {
-                    console.info("hide");
-                    //console.info($("#collapse"));
+                    //console.info("hide");
                     $("#vote-container").hide();
                 } else {
-                    console.info("show");
+                    //console.info("show");
                     $("#vote-container").show();
                 }
             } 

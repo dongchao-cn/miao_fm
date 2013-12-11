@@ -541,8 +541,8 @@ function clickVote(event) {
             val: style
         },
         success:function() {
-            console.info('good');
-            console.info(musicId + ' has voted as ' + style);
+            //console.info('good');
+            //console.info(musicId + ' has voted as ' + style);
             showVoteCount(musicId);
         }
     });       
@@ -609,12 +609,12 @@ function collapse() {
             if(data !== null) {
                 $("#vote-container").toggle(1000);
                 var collapseLabel = getCookie("collapse");
-                console.info(collapseLabel);
+                //console.info(collapseLabel);
                 if((collapseLabel == "false") || (collapseLabel == null)) {
-                    console.info("do collapse true");
+                    //console.info("set collapse true");
                     setCookie("collapse", "true");
                 } else {
-                    console.info("do collapse false");
+                    //console.info("set collapse false");
                     setCookie("collapse", "false");
                 }
             } else {
