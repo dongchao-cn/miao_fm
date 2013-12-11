@@ -6,7 +6,7 @@ body { margin:0 auto; background-color: #cccccc; }
 
 #footer {
 	border-top: 0px solid #888;
-	margin-top: 40px;
+	margin-top: 20px;
 	text-align: center;
 	padding: 10px 0;
 }
@@ -129,9 +129,10 @@ body { margin:0 auto; background-color: #cccccc; }
 
 /*vote bar*/
 #vote-container {
-    margin-top: 240px;
-    margin-left:85px;
-    padding: 5px;
+	display: none;
+    margin-top: 10px;
+    margin-left:0px;
+    padding: 0px;
     border: 0px solid red;
 }
 
@@ -239,3 +240,10 @@ body { margin:0 auto; background-color: #cccccc; }
     padding: 10px;
     font-size: 15px;
 }*/
+
+#accordion2 {
+	float: left;
+	margin-top: 20px;
+	margin-left: 85px;
+}
+

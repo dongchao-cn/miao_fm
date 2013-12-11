@@ -3,6 +3,7 @@ var currentSongInfo = [];
 var favoLabel;
 var trashLabel;
 var title;
+var collapseTag;
 
 $(document).ready(function(){
     //jplayer init
@@ -45,6 +46,9 @@ $(document).ready(function(){
         $(this).find(".flapLabel").html(text);
         $(this).find(".flapLabel").mbFlipText();
     };
+
+    //collapse();
+    voteCollapse();
 });
 
 /*
@@ -179,6 +183,8 @@ function playEnded() {
                 $("#jp-favorite").html('<a href="#" data-toggle="tooltip" data-placement="top" title="喜欢" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite2.png"></img></a>');
                 $("#jp-trash").html('<a href="#" data-toggle="tooltip" data-placement="top" title="不喜欢" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash2.png"></img></a>');
                 songTag(data);
+
+
             }
         }   
     });
@@ -511,11 +517,11 @@ function IsVoted(musicId, objectVote) {
     } else {
         for(each in objectVote) {
             if(musicId === each) {
-                console.info("true");
+                //console.info("true");
                 return true;
             } 
         }
-        console.info("false");
+        //console.info("false");
         return false;
 
     }
@@ -544,7 +550,7 @@ function clickVote(event) {
 
 function showVoteCount(musicId) {
     $("#vote-container span").html(0);
-    $("#vote-container div").animate({ width: '180px' },500);
+    $("#vote-container div").animate({ width: '165px' },500);
     $.ajax({
         type: 'get',
         url: '/api/music/' + musicId + '/',
@@ -582,15 +588,38 @@ function showVoteCount(musicId) {
                         //horizontal 
                         $("#" + each + " span").html(voteData.music_voted[each]);
                         $("#" + each).animate({
-                            width: 180 + voteData.music_voted[each] * 250 / max + 'px',
+                            width: 165 + voteData.music_voted[each] * 250 / max + 'px',
                         }, 500);
                     }
                 }
             });
             
         },
-        // false: function() {
-        //     alert('error');
-        // },
     });
+}
+
+function collapse() {
+    //$("#collapse").collapse('toggle');
+    $.ajax({
+        type: 'get',
+        url: "/api/user/current/",
+        async : false,
+        dataType: "json",
+        success:function(data) {
+            if(data !== null) {
+                $("#vote-container").toggle(1000);
+                var collapseLabel = getCookie("collapse");
+                console.info(collapseLabel);
+                if((collapseLabel == "false") || (collapseLabel == null)) {
+                    console.info("do collapse true");
+                    setCookie("collapse", "true");
+                } else {
+                    console.info("do collapse false");
+                    setCookie("collapse", "false");
+                }
+            } else {
+                $("#vote-container").toggle(1000);
+            }
+        }
+    });  
 }

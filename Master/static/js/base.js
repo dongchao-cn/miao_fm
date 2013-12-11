@@ -15,37 +15,44 @@ function login(){
             },
             async: false,
             success:function(data){
-                if (data === null){
+                if(data !== null){
+                    if(data.user_level == 'normal') {
+                        $("#user_info").empty();
+                        $('#login').modal('hide');
+                    } else if(data.user_level == 'uploader') {
+                        $("#user_info").empty();
+                        $('#login').modal('hide');
+                        $("#link_info").append('<li><a href="/admin/music/">Music</a></li>');
+                        $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
+                    } else if(data.user_level == 'admin') {
+                        $("#user_info").empty();
+                        $('#login').modal('hide');
+                        $("#link_info").append('<li><a href="/admin/music/">Music</a></li>');
+                        $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
+                        $("#link_info").append('<li><a href="/admin/user/">User</a></li>');
+                    }
+
+                    //nav-bar
+                    $("#user_info").append('<li><a><i class="icon-user"></i>&nbsp' + data.user_name+ '</a></li>');
+                    $("#user_info").append('<li><a id="user_listened">听过' + data.user_listened+ '首</a></li>');
+                    $("#user_info").append('<li><a id="user_favour">喜欢过' + data.user_favour.length + '首</a></li>');
+                    $("#user_info").append('<li><a id="logoutButton" href="#" onClick="logout()">注销</a></li>');
+
+                    //music player
+                    $("#jp-report").html('<a href="#myModal" data-toggle="modal" data-toggle="tooltip" data-placement="top" title="举报" alt="report" onClick="reportError(this)"><img src="../static/img/report.png"></img></a>');
+                    $("#jp-favorite").html('<a href="#" data-toggle="tooltip" data-placement="top" title="喜欢" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite2.png"></img></a>');
+                    $("#jp-trash").html('<a href="#" data-toggle="tooltip" data-placement="top" title="不喜欢" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash2.png"></img></a>');
+                    
+                    //song tag
+                    songTag(data);
+
+                    //vote-bar
+                    voteBar();  
+
+                    voteCollapse();                  
+                } else {
                     alert('用户名或密码错误!');
-                }else if(data.user_level == 'normal') {
-                    $("#user_info").empty();
-                    $('#login').modal('hide');
-                }else if(data.user_level == 'uploader') {
-                    $("#user_info").empty();
-                    $('#login').modal('hide');
-                    $("#link_info").append('<li><a href="/admin/music/">Music</a></li>');
-                    $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
-                }else if(data.user_level == 'admin') {
-                    $("#user_info").empty();
-                    $('#login').modal('hide');
-                    $("#link_info").append('<li><a href="/admin/music/">Music</a></li>');
-                    $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
-                    $("#link_info").append('<li><a href="/admin/user/">User</a></li>');
                 }
-                //nav-bar
-                $("#user_info").append('<li><a><i class="icon-user"></i>&nbsp' + data.user_name+ '</a></li>');
-                $("#user_info").append('<li><a id="user_listened">听过' + data.user_listened+ '首</a></li>');
-                $("#user_info").append('<li><a id="user_favour">喜欢过' + data.user_favour.length + '首</a></li>');
-                $("#user_info").append('<li><a id="logoutButton" href="#" onClick="logout()">注销</a></li>');
-
-                //music player
-                $("#jp-report").html('<a href="#myModal" data-toggle="modal" data-toggle="tooltip" data-placement="top" title="举报" alt="report" onClick="reportError(this)"><img src="../static/img/report.png"></img></a>');
-                $("#jp-favorite").html('<a href="#" data-toggle="tooltip" data-placement="top" title="喜欢" alt="favorite" onClick="favoriteSong(this)"><img src="../static/img/favorite2.png"></img></a>');
-                $("#jp-trash").html('<a href="#" data-toggle="tooltip" data-placement="top" title="不喜欢" alt="trash" onClick="trashSong(this)"><img src="../static/img/trash2.png"></img></a>');
-                songTag(data);
-
-                //vote-bar
-                voteBar();
             }
         });
     }
@@ -101,6 +108,8 @@ function register(){
 
                             //vote-bar
                             voteBar();
+
+                            voteCollapse();
                         }
                     });
                 }
@@ -122,4 +131,49 @@ function logout() {
             location.href = '/';
         }
     });
+}
+
+
+//cookie 
+function setCookie(key,value) {
+    document.cookie = key + "=" + value;
+}
+
+function getCookie(key) {
+    var allCookie = document.cookie;
+    var arr = allCookie.match(new RegExp("(^| )"+key+"=([^;]*)(;|$)"));
+    if(arr != null) {
+        return unescape(arr[2]);  
+   } else {
+        return null;
+   }
+}
+
+function delCookie() {
+
+}
+
+function voteCollapse() {
+    //vote bar test
+    console.info(document.cookie);
+    $.ajax({
+        type: 'get',
+        url: "/api/user/current/",
+        async : false,
+        dataType: "json",
+        success:function(data) {
+            if(data !== null) {
+                var collapseLabel = getCookie("collapse");
+                console.info(collapseLabel);
+                if((collapseLabel == "false") || (collapseLabel == null)) {
+                    console.info("hide");
+                    //console.info($("#collapse"));
+                    $("#vote-container").hide();
+                } else {
+                    console.info("show");
+                    $("#vote-container").show();
+                }
+            } 
+        }
+    });   
 }
