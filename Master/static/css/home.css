@@ -6,7 +6,7 @@ body { margin:0 auto; background-color: #cccccc; }
 
 #footer {
 	border-top: 0px solid #888;
-	margin-top: 30px;
+	margin-top: 40px;
 	text-align: center;
 	padding: 10px 0;
 }
@@ -28,7 +28,7 @@ body { margin:0 auto; background-color: #cccccc; }
 }
 
 #jp_container_1 {
-	margin-top: 80px;
+	margin-top: 130px;
 	float:left;
 	width:470px;
 	margin-left:85px;

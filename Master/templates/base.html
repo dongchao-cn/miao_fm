@@ -52,8 +52,6 @@
                         $("#user_info").append('<li><a id="user_listened">听过' + data.user_listened+ '首</a></li>');
                         $("#user_info").append('<li><a id="user_favour">喜欢过' + data.user_favour.length + '首</a></li>');
                         $("#user_info").append('<li><a id="logoutButton" href="#" onClick="logout()">注销</a></li>');
-
-                        //voteCollapse();
                     }    
                 }
             });
@@ -65,10 +63,8 @@
         <div class="navbar navbar-inner" >
             <div id="navBar">
                 <a class="brand" href="/">Miao FM</a>
-                <ul id="link_info" class="nav">
-                </ul>
-                <ul id='user_info' class="nav pull-right">
-                </ul>
+                <ul id="link_info" class="nav"></ul>
+                <ul id='user_info' class="nav pull-right"></ul>
             </div>
         </div>
 
