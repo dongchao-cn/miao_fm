@@ -19,6 +19,9 @@ body { margin:0 auto; background-color: #cccccc; }
 	height: 150px;
 	margin-top: 0px;
 	padding-top: 0px;
+	-webkit-border-radius: 0.5em;
+    -moz-border-radius: 1em 0em 0em 1em;
+    border-radius: 1em 0em 0em 1em;
 }
 
 #jp_container_1 {
@@ -26,9 +29,9 @@ body { margin:0 auto; background-color: #cccccc; }
 	width:470px;
 	background-color:#eee;
 	border: 0px solid red;
-	-moz-box-shadow: 5px 5px 6px #000;
+/*	-moz-box-shadow: 5px 5px 6px #000;
     -webkit-box-shadow: 5px 5px 6px #000;
-    box-shadow: 5px 5px 6px #000;
+    box-shadow: 5px 5px 6px #000;*/
     /* For IE 8 */
     -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000')";
     /* For IE 5.5 - 7 */
