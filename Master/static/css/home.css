@@ -1,25 +1,19 @@
 body { margin:0 auto; background-color: #cccccc; }
 #container {border:0px solid red;}
-
 #wrapper {margin:60px 0px 0px 110px; border: 0px solid red;}
-
-
 #footer {
 	border-top: 0px solid #888;
 	margin-top: 40px;
 	text-align: center;
 	padding: 10px 0;
 }
-
 #footer a {
 	font-size: 13px;
 }
-
 #jp-cover {
 	float:left;
 	padding: 0px;
 }
-
 #jp-cover img {
 	width: 150px;
 	height: 150px;
@@ -28,12 +22,9 @@ body { margin:0 auto; background-color: #cccccc; }
 }
 
 #jp_container_1 {
-	margin-top: 130px;
-	float:left;
+	margin-top: 100px;
 	width:470px;
-	margin-left:85px;
 	background-color:#eee;
-	/*margin-right: 50px;*/
 	border: 0px solid red;
 	-moz-box-shadow: 5px 5px 6px #000;
     -webkit-box-shadow: 5px 5px 6px #000;
@@ -43,7 +34,6 @@ body { margin:0 auto; background-color: #cccccc; }
     /* For IE 5.5 - 7 */
     filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000');
 }
-
 #jp-singer {
 	font-size:18px; 
 	font-family:sans-serif,Verdana, Arial;
@@ -55,17 +45,13 @@ body { margin:0 auto; background-color: #cccccc; }
 	margin-right:50px;
 	border:0px solid red;
 }
-
-
 #jp-name {
 	font-size:16px; 
 	font-family:Verdana, Arial, sans-serif;
 	color: #009be3;
 	padding: 0px;
 	margin-left:1px;
-
 }
-
 #jp-album {
 	font-size:14px; 
 	font-family:Verdana, Arial, sans-serif;
@@ -75,7 +61,6 @@ body { margin:0 auto; background-color: #cccccc; }
 	margin-right:50px;
 	border:0px solid red;
 }
-
 #jp-nameAlbum {
 	height: 24px;
 	margin-top:15px;
@@ -83,7 +68,6 @@ body { margin:0 auto; background-color: #cccccc; }
 	margin-right:10px;
 	border-bottom:1px solid #009be3;
 }
-
 #jp-report {
 	width: 25px;
 	height: 25px;
@@ -92,11 +76,7 @@ body { margin:0 auto; background-color: #cccccc; }
 	margin-right:15px;
 	border:0px solid red;
 }
-
-#jp-report img {
-	size:25px 25px;
-}
-
+#jp-report img {size:25px 25px;}
 #jp-trash {
 	width: 25px;
 	height: 25px;
@@ -105,11 +85,9 @@ body { margin:0 auto; background-color: #cccccc; }
 	margin-right:10px;
 	border:0px solid red;
 }
-
 #jp-trash img {
 	size:25px 25px;
 }
-
 #jp-favorite {
 	width: 25px;
 	height: 25px;
@@ -122,16 +100,15 @@ body { margin:0 auto; background-color: #cccccc; }
 	size:25px 25px;
 }
 
-.clear {
-	clear:both;
-}
-
+.clear {clear:both;}
 
 /*vote bar*/
+#accordion {
+	display: inline;
+	border: 1px solid #cccccc;
+}
 #vote-container {
 	display: none;
-    margin-top: 10px;
-    margin-left:0px;
     padding: 0px;
     border: 0px solid red;
 }
@@ -241,9 +218,4 @@ body { margin:0 auto; background-color: #cccccc; }
     font-size: 15px;
 }*/
 
-#accordion2 {
-	float: left;
-	margin-top: 20px;
-	margin-left: 85px;
-}
 

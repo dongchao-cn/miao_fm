@@ -4,7 +4,7 @@ function login(){
     var userPassword = $("#login_password").val();
     if (userName == '' || userPassword == ''){
         alert("用户名或密码不能为空，请重新输入！");
-    }else{
+    } else {
         $.ajax({
             type: 'post',
             url: "/api/user/current/",
@@ -149,10 +149,6 @@ function getCookie(key) {
    }
 }
 
-function delCookie() {
-
-}
-
 function voteCollapse() {
     //vote bar test
     //console.info(document.cookie);
@@ -175,4 +171,37 @@ function voteCollapse() {
             } 
         }
     });   
+}
+
+//draw nav-bar
+function drawNavBar() {
+    $.ajax({
+        type: 'get',
+        url: "/api/user/current/",
+        async : false,
+        dataType: "json",
+        success:function(data) {
+            var userInfo = $("#user_info");
+            var linkInfo = $("#link_info");
+            //console.info(data);
+            if(data == null) {
+                userInfo.append('<li><a href="#login" data-toggle="modal">登录</a></li><li><a href="#register" data-toggle="modal">注册</a></li>');
+            }
+            else{
+                if (data.user_level == 'normal'){
+                    ;
+                }
+                else if (data.user_level == 'uploader'){
+                    userInfo.empty();
+                    linkInfo.append('<li><a href="/admin/music/">Music</a></li><li><a href="/admin/report/">Report</a></li>');
+                }
+                else if (data.user_level == 'admin'){
+                    userInfo.empty();
+                    linkInfo.append('<li><a href="/admin/music/">Music</a></li><li><a href="/admin/report/">Report</a></li><li><a href="/admin/user/">User</a></li>');
+                }
+
+                userInfo.append('<li><a><i class="icon-user"></i>&nbsp' + data.user_name+ '</a></li><li><a id="user_listened">听过' + data.user_listened+ '首</a></li><li><a id="user_favour">喜欢过' + data.user_favour.length + '首</a></li><li><a id="logoutButton" href="#" onClick="logout()">注销</a></li>');
+            }    
+        }
+    });
 }

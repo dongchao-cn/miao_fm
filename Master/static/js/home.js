@@ -2,7 +2,7 @@
 var currentSongInfo = [];
 var favoLabel;
 var trashLabel;
-var title;
+//var title;
 var collapseTag;
 
 $(document).ready(function(){
@@ -21,7 +21,6 @@ $(document).ready(function(){
         smoothPlayBar: true,
         keyEnabled: true
     });
-
 
     $("#jp-next").click(function() {
         playNextSong("next");
@@ -47,7 +46,7 @@ $(document).ready(function(){
         $(this).find(".flapLabel").mbFlipText();
     };
 
-    //collapse();
+    //vote bar initial
     voteCollapse();
 });
 
@@ -139,13 +138,14 @@ function playEnded() {
             currentSongInfo = [data.music_id, data.music_name, data.music_artist, data.music_album];
 
             $("#jp-singer").text(singer); 
+
             marqueeShow(name, album);
 
             if(data.img_url == '') {
-                $('#jp-cover').empty();
-                $('#jp-cover').html('<img src="/static/img/default.jpg" />');
+                //$('#jp-cover').empty();
+                $('#jp-cover').html('<img src="/static/img/default.jpg"/>');
             }else {
-                $('#jp-cover').empty();
+                //$('#jp-cover').empty();
                 $('#jp-cover').html('<img src="' + data.img_url + '" />');
             }
 
@@ -359,7 +359,6 @@ function songTag(data) {
     }
 }
 
-
 function postFavSong() {
     $.ajax({
         type: "post",
@@ -541,7 +540,6 @@ function clickVote(event) {
             val: style
         },
         success:function() {
-            //console.info('good');
             //console.info(musicId + ' has voted as ' + style);
             showVoteCount(musicId);
         }
@@ -578,14 +576,6 @@ function showVoteCount(musicId) {
                     //var activeUser = data.status_user.total_count;
                     for(each in voteData.music_voted) {
                         //console.info(each);
-                        //vertical
-                        // $("#" + each + " span").html(voteData.music_voted[each]);
-                        // $("#" + each).animate({
-                        //     height: 200 + voteData.music_voted[each] / max + 'px',
-                        //     top:   "-" + voteData.music_voted[each] / max + 'px'
-                        // }, 500);
-
-                        //horizontal 
                         $("#" + each + " span").html(voteData.music_voted[each]);
                         $("#" + each).animate({
                             width: 165 + voteData.music_voted[each] * 250 / max + 'px',
@@ -593,13 +583,11 @@ function showVoteCount(musicId) {
                     }
                 }
             });
-            
         },
     });
 }
 
 function collapse() {
-    //$("#collapse").collapse('toggle');
     $.ajax({
         type: 'get',
         url: "/api/user/current/",

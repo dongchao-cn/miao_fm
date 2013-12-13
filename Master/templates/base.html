@@ -21,40 +21,7 @@
         <script type="text/javascript" src="/static/js/home.js"></script>
         <script type='text/javascript'>
         $(document).ready(function() {
-            $.ajax({
-                type: 'get',
-                url: "/api/user/current/",
-                async : false,
-                dataType: "json",
-                success:function(data) {
-                    //console.info(data);
-                    if(data == null) {
-                        $("#user_info").append('<li><a href="#login" data-toggle="modal">登录</a></li>');
-                        $("#user_info").append('<li><a href="#register" data-toggle="modal">注册</a></li>')
-                    }
-                    else{
-                        if (data.user_level == 'normal'){
-                            ;
-                        }
-                        else if (data.user_level == 'uploader'){
-                            $("#user_info").empty();
-                            $("#link_info").append('<li><a href="/admin/music/">Music</a></li>');
-                            $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
-                        }
-                        else if (data.user_level == 'admin'){
-                            $("#user_info").empty();
-                            $("#link_info").append('<li><a href="/admin/music/">Music</a></li>');
-                            $("#link_info").append('<li><a href="/admin/report/">Report</a></li>');
-                            $("#link_info").append('<li><a href="/admin/user/">User</a></li>');
-                        }
-
-                        $("#user_info").append('<li><a><i class="icon-user"></i>&nbsp' + data.user_name+ '</a></li>');
-                        $("#user_info").append('<li><a id="user_listened">听过' + data.user_listened+ '首</a></li>');
-                        $("#user_info").append('<li><a id="user_favour">喜欢过' + data.user_favour.length + '首</a></li>');
-                        $("#user_info").append('<li><a id="logoutButton" href="#" onClick="logout()">注销</a></li>');
-                    }    
-                }
-            });
+            drawNavBar();
         });
         </script>
         {% block extern_lib %}{% end %}
@@ -75,32 +42,27 @@
                 <h3>用户登录</h3>
             </div>
             <div class="modal-body">
-                    {% module xsrf_form_html() %} 
-                  
-                    <p id='nowStatus'></p>
-
-                    <div class="control-group">
-                        <label class="control-label" for="login_name">用户名</label>
-                        <div class="controls">
-                            <input type="text" id="login_name" name="user_name" maxlength="50"/>
-                        </div>
+                {% module xsrf_form_html() %} 
+                <p id='nowStatus'></p>
+                <div class="control-group">
+                    <label class="control-label" for="login_name">用户名</label>
+                    <div class="controls">
+                        <input type="text" id="login_name" name="user_name" maxlength="50"/>
                     </div>
-
-                    <div class="control-group">
-                        <label class="control-label" for="login_password">密码</label>
-                        <div class="controls">
-                            <input type="password" id="login_password" name="user_password" maxlength="40"/>
-                        </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="login_password">密码</label>
+                    <div class="controls">
+                        <input type="password" id="login_password" name="user_password" maxlength="40"/>
                     </div>
-
-                    <div class="control-group">
-                        <div class="controls">
-                            <input class="btn btn btn-success" type="button" value="返回" onclick="location.href='/';">
-                            <button class="btn btn-primary" onClick="login()">登录</button>
-                        </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <input class="btn btn btn-success" type="button" value="返回" onclick="location.href='/';">
+                        <button class="btn btn-primary" onClick="login()">登录</button>
                     </div>
+                </div>
             </div>
-
         </div>
         <!-- login window end -->  
 
@@ -111,38 +73,37 @@
                 <h3>用户注册</h3>              
             </div>
             <div class="modal-body">
-                    {% module xsrf_form_html() %}                    
-                    <div class="control-group">
-                        <label class="control-label" for="reg_name">用户名</label>
-                        <div class="controls">
-                            <input type="text" id="reg_name" name="user_name" maxlength="50"/>
-                        </div>
+                {% module xsrf_form_html() %}                    
+                <div class="control-group">
+                    <label class="control-label" for="reg_name">用户名</label>
+                    <div class="controls">
+                        <input type="text" id="reg_name" name="user_name" maxlength="50"/>
                     </div>
-
-                    <div class="control-group">
-                        <label class="control-label" for="reg_password">密码</label>
-                        <div class="controls">
-                            <input type="password" id="reg_password" name="reg_password" maxlength="40"/>
-                        </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="reg_password">密码</label>
+                    <div class="controls">
+                        <input type="password" id="reg_password" name="reg_password" maxlength="40"/>
                     </div>
-                     <div class="control-group">
-                        <label class="control-label" for="repeat_password">再次输入密码</label>
-                        <div class="controls">
-                            <input type="password" id="repeat_password" name="repeat_password" maxlength="40"/>
-                        </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="repeat_password">再次输入密码</label>
+                    <div class="controls">
+                        <input type="password" id="repeat_password" name="repeat_password" maxlength="40"/>
                     </div>
-                    <div class="control-group">
-                        <div class="controls">
-                            <input class="btn btn btn-success" type="button" value="返回" onclick="location.href='/';">
-                            <button class="btn btn-primary" onClick="register()">注册</button>
-                        </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <input class="btn btn btn-success" type="button" value="返回" onclick="location.href='/';">
+                        <button class="btn btn-primary" onClick="register()">注册</button>
                     </div>
+                </div>
             </div>
         </div>
         <!-- register window end --> 
 
         <div class="container-fluid">
-            {% block content %}{% end %}
+        {% block content %}{% end %}
         </div>
         {% block extern_js %}{% end %}
         <script src="/static/js/util.js"></script>
