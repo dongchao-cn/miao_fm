@@ -39,8 +39,9 @@ def sim_pearson(prefs, user1, user2):
     pearson_sum = sum([prefs[user1][tag] * prefs[user2][tag] for tag in si])
 
     num = pearson_sum - float(sum_tag_uesr1) * sum_tag_uesr2 / n
-    den = sqrt((sumsq_tag_user1 - pow(sum_tag_uesr1, 2) / float(n)) * (sumsq_tag_user2 -
-        pow(sum_tag_uesr2, 2) / float(n)))
+    den = sqrt((sumsq_tag_user1 -
+                pow(sum_tag_uesr1, 2) / float(n)) *
+               (sumsq_tag_user2 - pow(sum_tag_uesr2, 2) / float(n)))
     if den == 0:
         return 0
     return num / den
@@ -53,13 +54,15 @@ def sim_distance(prefs, user1_id, user2_id):
             si[item] = 1
     if len(si) == 0:
         return 0
-    sum_of_squares = sum([pow(prefs[user1_id][item] - prefs[user2_id][item], 2) for item in
-        prefs[user1_id] if item in prefs[user2_id]])
+    sum_of_squares = sum([pow(prefs[user1_id][item] -
+                          prefs[user2_id][item], 2) for item in
+                          prefs[user1_id] if item in prefs[user2_id]])
     return 1 / (1 + sqrt(sum_of_squares))
 
 
 def top_k_matches(prefs, user_id, k=10, similarity=sim_distance):
-    scores = [(similarity(prefs, user_id, other), other) for other in prefs if other != user_id]
+    scores = [(similarity(prefs, user_id, other), other)
+              for other in prefs if other != user_id]
     scores.sort()
     scores.reverse()
     return scores[0:k]
@@ -155,7 +158,9 @@ class Recommend():
                 ret[str(user.user_id)][music_id] = -1
         return ret
 
-    def get_recommendations_with_user_based(self, user_id, similarity=sim_distance):
+    def get_recommendations_with_user_based(self,
+                                            user_id,
+                                            similarity=sim_distance):
         totals = {}
         simSums = {}
         for other in self.user_tags_prefs:
@@ -172,8 +177,9 @@ class Recommend():
                     totals[music_id] += self.user_music_prefs[other][music_id] * sim
                     simSums[music_id] += sim
 
-        rankings = [(total / simSums[music_id], music_id) for music_id, total in totals.items() if
-                simSums[music_id] != 0]
+        rankings = [(total / simSums[music_id], music_id)
+                    for music_id, total in totals.items() if
+                    simSums[music_id] != 0]
         rankings.sort()
         rankings.reverse()
         return rankings
@@ -190,8 +196,9 @@ class Recommend():
                 scores[other_music_id] += similarity * rating
                 total_sim.setdefault(other_music_id, 0)
                 total_sim[other_music_id] += similarity
-        rankings = [(score / total_sim[music_id], music_id) for music_id, score in scores.items() if
-                total_sim[music_id] != 0]
+        rankings = [(score / total_sim[music_id], music_id)
+                    for music_id, score in scores.items()
+                    if total_sim[music_id] != 0]
         rankings.sort()
         rankings.reverse()
         return rankings
@@ -223,14 +230,15 @@ def user_get_music():
 def get_mixed_next_music(user_id, recom_list, dislike_list, favour_list):
     #print recom_list, dislike_list, favour_list
     dice = random.randint(0, 100)
-    if dice < 20 and favour_list is not None and len(favour_list) > 0:
+    if dice < 10 and favour_list is not None and len(favour_list) > 0:
         #print "1"
         #print favour_list[random.randint(0, len(favour_list) - 1)]
         #print MusicSet.get_music(favour_list[random.randint(0, len(favour_list) - 1)])
         return MusicSet.get_music(favour_list[random.randint(0, len(favour_list) - 1)])
     if dice < 60:
         #print "2"
-        new_recom_list = list(set(recom_list) - set(recom_list) & set(dislike_list))
+        new_recom_list = list(set(recom_list) -
+                              set(recom_list) & set(dislike_list))
         if new_recom_list is not None and len(new_recom_list) != 0:
             #print new_recom_list[random.randint(0, len(new_recom_list) - 1)]
             #print MusicSet.get_music(new_recom_list[random.randint(0, len(new_recom_list) - 1)])
@@ -262,9 +270,12 @@ def get_next_music(user_id):
 if __name__ == '__main__':
     from master_config import MONGODB_URL, MONGODB_PORT
     connect('miao_fm', host=MONGODB_URL, port=MONGODB_PORT)
-    register_connection('miao_fm_cdn', 'miao_fm_cdn', host=MONGODB_URL, port=MONGODB_PORT)
-    #import profile
-    #profile.run("user_get_music()")
+    register_connection('miao_fm_cdn',
+                        'miao_fm_cdn',
+                        host=MONGODB_URL,
+                        port=MONGODB_PORT)
+    import profile
+    profile.run("user_get_music()")
     #user_get_music()
     for user in UserSet.get_all_user():
         #print user
