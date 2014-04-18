@@ -4,7 +4,7 @@ miao_fm
 this is a online music server, just like douban FM.
 
 **This project is deprecated and will NO longer be updated！**
-Please see [wang_fm](https://github.com/dccrazyboy/wang_fm/]) instead.
+Please see [wang_fm](https://github.com/dccrazyboy/wang_fm/) instead.
 
 Depends
 -------
